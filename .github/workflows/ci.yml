@@ -1,0 +1,35 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mymindstorm/setup-emsdk@v14
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Native unit tests (ASan/UBSan)
+        run: scripts/build.sh native-test
+      - name: Web debug build
+        run: scripts/build.sh debug
+      - name: Playwright smoke test
+        run: |
+          cd tools && npm ci || npm install
+          npx playwright install --with-deps chromium
+          node smoke.mjs ../build-web-debug
+      - name: Package
+        run: sudo apt-get install -y brotli && scripts/package.sh
+      - uses: actions/upload-artifact@v4
+        with: { name: dist, path: dist }
+  deploy:
+    needs: build-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions: { contents: read, pages: write, id-token: write }
+    environment: { name: github-pages }
+    steps:
+      - uses: actions/download-artifact@v4
+        with: { name: dist, path: dist }
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: dist }
+      - uses: actions/deploy-pages@v4

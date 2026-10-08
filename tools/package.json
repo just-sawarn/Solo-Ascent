@@ -1,0 +1,10 @@
+{
+  "name": "solo-ascent-tools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node dev_server.mjs ../build-web-debug",
+    "smoke": "node smoke.mjs ../build-web-debug"
+  },
+  "devDependencies": { "playwright": "^1.50.0" }
+}

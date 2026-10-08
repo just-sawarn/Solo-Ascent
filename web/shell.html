@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Solo Ascent: The S-Rank Hero</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b0e18">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="stylesheet" href="game.css">
+</head>
+<body>
+<canvas id="canvas" tabindex="-1" oncontextmenu="event.preventDefault()"></canvas>
+
+<div id="overlay" class="screen">
+  <h1>SOLO ASCENT</h1>
+  <h2>The S-Rank Hero</h2>
+  <div id="loadbox"><div id="loadbar"></div></div>
+  <p id="status">Loading…</p>
+  <button id="start" disabled>Click / Tap to Start</button>
+</div>
+
+<div id="unsupported" class="screen" hidden>
+  <h1>Your browser can't run this game</h1>
+  <p id="unsupported-why">WebGL2 is required.</p>
+  <p>Try a recent version of Chrome, Edge or Firefox, and make sure hardware acceleration is enabled.</p>
+</div>
+
+<script src="glue.js"></script>
+<script>SoloAscentGlue.boot();</script>
+{{{ SCRIPT }}}
+</body>
+</html>
