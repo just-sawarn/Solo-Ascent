@@ -6,5 +6,13 @@
     "source": "https://opengameart.org/content/low-poly-medieval-weapons",
     "retrieved": "2026-10-09",
     "modifications": "OBJ n-gons triangulated (tools/triangulate_obj.py)"
+  },
+  "assets/models/characters": {
+    "name": "Universal Base Characters [Standard]",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://quaternius.itch.io/universal-base-characters",
+    "retrieved": "2026-10-09",
+    "modifications": "normal/roughness texture refs removed, base-colour textures downsized to 512 px (tools/prep_characters.py)"
   }
 }

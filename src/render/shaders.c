@@ -7,16 +7,19 @@
 #define SH_PRELUDE "#version 330\n"
 #endif
 
-const char *sh_compose(const char *body) {
-    static char buf[8][12288];
+const char *sh_compose_def(const char *body, const char *defs) {
+    static char buf[10][14336];
     static int idx;
-    char *b = buf[idx++ & 7];
-    size_t pl = strlen(SH_PRELUDE), bl = strlen(body);
-    if (pl + bl + 1 > sizeof buf[0]) return SH_PRELUDE "void main(){}"; /* never in practice; compile error is loud */
+    char *b = buf[idx++ % 10];
+    size_t pl = strlen(SH_PRELUDE), dl = strlen(defs), bl = strlen(body);
+    if (pl + dl + bl + 1 > sizeof buf[0]) return SH_PRELUDE "void main(){}"; /* never in practice; compile error is loud */
     memcpy(b, SH_PRELUDE, pl);
-    memcpy(b + pl, body, bl + 1);
+    memcpy(b + pl, defs, dl);
+    memcpy(b + pl + dl, body, bl + 1);
     return b;
 }
+
+const char *sh_compose(const char *body) { return sh_compose_def(body, ""); }
 
 const char *SH_VS_MESH = "";
 
@@ -33,16 +36,35 @@ const char *SH_VS_TOON =
 "out vec3 vWorld;\n"
 "out vec3 vNormal;\n"
 "out vec4 vLight;\n"
+"out vec3 vBind;\n"
+"#ifdef SKINNED\n"
+"in vec4 vertexBoneIds;\n"
+"in vec4 vertexBoneWeights;\n"
+"uniform mat4 boneMatrices[72];\n"
+"mat4 skinMat(){\n"
+"  return boneMatrices[int(vertexBoneIds.x)] * vertexBoneWeights.x + boneMatrices[int(vertexBoneIds.y)] * vertexBoneWeights.y +\n"
+"         boneMatrices[int(vertexBoneIds.z)] * vertexBoneWeights.z + boneMatrices[int(vertexBoneIds.w)] * vertexBoneWeights.w;\n"
+"}\n"
+"#endif\n"
 "void main(){\n"
-"  vec4 w = matModel * vec4(vertexPosition, 1.0);\n"
+"  vec3 lp = vertexPosition;\n"
+"  vec3 ln = vertexNormal;\n"
+"#ifdef SKINNED\n"
+"  mat4 sk = skinMat();\n"
+"  lp = (sk * vec4(vertexPosition, 1.0)).xyz;\n"
+"  ln = mat3(sk) * vertexNormal;\n"
+"#endif\n"
+"  vec4 w = matModel * vec4(lp, 1.0);\n"
 "  vUv = vertexTexCoord;\n"
+"  vBind = vertexPosition;\n"
 "  vWorld = w.xyz;\n"
-"  vNormal = normalize(mat3(matNormal) * vertexNormal);\n"
+"  vNormal = normalize(mat3(matNormal) * ln);\n"
 "  vLight = uLightVP * w;\n"
-"  gl_Position = mvp * vec4(vertexPosition, 1.0);\n"
+"  gl_Position = mvp * vec4(lp, 1.0);\n"
 "}\n";
 
 const char *SH_FS_TOON =
+"in vec3 vBind;\n"
 "in vec2 vUv;\n"
 "in vec3 vWorld;\n"
 "in vec3 vNormal;\n"
@@ -68,6 +90,10 @@ const char *SH_FS_TOON =
 "uniform vec3 uFogCol;\n"
 "uniform float uFogDen;\n"
 "uniform vec4 uMat;\n"         /* rimMul, specMul, emissive, flags */
+"uniform vec3 uPaint1;\n"      /* outfit paint: top, bottom, shoes (bind-space regions) */
+"uniform vec3 uPaint2;\n"
+"uniform vec3 uPaint3;\n"
+"uniform vec4 uPaintCfg;\n"    /* x: sleeve reach (|x| limit, 0 = sleeveless), y: pants hem y, z: shoe height, w: top hem y */
 "float unpackDepth(vec4 c){ return dot(c, vec4(1.0, 1.0/255.0, 1.0/65025.0, 1.0/16581375.0)); }\n"
 "float shadowAt(vec4 lp, float ndl){\n"
 "  vec3 p = lp.xyz / lp.w * 0.5 + 0.5;\n"
@@ -95,6 +121,18 @@ const char *SH_FS_TOON =
 "    float line = 1.0 - min(min(f.x, f.y), 1.0);\n"
 "    float tone = 0.88 + 0.24 * hash21(floor(g));\n"
 "    base *= tone * (1.0 - 0.45 * line);\n"
+"  }\n"
+"  if ((fl & 8) != 0) {\n"                     /* outfit paint by bind-space body region */
+"    base = mix(pow(colDiffuse.rgb, vec3(2.2)), base, 0.22);\n"   /* flat anime skin: keep only a little texture detail */
+"    float ax = abs(vBind.x), y = vBind.y;\n"
+"    float torso = step(ax, 0.30) * smoothstep(uPaintCfg.w - 0.015, uPaintCfg.w + 0.015, y) * (1.0 - smoothstep(1.50, 1.54, y));\n"
+"    float sleeve = step(0.30, ax) * (1.0 - smoothstep(uPaintCfg.x - 0.01, uPaintCfg.x + 0.01, ax)) * step(1.30, y) * step(0.01, uPaintCfg.x);\n"
+"    float pants = step(ax, 0.32) * (1.0 - smoothstep(uPaintCfg.w - 0.015, uPaintCfg.w + 0.015, y)) * smoothstep(uPaintCfg.y - 0.012, uPaintCfg.y + 0.012, y);\n"
+"    float shoes = (1.0 - smoothstep(uPaintCfg.z - 0.01, uPaintCfg.z + 0.01, y)) * step(ax, 0.32);\n"
+"    vec3 pc = pow(uPaint1, vec3(2.2));\n"
+"    base = mix(base, pc, clamp(torso + sleeve, 0.0, 1.0));\n"
+"    base = mix(base, pow(uPaint2, vec3(2.2)), pants);\n"
+"    base = mix(base, pow(uPaint3, vec3(2.2)), shoes);\n"
 "  }\n"
 "  float ndl = dot(N, L);\n"
 "  float sh = ((fl & 4) != 0) ? 1.0 : shadowAt(vLight, ndl);\n"
@@ -132,9 +170,25 @@ const char *SH_VS_OUTLINE =
 "uniform vec3 viewPos;\n"
 "uniform float uOutlinePx;\n"   /* pixel-ish thickness, converted to world units by distance */
 "uniform float uSmooth;\n"      /* 0 = use mesh normals, 1 = radial from object centre (fixes hard-edged cubes) */
+"#ifdef SKINNED\n"
+"in vec4 vertexBoneIds;\n"
+"in vec4 vertexBoneWeights;\n"
+"uniform mat4 boneMatrices[72];\n"
+"mat4 skinMat(){\n"
+"  return boneMatrices[int(vertexBoneIds.x)] * vertexBoneWeights.x + boneMatrices[int(vertexBoneIds.y)] * vertexBoneWeights.y +\n"
+"         boneMatrices[int(vertexBoneIds.z)] * vertexBoneWeights.z + boneMatrices[int(vertexBoneIds.w)] * vertexBoneWeights.w;\n"
+"}\n"
+"#endif\n"
 "void main(){\n"
-"  vec3 dir = normalize(mix(vertexNormal, normalize(vertexPosition + vec3(0.0, 1e-4, 0.0)), uSmooth));\n"
-"  vec4 w = matModel * vec4(vertexPosition, 1.0);\n"
+"  vec3 lp = vertexPosition;\n"
+"  vec3 nrm = vertexNormal;\n"
+"#ifdef SKINNED\n"
+"  mat4 sk = skinMat();\n"
+"  lp = (sk * vec4(vertexPosition, 1.0)).xyz;\n"
+"  nrm = mat3(sk) * vertexNormal;\n"
+"#endif\n"
+"  vec3 dir = normalize(mix(nrm, normalize(lp + vec3(0.0, 1e-4, 0.0)), uSmooth));\n"
+"  vec4 w = matModel * vec4(lp, 1.0);\n"
 "  vec3 nw = normalize(mat3(matNormal) * dir);\n"
 "  float dist = length(viewPos - w.xyz);\n"
 "  w.xyz += nw * clamp(dist * uOutlinePx, 0.002, 0.06);\n"

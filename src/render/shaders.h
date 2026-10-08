@@ -4,6 +4,8 @@
 
 /* Returns "prelude + body" in a static ring of buffers (valid until 8 more calls). */
 const char *sh_compose(const char *body);
+/* Same, with extra #defines placed after the prelude (e.g. "#define SKINNED\n"). */
+const char *sh_compose_def(const char *body, const char *defs);
 
 extern const char *SH_VS_MESH;      /* toon + shadow-depth + outline use their own VS; these are bodies */
 extern const char *SH_VS_TOON;

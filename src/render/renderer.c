@@ -8,7 +8,10 @@
 
 #define MAX_DRAWS 2048
 
-typedef struct { const Mesh *mesh; Matrix xf; RenderMat mat; } DrawCmd;
+typedef struct { const Mesh *mesh; Matrix xf; RenderMat mat; const Matrix *bones; int bone_count; } DrawCmd;
+
+#define MAX_BONE_SETS 160
+#define BONES_PER_SET 72
 
 typedef struct {
     const char *name;
@@ -93,7 +96,10 @@ typedef struct {
     QualityTier tier;
     int  look;
     Shader toon, outline, shadow, sky, bright, blur, composite;
-    int u_toon[24];
+    Shader toon_sk, outline_sk, shadow_sk;
+    Material m_toon, m_toon_sk, m_outline, m_outline_sk, m_shadow, m_shadow_sk;
+    Matrix bone_arena[MAX_BONE_SETS * BONES_PER_SET];
+    int bone_sets;
     RenderTexture2D scene, shadow_rt, bloom_a, bloom_b;
     Texture2D ramp, white;
     unsigned char ramp_px[256 * 4];
@@ -167,10 +173,20 @@ static Shader load(const char *vs, const char *fs, const char *name) {
     return s;
 }
 
+static Material make_material(Shader sh);
 static void load_shaders(void) {
     r.toon = load(SH_VS_TOON, SH_FS_TOON, "toon");
     r.outline = load(SH_VS_OUTLINE, SH_FS_OUTLINE, "outline");
     r.shadow = load(SH_VS_TOON, SH_FS_SHADOW, "shadow");
+    const char *SK = "#define SKINNED\n";
+    r.toon_sk = LoadShaderFromMemory(sh_compose_def(SH_VS_TOON, SK), sh_compose(SH_FS_TOON));
+    r.outline_sk = LoadShaderFromMemory(sh_compose_def(SH_VS_OUTLINE, SK), sh_compose(SH_FS_OUTLINE));
+    r.shadow_sk = LoadShaderFromMemory(sh_compose_def(SH_VS_TOON, SK), sh_compose(SH_FS_SHADOW));
+    if (r.toon_sk.id == rlGetShaderIdDefault() || r.outline_sk.id == rlGetShaderIdDefault() || r.shadow_sk.id == rlGetShaderIdDefault())
+        LOGE("skinned shader variants failed to compile/link");
+    r.m_toon = make_material(r.toon); r.m_toon_sk = make_material(r.toon_sk);
+    r.m_outline = make_material(r.outline); r.m_outline_sk = make_material(r.outline_sk);
+    r.m_shadow = make_material(r.shadow); r.m_shadow_sk = make_material(r.shadow_sk);
     r.sky = load(SH_VS_QUAD, SH_FS_SKY, "sky");
     r.bright = load(SH_VS_QUAD, SH_FS_BRIGHT, "bright");
     r.blur = load(SH_VS_QUAD, SH_FS_BLUR, "blur");
@@ -214,6 +230,9 @@ void renderer_shutdown(void) {
     UnloadTexture(r.ramp); UnloadTexture(r.white);
     UnloadShader(r.toon); UnloadShader(r.outline); UnloadShader(r.shadow); UnloadShader(r.sky);
     UnloadShader(r.bright); UnloadShader(r.blur); UnloadShader(r.composite);
+    UnloadShader(r.toon_sk); UnloadShader(r.outline_sk); UnloadShader(r.shadow_sk);
+    Material *ms[] = {&r.m_toon, &r.m_toon_sk, &r.m_outline, &r.m_outline_sk, &r.m_shadow, &r.m_shadow_sk};
+    for (int i = 0; i < 6; ++i) { MemFree(ms[i]->maps); ms[i]->maps = NULL; } /* textures are owned elsewhere */
     r.ready = false;
 }
 
@@ -232,7 +251,7 @@ void renderer_target_size(int *w, int *h) { *w = r.rt_w; *h = r.rt_h; }
 int renderer_queue_count(void) { return r.ncmds; }
 
 void renderer_begin_frame(Camera3D cam, float time_s) {
-    r.cam = cam; r.time = time_s; r.ncmds = 0;
+    r.cam = cam; r.time = time_s; r.ncmds = 0; r.bone_sets = 0;
     int sw = GetScreenWidth(), sh = GetScreenHeight();
     if (sw != r.screen_w || sh != r.screen_h) {
         r.screen_w = sw; r.screen_h = sh;
@@ -242,13 +261,22 @@ void renderer_begin_frame(Camera3D cam, float time_s) {
 
 void renderer_submit(const Mesh *mesh, Matrix xf, RenderMat mat) {
     if (r.ncmds >= MAX_DRAWS) { r.dropped++; return; }
-    r.cmds[r.ncmds++] = (DrawCmd){mesh, xf, mat};
+    r.cmds[r.ncmds++] = (DrawCmd){.mesh = mesh, .xf = xf, .mat = mat};
 }
 
-static Material material_for(Shader s, Color c) {
+Matrix *renderer_alloc_bones(int count) {
+    if (count > BONES_PER_SET || r.bone_sets >= MAX_BONE_SETS) return NULL;
+    return &r.bone_arena[(r.bone_sets++) * BONES_PER_SET];
+}
+
+void renderer_submit_skinned(const Mesh *mesh, Matrix xf, RenderMat mat, const Matrix *bones, int bone_count) {
+    if (r.ncmds >= MAX_DRAWS) { r.dropped++; return; }
+    r.cmds[r.ncmds++] = (DrawCmd){.mesh = mesh, .xf = xf, .mat = mat, .bones = bones, .bone_count = bone_count};
+}
+
+static Material make_material(Shader sh) {
     Material m = LoadMaterialDefault();
-    m.shader = s;
-    m.maps[MATERIAL_MAP_DIFFUSE].color = c;
+    m.shader = sh;
     return m;
 }
 
@@ -271,6 +299,13 @@ static void compute_light_vp(Camera3D *lc, float extent) {
     lc->fovy = extent * 2.0f; /* raylib: ortho fovy = view height in world units */
 }
 
+/* Mesh to draw for a command: skinned commands carry their own bone matrices (shared meshes, per-instance poses). */
+static Mesh cmd_mesh(const DrawCmd *c) {
+    Mesh m = *c->mesh;
+    if (c->bones) { m.boneMatrices = (Matrix *)c->bones; m.boneCount = c->bone_count; }
+    return m;
+}
+
 static void run_shadow_pass(void) {
     Camera3D lc = {0};
     compute_light_vp(&lc, 14.0f);
@@ -281,10 +316,10 @@ static void run_shadow_pass(void) {
     r.light_vp = MatrixMultiply(rlGetMatrixModelview(), rlGetMatrixProjection());
     rlDisableColorBlend();
     rlSetCullFace(RL_CULL_FACE_FRONT);
-    Material m = material_for(r.shadow, WHITE);
     for (int i = 0; i < r.ncmds; ++i) {
-        if (r.cmds[i].mat.flags & RM_NO_SHADOW_CAST) continue;
-        DrawMesh(*r.cmds[i].mesh, m, r.cmds[i].xf);
+        const DrawCmd *c = &r.cmds[i];
+        if (c->mat.flags & RM_NO_SHADOW_CAST) continue;
+        DrawMesh(cmd_mesh(c), c->bones ? r.m_shadow_sk : r.m_shadow, c->xf);
     }
     rlDrawRenderBatchActive();
     rlSetCullFace(RL_CULL_FACE_BACK);
@@ -294,12 +329,10 @@ static void run_shadow_pass(void) {
     EndTextureMode();
 }
 
-static void set_toon_uniforms(void) {
+static void set_toon_uniforms(Shader s) {
     const Look *L = &LOOKS[r.look];
     const TierSettings *T = &TIERS[r.tier];
-    Shader s = r.toon;
-    Vector3 ld = v3n(L->light_dir);
-    set3(s, "uLightDir", ld);
+    set3(s, "uLightDir", v3n(L->light_dir));
     set3(s, "uLightCol", L->light_col);
     set3(s, "uAmbTop", L->amb_top);
     set3(s, "uAmbBot", L->amb_bot);
@@ -316,12 +349,8 @@ static void set_toon_uniforms(void) {
     SetShaderValueMatrix(s, loc(s, "uLightVP"), r.light_vp);
     float cp[3] = {r.cam.position.x, r.cam.position.y, r.cam.position.z};
     SetShaderValue(s, loc(s, "viewPos"), cp, SHADER_UNIFORM_VEC3);
-    int slot_shadow = 10, slot_ramp = 11;
-    rlActiveTextureSlot(slot_shadow); rlEnableTexture(r.shadow_rt.texture.id);
-    rlActiveTextureSlot(slot_ramp);   rlEnableTexture(r.ramp.id);
-    rlActiveTextureSlot(0);
-    seti(s, "uShadow", slot_shadow);
-    seti(s, "uRamp", slot_ramp);
+    seti(s, "uShadow", 10);
+    seti(s, "uRamp", 11);
 }
 
 static void draw_sky(void) {
@@ -343,6 +372,23 @@ static void draw_sky(void) {
     rlDrawRenderBatchActive();
 }
 
+static void set_cmd_uniforms(Shader s, const DrawCmd *c) {
+    int fl = 0;
+    if (c->mat.flags & RM_GROUND) fl |= 1;
+    if (c->mat.flags & RM_HAIR) fl |= 2;
+    if (c->mat.flags & RM_NO_RECEIVE) fl |= 4;
+    if (c->mat.flags & RM_PAINT) fl |= 8;
+    float um[4] = {c->mat.rim, c->mat.spec, c->mat.emissive, (float)fl};
+    SetShaderValue(s, loc(s, "uMat"), um, SHADER_UNIFORM_VEC4);
+    if (c->mat.flags & RM_PAINT) {
+        Vector3 p1 = {c->mat.paint[0].r / 255.0f, c->mat.paint[0].g / 255.0f, c->mat.paint[0].b / 255.0f};
+        Vector3 p2 = {c->mat.paint[1].r / 255.0f, c->mat.paint[1].g / 255.0f, c->mat.paint[1].b / 255.0f};
+        Vector3 p3 = {c->mat.paint[2].r / 255.0f, c->mat.paint[2].g / 255.0f, c->mat.paint[2].b / 255.0f};
+        set3(s, "uPaint1", p1); set3(s, "uPaint2", p2); set3(s, "uPaint3", p3);
+        SetShaderValue(s, loc(s, "uPaintCfg"), c->mat.paint_cfg, SHADER_UNIFORM_VEC4);
+    }
+}
+
 static void run_scene_pass(void) {
     const Look *L = &LOOKS[r.look];
     const TierSettings *T = &TIERS[r.tier];
@@ -352,36 +398,36 @@ static void run_scene_pass(void) {
     draw_sky();
     rlSetClipPlanes(0.1, 300.0);
     BeginMode3D(r.cam);
-    set_toon_uniforms();
-    Material m = material_for(r.toon, WHITE);
+    set_toon_uniforms(r.toon);
+    set_toon_uniforms(r.toon_sk);
+    rlActiveTextureSlot(10); rlEnableTexture(r.shadow_rt.texture.id);
+    rlActiveTextureSlot(11); rlEnableTexture(r.ramp.id);
+    rlActiveTextureSlot(0);
     for (int i = 0; i < r.ncmds; ++i) {
         const DrawCmd *c = &r.cmds[i];
-        float um[4];
-        int fl = 0;
-        if (c->mat.flags & RM_GROUND) fl |= 1;
-        if (c->mat.flags & RM_HAIR) fl |= 2;
-        if (c->mat.flags & RM_NO_RECEIVE) fl |= 4;
-        um[0] = c->mat.rim; um[1] = c->mat.spec; um[2] = c->mat.emissive; um[3] = (float)fl;
-        SetShaderValue(r.toon, loc(r.toon, "uMat"), um, SHADER_UNIFORM_VEC4);
-        m.maps[MATERIAL_MAP_DIFFUSE].color = c->mat.base;
-        m.maps[MATERIAL_MAP_DIFFUSE].texture = c->mat.tex.id ? c->mat.tex : r.white;
-        DrawMesh(*c->mesh, m, c->xf);
+        Material *m = c->bones ? &r.m_toon_sk : &r.m_toon;
+        set_cmd_uniforms(m->shader, c);
+        m->maps[MATERIAL_MAP_DIFFUSE].color = c->mat.base;
+        m->maps[MATERIAL_MAP_DIFFUSE].texture = c->mat.tex.id ? c->mat.tex : r.white;
+        DrawMesh(cmd_mesh(c), *m, c->xf);
     }
     if (T->outlines) {
-        Shader os = r.outline;
-        set3(os, "uOutlineCol", L->outline_col);
+        float px = L->outline_px * (float)r.rt_h / 720.0f;
         float cp[3] = {r.cam.position.x, r.cam.position.y, r.cam.position.z};
-        SetShaderValue(os, loc(os, "viewPos"), cp, SHADER_UNIFORM_VEC3);
-        /* constant ~screen-space thickness: scale with internal resolution */
-        setf(os, "uOutlinePx", L->outline_px * (float)r.rt_h / 720.0f);
-        Material om = material_for(os, WHITE);
+        for (int k = 0; k < 2; ++k) {
+            Shader os = k ? r.outline_sk : r.outline;
+            set3(os, "uOutlineCol", L->outline_col);
+            SetShaderValue(os, loc(os, "viewPos"), cp, SHADER_UNIFORM_VEC3);
+            setf(os, "uOutlinePx", px);
+        }
         rlSetCullFace(RL_CULL_FACE_FRONT);
         for (int i = 0; i < r.ncmds; ++i) {
             const DrawCmd *c = &r.cmds[i];
             if (c->mat.flags & (RM_NO_OUTLINE | RM_GROUND)) continue;
-            setf(os, "uSmooth", c->mat.smooth);
-            om.maps[MATERIAL_MAP_DIFFUSE].color = c->mat.base;
-            DrawMesh(*c->mesh, om, c->xf);
+            Material *om = c->bones ? &r.m_outline_sk : &r.m_outline;
+            setf(om->shader, "uSmooth", c->mat.smooth);
+            om->maps[MATERIAL_MAP_DIFFUSE].color = c->mat.base;
+            DrawMesh(cmd_mesh(c), *om, c->xf);
         }
         rlSetCullFace(RL_CULL_FACE_BACK);
     }

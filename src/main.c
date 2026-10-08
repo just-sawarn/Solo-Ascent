@@ -7,6 +7,7 @@
 #include "core/gameloop.h"
 #include "core/log.h"
 #include "platform/platform.h"
+#include "render/heroes.h"
 #include "render/procmodels.h"
 #include "render/renderer.h"
 #include "ui/debug_overlay.h"
@@ -207,6 +208,7 @@ int main(int argc, char **argv) {
 
     if (hero_only) { test_scene_set_showcase(true); test_scene_set_rack(rack); G.cam_dist = rack ? 7.5f : 4.4f; G.cam_pitch = rack ? 0.25f : 0.04f; G.cam_yaw = rack ? 0.0f : 0.35f; }
     proc_init();
+    heroes_init();
     renderer_init(GetScreenWidth(), GetScreenHeight(), tier, look);
     platform_report_state("title");
     LOGI("Solo Ascent boot OK");

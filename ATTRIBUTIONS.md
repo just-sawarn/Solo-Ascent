@@ -5,6 +5,7 @@ All third-party assets must be CC0 or permissively licensed. Machine-readable re
 | Asset | Author | License | Source |
 |---|---|---|---|
 | Low poly medieval weapons (Dagger, ShortSword, LongSword, Katana, SimpleAxe, Club, Spear) | Quaternius | CC0 1.0 | https://opengameart.org/content/low-poly-medieval-weapons |
+| Universal Base Characters [Standard] (Superhero male/female bodies, hairstyles) | Quaternius | CC0 1.0 | https://quaternius.itch.io/universal-base-characters |
 
 Code dependencies: raylib 5.5 (zlib/libpng license), Emscripten (MIT/UIUC).
 Processing applied: OBJ n-gons fan-triangulated with `tools/triangulate_obj.py`; geometry otherwise unmodified.

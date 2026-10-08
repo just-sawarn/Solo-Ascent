@@ -59,6 +59,8 @@ if(EMSCRIPTEN OR SA_BUILD_NATIVE_GAME)
     src/render/renderer.c
     src/render/shaders.c
     src/render/procmodels.c
+    src/render/character.c
+    src/render/heroes.c
     src/world/test_scene.c
     src/platform/web/platform.c)
   target_link_libraries(solo_ascent PRIVATE sa_core raylib)
@@ -72,7 +74,8 @@ if(EMSCRIPTEN OR SA_BUILD_NATIVE_GAME)
       -sASSERTIONS=$<IF:$<CONFIG:Debug>,1,0>
       -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
       -sEXPORTED_FUNCTIONS=_main,_sa_on_visibility,_sa_on_context_lost,_sa_on_context_restored
-      --preload-file ${CMAKE_SOURCE_DIR}/assets/models/weapons@/assets/weapons
+      "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/assets/models/weapons@/assets/weapons"
+      "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/assets/models/characters@/assets/characters"
       --shell-file ${CMAKE_SOURCE_DIR}/web/shell.html)
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
       target_link_options(solo_ascent PRIVATE -gsource-map)

@@ -1,6 +1,7 @@
 #include "world/test_scene.h"
 #include <math.h>
 #include <raymath.h>
+#include "render/heroes.h"
 #include "render/procmodels.h"
 
 static Color C(int r, int g, int b) { return (Color){(unsigned char)r, (unsigned char)g, (unsigned char)b, 255}; }
@@ -10,17 +11,17 @@ void test_scene_set_rack(bool on) { g_rack = on; }
 void test_scene_set_showcase(bool on) { g_showcase = on; }
 
 void test_scene_submit(float t, Vector3 hero, float hero_yaw) {
-    static CharDesc kael, bram, lyra, mirelle, shadow;
+    static CharDesc bram, lyra, mirelle, shadow;
     static bool init;
     if (!init) {
-        kael = proc_preset(OUTFIT_HERO); bram = proc_preset(OUTFIT_TANK); lyra = proc_preset(OUTFIT_MAGE);
+        bram = proc_preset(OUTFIT_TANK); lyra = proc_preset(OUTFIT_MAGE);
         mirelle = proc_preset(OUTFIT_HEALER); shadow = proc_preset(OUTFIT_SHADOW);
         init = true;
     }
     proc_submit_ground(120.0f, C(54, 56, 76));
 
     /* the party, in a loose arc around the hero's start; the hero is driven by the ECS player */
-    proc_submit_character(&kael, hero, hero_yaw, t);
+    heroes_submit_kael(hero, hero_yaw, t);
     if (g_showcase) {
         if (g_rack) { /* weapon review: one of each, tips up, 0.9 m long */
             for (int i = 0; i < WEAPON_COUNT; ++i)

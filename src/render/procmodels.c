@@ -147,7 +147,10 @@ static void build_face(const Rig *g, const CharDesc *c, float hy) {
 
 
 /* ---- Kael: tall, slim, long open hooded coat, white tee, dark pants, sneakers, messy black hair ---- */
-static Matrix limb(Vector3 a, Vector3 b, float rx, float rz) {
+Matrix proc_limb(Vector3 a, Vector3 b, float rx, float rz);
+static Matrix limb(Vector3 a, Vector3 b, float rx, float rz) { return proc_limb(a, b, rx, rz); }
+
+Matrix proc_limb(Vector3 a, Vector3 b, float rx, float rz) {
     Vector3 d = Vector3Subtract(b, a);
     float len = Vector3Length(d);
     d = Vector3Scale(d, 1.0f / len);
@@ -378,4 +381,14 @@ void proc_submit_weapon(WeaponId id, Matrix grip_to_tip, float length_m) {
     RenderMat m = {.base = (Color){196, 208, 232, 255}, .spec = 1.5f, .rim = 1.0f, .emissive = 0, .smooth = 0.3f, .flags = 0, .tex = w->palette};
     for (int i = 0; i < w->model.meshCount; ++i)
         renderer_submit(&w->model.meshes[i], MatrixMultiply(local, grip_to_tip), m);
+}
+
+const Mesh *proc_mesh(ProcMesh m) {
+    switch (m) {
+    case PM_SPHERE: return &M_SPHERE;
+    case PM_CYL: return &M_CYL;
+    case PM_CONE: return &M_CONE;
+    case PM_CUBE: return &M_CUBE;
+    default: return &M_TORUS;
+    }
 }

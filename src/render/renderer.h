@@ -24,7 +24,7 @@ typedef struct {
     bool  shadows;
 } TierSettings;
 
-enum { RM_NO_SHADOW_CAST = 1, RM_NO_OUTLINE = 2, RM_GROUND = 4, RM_HAIR = 8, RM_NO_RECEIVE = 16 };
+enum { RM_NO_SHADOW_CAST = 1, RM_NO_OUTLINE = 2, RM_GROUND = 4, RM_HAIR = 8, RM_NO_RECEIVE = 16, RM_PAINT = 32 };
 
 typedef struct {
     Color base;
@@ -34,6 +34,9 @@ typedef struct {
     float smooth;    /* outline direction blend toward radial (0 for smooth meshes, ~0.8 for cubes) */
     uint8_t flags;
     Texture2D tex;   /* optional albedo (palette) texture; id 0 = none */
+    /* RM_PAINT: outfit colours painted by bind-space body region (top, bottom, shoes) */
+    Color paint[3];
+    float paint_cfg[4]; /* sleeve reach |x|, pants hem y, shoe height y, waist y */
 } RenderMat;
 
 #define LOOK_COUNT 3
@@ -51,6 +54,9 @@ void  renderer_target_size(int *w, int *h);
 
 void  renderer_begin_frame(Camera3D cam, float time_s);
 void  renderer_submit(const Mesh *mesh, Matrix xf, RenderMat mat);
+/* Skinned mesh: `bones` must stay valid until end_frame (use renderer_alloc_bones). */
+Matrix *renderer_alloc_bones(int count);
+void  renderer_submit_skinned(const Mesh *mesh, Matrix xf, RenderMat mat, const Matrix *bones, int bone_count);
 void  renderer_end_frame(void); /* call inside BeginDrawing(); draws the final image to the screen */
 int   renderer_queue_count(void);
 
