@@ -1,0 +1,30 @@
+#ifndef SA_PROCMODELS_H
+#define SA_PROCMODELS_H
+/* Procedural placeholder art: primitive meshes and an anime-proportioned character builder.
+ * Real CC0 glTF characters replace these in the asset-pipeline milestone; the renderer API stays the same. */
+#include <raylib.h>
+#include "render/renderer.h"
+
+typedef enum { OUTFIT_HERO, OUTFIT_TANK, OUTFIT_MAGE, OUTFIT_HEALER, OUTFIT_SHADOW } Outfit;
+typedef enum { HAIR_SPIKY, HAIR_SHORT, HAIR_LONG, HAIR_TWINTAIL, HAIR_NONE } HairStyle;
+
+typedef struct {
+    Outfit outfit;
+    HairStyle hair_style;
+    Color skin, hair, coat, trim, pants, boots, eye;
+    float height; /* world units, ~1.8 for adults */
+} CharDesc;
+
+void proc_init(void);
+void proc_shutdown(void);
+CharDesc proc_preset(Outfit o);
+
+/* Queue a character for rendering. t = seconds for idle animation. */
+void proc_submit_character(const CharDesc *c, Vector3 pos, float yaw, float t);
+/* Scene props */
+void proc_submit_pillar(Vector3 pos, float h, float r, Color c);
+void proc_submit_crystal(Vector3 pos, float h, Color c, float t);
+void proc_submit_ground(float size, Color c);
+void proc_submit_arch(Vector3 pos, float yaw, Color c);
+
+#endif

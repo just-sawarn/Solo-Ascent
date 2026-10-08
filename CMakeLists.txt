@@ -56,6 +56,10 @@ if(EMSCRIPTEN OR SA_BUILD_NATIVE_GAME)
   add_executable(solo_ascent
     src/main.c
     src/ui/debug_overlay.c
+    src/render/renderer.c
+    src/render/shaders.c
+    src/render/procmodels.c
+    src/world/test_scene.c
     src/platform/web/platform.c)
   target_link_libraries(solo_ascent PRIVATE sa_core raylib)
   target_compile_options(solo_ascent PRIVATE ${SA_WARN} ${SA_SAN_FLAGS})

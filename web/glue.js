@@ -72,7 +72,15 @@
         if (window.Module && Module._sa_on_context_restored) Module._sa_on_context_restored();
       });
 
+      // URL query -> C argv: ?look=2&tier=high&still=1 => --look 2 --tier high --still
+      var args = [];
+      var q = new URLSearchParams(location.search);
+      ['look', 'tier'].forEach(function (k) { if (q.has(k)) args.push('--' + k, q.get(k)); });
+      if (q.has('still')) args.push('--still');
+      if (window.matchMedia && matchMedia('(pointer: coarse)').matches) args.push('--mobile');
+
       window.Module = {
+        arguments: args,
         canvas: canvas,
         print: function (t) { console.log(t); },
         printErr: function (t) { console.warn(t); },

@@ -16,6 +16,7 @@ typedef struct {
 void dbg_init(DebugState *d);
 void dbg_count_draw(DebugState *d);
 void dbg_update(DebugState *d, float frame_dt_s, int sim_steps);
-void dbg_draw(const DebugState *d, int alive_entities, unsigned long long ticks, unsigned long heap_bytes);
+/* extra: renderer status line (may be NULL) */
+void dbg_draw(const DebugState *d, int alive_entities, unsigned long long ticks, unsigned long heap_bytes, const char *extra);
 
 #endif

@@ -16,7 +16,9 @@ const REGRESSION_FACTOR = 2.0;   // fail if avg frame time > baseline * factor
 const ABS_FLOOR_MS = 40;         // ...and also above this, so noise on tiny numbers can't fail CI
 
 const server = await startServer(path.resolve(here, dir), 0, { quiet: true });
-const url = `http://localhost:${server.address().port}/index.html`;
+const base = `http://localhost:${server.address().port}/index.html`;
+// fixed tier + still camera so the benchmark is deterministic (the quality governor is off when a tier is forced)
+const url = base + '?tier=medium&still=1&look=3';
 const browser = await chromium.launch({
   args: ['--use-angle=swiftshader', '--use-gl=angle', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--enable-webgl'],
 });
@@ -78,7 +80,7 @@ try {
   const ctx2 = await browser.newContext();
   const p2 = await ctx2.newPage();
   await p2.addInitScript(() => { Object.defineProperty(window, 'WebGL2RenderingContext', { value: undefined }); });
-  await p2.goto(url);
+  await p2.goto(base);
   await p2.waitForFunction(() => window.__sa && window.__sa.state === 'unsupported', null, { timeout: 5000 })
     .then(() => check(true, 'friendly error page when WebGL2 is missing'))
     .catch(() => check(false, 'friendly error page when WebGL2 is missing'));

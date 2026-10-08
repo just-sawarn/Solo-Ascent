@@ -26,9 +26,9 @@ void dbg_update(DebugState *d, float dt, int steps) {
     d->worst_ms = worst;
 }
 
-void dbg_draw(const DebugState *d, int alive, unsigned long long ticks, unsigned long heap) {
+void dbg_draw(const DebugState *d, int alive, unsigned long long ticks, unsigned long heap, const char *extra) {
     if (!d->visible) return;
-    const int x = 10, w = 330, h = 190;
+    const int x = 10, w = 420, h = 214;
     DrawRectangle(x - 5, 5, w, h, (Color){0, 0, 0, 170});
     int y = 10;
     DrawText(TextFormat("FPS %d  (avg %.2f ms, worst %.1f ms)", GetFPS(), d->avg_ms, d->worst_ms), x, y, 16, LIME); y += 20;
@@ -38,8 +38,9 @@ void dbg_draw(const DebugState *d, int alive, unsigned long long ticks, unsigned
     if (heap) DrawText(TextFormat("WASM heap: %.1f MB", (double)heap / (1024.0 * 1024.0)), x, y, 16, WHITE);
     else DrawText("WASM heap: n/a (native)", x, y, 16, GRAY);
     y += 20;
+    if (extra) { DrawText(extra, x, y, 16, (Color){180, 220, 255, 255}); y += 20; }
     DrawText(TextFormat("[G] god mode: %s", d->god_mode ? "ON" : "off"), x, y, 16, d->god_mode ? GOLD : WHITE); y += 20;
-    DrawText("[K] quest skip   [F3 / 3-finger tap] hide", x, y, 16, WHITE); y += 20;
+    DrawText("[K] quest skip  [1-3] look  [ ] ] quality  [F3] hide", x, y, 16, WHITE); y += 20;
     /* frame-time graph */
     for (int i = 0; i < 120; ++i) {
         float ms = d->frame_ms[(d->frame_head + i) % 120];
