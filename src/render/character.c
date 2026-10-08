@@ -2,6 +2,7 @@
 #include <string.h>
 #include <raymath.h>
 #include "core/log.h"
+#include "render/anim.h"
 
 typedef struct {
     Model model;
@@ -88,13 +89,12 @@ int character_bone(BodySex sex, const char *name) {
 }
 
 /* posed_i = R_i * local_i * posed_parent (row-vector convention, as raymath) */
-static void eval_bone(const Body *b, int i, const Matrix *rot, bool *done, Matrix *posed) {
+static void eval_bone(const Body *b, int i, const Matrix *rot, const Matrix *locals, bool *done, Matrix *posed) {
     if (done[i]) return;
     int par = b->model.bones[i].parent;
-    Matrix local = par >= 0 ? MatrixMultiply(b->bind[i], b->bind_inv[par]) : b->bind[i];
-    Matrix m = MatrixMultiply(rot[i], local);
+    Matrix m = MatrixMultiply(rot[i], locals[i]);
     if (par >= 0) {
-        eval_bone(b, par, rot, done, posed);
+        eval_bone(b, par, rot, locals, done, posed);
         m = MatrixMultiply(m, posed[par]);
     }
     posed[i] = m;
@@ -116,10 +116,49 @@ void character_pose(BodySex sex, const BoneRot *rots, int n, Pose *out) {
                     MatrixTranslate(o.x, o.y, o.z));
         rot[i] = MatrixMultiply(MatrixMultiply(b->bind[i], dw), b->bind_inv[i]);
     }
+    Matrix locals[CHAR_MAX_BONES];
+    for (int i = 0; i < count; ++i) {
+        int par = b->model.bones[i].parent;
+        locals[i] = par >= 0 ? MatrixMultiply(b->bind[i], b->bind_inv[par]) : b->bind[i];
+    }
     out->count = count;
-    for (int i = 0; i < count; ++i) eval_bone(b, i, rot, done, out->posed);
+    for (int i = 0; i < count; ++i) eval_bone(b, i, rot, locals, done, out->posed);
     for (int i = 0; i < count; ++i) out->skin[i] = MatrixMultiply(b->bind_inv[i], out->posed[i]);
 }
+
+static Matrix extra_rot(const Body *b, int i, Vector3 deg) {
+    Vector3 o = {b->bind[i].m12, b->bind[i].m13, b->bind[i].m14};
+    Matrix dw = MatrixMultiply(MatrixMultiply(MatrixTranslate(-o.x, -o.y, -o.z),
+                MatrixRotateXYZ((Vector3){deg.x * DEG2RAD, deg.y * DEG2RAD, deg.z * DEG2RAD})), MatrixTranslate(o.x, o.y, o.z));
+    return MatrixMultiply(MatrixMultiply(b->bind[i], dw), b->bind_inv[i]);
+}
+
+void character_pose_anim(BodySex sex, const AnimPlayer *player, const BoneRot *extra, int n, Pose *out) {
+    const Body *b = &g_body[sex];
+    int count = b->model.boneCount;
+    Matrix rot[CHAR_MAX_BONES], locals[CHAR_MAX_BONES];
+    bool done[CHAR_MAX_BONES] = {0};
+    for (int i = 0; i < count; ++i) rot[i] = MatrixIdentity();
+    for (int i = 0; i < count; ++i) {
+        int par = b->model.bones[i].parent;
+        Matrix bind_local = par >= 0 ? MatrixMultiply(b->bind[i], b->bind_inv[par]) : b->bind[i];
+        int ab = anim_clip_bone(b->model.bones[i].name);
+        if (ab < 0 || player->clip[0] < 0) { locals[i] = bind_local; continue; }
+        Quaternion q = anim_sample_rot(player, ab);
+        Vector3 t = {bind_local.m12, bind_local.m13, bind_local.m14};
+        anim_sample_trans(player, ab, &t);
+        locals[i] = MatrixMultiply(QuaternionToMatrix(q), MatrixTranslate(t.x, t.y, t.z));
+    }
+    for (int k = 0; k < n; ++k) {
+        int i = character_bone(sex, extra[k].bone);
+        if (i >= 0) rot[i] = extra_rot(b, i, extra[k].deg);
+    }
+    out->count = count;
+    for (int i = 0; i < count; ++i) eval_bone(b, i, rot, locals, done, out->posed);
+    for (int i = 0; i < count; ++i) out->skin[i] = MatrixMultiply(b->bind_inv[i], out->posed[i]);
+}
+
+Matrix pose_bind(BodySex sex, int bone) { return g_body[sex].bind[bone]; }
 
 Vector3 pose_bone_pos(const Pose *p, int bone) { return (Vector3){p->posed[bone].m12, p->posed[bone].m13, p->posed[bone].m14}; }
 

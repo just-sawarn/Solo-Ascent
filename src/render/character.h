@@ -6,6 +6,7 @@
 #include <stdbool.h>
 #include <raylib.h>
 #include "render/renderer.h"
+#include "render/anim.h"
 
 #define CHAR_MAX_BONES 72
 
@@ -37,6 +38,9 @@ void  characters_shutdown(void);
 bool  characters_ready(void);
 int   character_bone(BodySex sex, const char *name); /* -1 if unknown */
 void  character_pose(BodySex sex, const BoneRot *rots, int n, Pose *out);
+/* Pose from a playing animation; `extra` bone rotations (world axes, degrees) are layered on top. */
+void  character_pose_anim(BodySex sex, const AnimPlayer *player, const BoneRot *extra, int n, Pose *out);
+Matrix pose_bind(BodySex sex, int bone);   /* bind-pose (T) world matrix of a bone */
 Vector3 pose_bone_pos(const Pose *p, int bone);       /* posed origin, model space */
 Matrix  pose_attach(const Pose *p, int bone, Matrix bind_space_xf); /* place a part authored in the bind (T) pose on a bone */
 /* Queue body + brows + eyes + hair. `root` maps model space to world. */

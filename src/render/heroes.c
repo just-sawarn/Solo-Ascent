@@ -22,23 +22,45 @@ static void part_between(ProcMesh m, Vector3 a, Vector3 b, float rx, float rz, R
 }
 static Vector3 tr(Vector3 v, Matrix m) { return Vector3Transform(v, m); }
 
-void heroes_init(void) { characters_init(); }
+typedef struct {
+    AnimPlayer anim;
+    int idle, walk, jog, sprint, attack, roll;
+    int action; /* 0 none, 1 attack, 2 roll */
+    bool ready;
+} KaelAnim;
+static KaelAnim K;
+
+void heroes_init(void) {
+    characters_init();
+    if (!anims_load("assets/animations/ual.sanim")) return;
+    K.idle = anim_find("Idle_Loop"); K.walk = anim_find("Walk_Loop"); K.jog = anim_find("Jog_Fwd_Loop");
+    K.sprint = anim_find("Sprint_Loop"); K.attack = anim_find("Sword_Attack"); K.roll = anim_find("Roll");
+    anim_player_init(&K.anim, K.idle);
+    K.ready = K.idle >= 0;
+}
+
+void heroes_update_kael(float dt, float speed, bool attack, bool roll) {
+    if (!K.ready) return;
+    if (K.action == 0) {
+        if (attack && K.attack >= 0) { anim_play(&K.anim, K.attack, 0.08f, true); K.action = 1; }
+        else if (roll && K.roll >= 0) { anim_play(&K.anim, K.roll, 0.08f, true); K.action = 2; }
+        else {
+            int c = speed < 0.2f ? K.idle : speed < 3.2f ? K.walk : speed < 6.2f ? K.jog : K.sprint;
+            anim_play(&K.anim, c, 0.18f, false);
+        }
+    }
+    anim_update(&K.anim, dt);
+    if (K.action != 0 && K.anim.finished) { K.action = 0; anim_play(&K.anim, K.idle, 0.15f, true); }
+}
+
 
 void heroes_submit_kael(Vector3 pos, float yaw, float t) {
     if (!characters_ready()) return;
     const BodySex S = SEX_MALE;
-    float sway = sinf(t * 1.3f) * 2.0f;
-    BoneRot rots[] = {
-        /* relaxed stride, weight on the left leg */
-        {"thigh_l", {10, 0, 0}}, {"calf_l", {-6, 0, 0}}, {"thigh_r", {-8, 0, 0}}, {"calf_r", {10, 0, 0}},
-        {"spine_02", {0, 3, 0}}, {"Head", {2 + sway * 0.3f, -4, 0}},
-        /* his right arm (-x): lowered and slightly forward, holding the blade; left arm (+x) down, hand in pocket */
-        {"upperarm_r", {0, 0, 68}}, {"lowerarm_r", {-30, 0, 0}},
-        {"upperarm_l", {0, 0, -70}}, {"lowerarm_l", {-8, 0, 0}},
-        {"clavicle_r", {0, 0, 4}}, {"clavicle_l", {0, 0, -4}},
-    };
+    (void)t;
     Pose pose;
-    character_pose(S, rots, (int)(sizeof rots / sizeof rots[0]), &pose);
+    if (K.ready) character_pose_anim(S, &K.anim, NULL, 0, &pose);
+    else character_pose(S, NULL, 0, &pose);
     Matrix root = MatrixMultiply(MatrixMultiply(MatrixScale(0.86f, 1.0f, 0.90f), MatrixRotateY(yaw)), MatrixTranslate(pos.x, pos.y, pos.z));
 
     CharStyle st = {
@@ -87,12 +109,11 @@ void heroes_submit_kael(Vector3 pos, float yaw, float t) {
         Vector3 d = Vector3Normalize(Vector3Subtract(arms[k].e, arms[k].s));
         part_between(PM_CYL, Vector3Subtract(arms[k].e, Vector3Scale(d, 0.035f)), Vector3Add(arms[k].e, Vector3Scale(d, 0.035f)), 0.074f, 0.074f, cl, MatrixIdentity());
     }
-    (void)pw_l;
-    /* Dawnbrand (Lv1): CC0 short sword, reverse grip, blade pointing down along the forearm direction */
-    Vector3 fd = Vector3Normalize(Vector3Subtract(pw_r, pe_r));
-    Vector3 blade_dir = Vector3Normalize(Vector3Add(fd, (Vector3){-0.0f, -0.5f, 0.25f}));
-    Vector3 g0 = Vector3Add(pw_r, Vector3Scale(fd, 0.015f));
-    Matrix wm = proc_limb(g0, Vector3Add(g0, blade_dir), 1.0f, 1.0f);
-    proc_submit_weapon(WEAPON_SHORT_SWORD, wm, 0.82f);
+    (void)pw_l; (void)pw_r;
+    /* Dawnbrand (Lv1): CC0 short sword held in the right fist; blade forward in the rig's bind pose */
+    Matrix hb = pose_bind(S, ha_r);
+    Vector3 g0 = {hb.m12 - 0.01f, hb.m13, hb.m14};
+    Matrix sw_bind = proc_limb(g0, (Vector3){g0.x - 0.15f, g0.y + 0.0f, g0.z + 0.95f}, 1.0f, 1.0f);
+    proc_submit_weapon(WEAPON_SHORT_SWORD, MatrixMultiply(pose_attach(&pose, ha_r, sw_bind), root), 0.82f);
     (void)sp2;
 }

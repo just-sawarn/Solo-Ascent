@@ -14,5 +14,13 @@
     "source": "https://quaternius.itch.io/universal-base-characters",
     "retrieved": "2026-10-09",
     "modifications": "normal/roughness texture refs removed, base-colour textures downsized to 512 px (tools/prep_characters.py)"
+  },
+  "assets/models/animations": {
+    "name": "Universal Animation Library [Standard]",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://quaternius.itch.io/universal-animation-library",
+    "retrieved": "2026-10-09",
+    "modifications": "32 clips resampled to 30 fps, quantized to int16 quaternions (tools/prep_animations.py)"
   }
 }

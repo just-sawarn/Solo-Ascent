@@ -62,9 +62,13 @@ static void sim_step(Game *g) {
         /* camera-relative movement */
         float cs = cosf(g->cam_yaw), sn = sinf(g->cam_yaw);
         float wx = ix * cs + iz * sn, wz = -ix * sn + iz * cs;
-        w->pos[p].x += wx * 4.5f * SIM_DT;
-        w->pos[p].z += wz * 4.5f * SIM_DT;
+        float spd = IsKeyDown(KEY_LEFT_SHIFT) ? 7.5f : IsKeyDown(KEY_LEFT_CONTROL) ? 2.0f : 5.0f;
+        w->pos[p].x += wx * spd * SIM_DT;
+        w->pos[p].z += wz * spd * SIM_DT;
         w->yaw[p] = atan2f(wx, wz);
+        w->vel[p] = vec3(wx * spd, 0, wz * spd);
+    } else {
+        w->vel[p] = vec3(0, 0, 0);
     }
 }
 
@@ -136,6 +140,12 @@ static void frame(void) {
     Camera3D cam = {.up = {0, 1, 0}, .fovy = 38.0f, .projection = CAMERA_PERSPECTIVE};
     update_camera(g, dt, &cam, (Vector3){pp.x, pp.y, pp.z});
 
+    {
+        float spd = vec3_len(g->world.vel[ecs_index(g->player)]);
+        bool atk = g->state == STATE_PLAYING && (IsKeyPressed(KEY_J) || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT));
+        bool roll = g->state == STATE_PLAYING && IsKeyPressed(KEY_SPACE);
+        heroes_update_kael(g->state == STATE_PLAYING ? dt : dt * 0.0f, spd, atk, roll);
+    }
     renderer_begin_frame(cam, (float)g->time);
     test_scene_submit((float)g->time, (Vector3){pp.x, pp.y, pp.z}, yaw);
     g->dbg.draw_calls = renderer_queue_count();
@@ -155,7 +165,7 @@ static void frame(void) {
             DrawText(p, (sw - MeasureText(p, 24)) / 2, sh * 6 / 7, 24, RAYWHITE);
         }
     } else {
-        DrawText("WASD move  |  drag: orbit  |  wheel: zoom  |  1-3: look  |  [ ]: quality  |  F3: debug", 10, sh - 26, 18, (Color){255, 255, 255, 170});
+        DrawText("WASD move (Shift sprint, Ctrl walk)  |  J / right-click: attack  |  Space: roll  |  drag: orbit  |  wheel: zoom  |  1-3: look  |  [ ]: quality  |  F3: debug", 10, sh - 26, 18, (Color){255, 255, 255, 170});
     }
     if (g->toast_t > 0) {
         g->toast_t -= (double)dt;

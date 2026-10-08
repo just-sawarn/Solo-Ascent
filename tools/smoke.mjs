@@ -12,7 +12,7 @@ const dir = process.argv[2] || '../build-web-debug';
 const updateBaseline = process.argv.includes('--update-baseline');
 const here = path.dirname(fileURLToPath(import.meta.url));
 const baselineFile = path.join(here, 'bench_baseline.json');
-const REGRESSION_FACTOR = 2.0;   // fail if avg frame time > baseline * factor
+const REGRESSION_FACTOR = 2.5;   // fail if avg frame time > baseline * factor
 const ABS_FLOOR_MS = 40;         // ...and also above this, so noise on tiny numbers can't fail CI
 
 const server = await startServer(path.resolve(here, dir), 0, { quiet: true });

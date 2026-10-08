@@ -60,6 +60,7 @@ if(EMSCRIPTEN OR SA_BUILD_NATIVE_GAME)
     src/render/shaders.c
     src/render/procmodels.c
     src/render/character.c
+    src/render/anim.c
     src/render/heroes.c
     src/world/test_scene.c
     src/platform/web/platform.c)
@@ -76,6 +77,7 @@ if(EMSCRIPTEN OR SA_BUILD_NATIVE_GAME)
       -sEXPORTED_FUNCTIONS=_main,_sa_on_visibility,_sa_on_context_lost,_sa_on_context_restored
       "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/assets/models/weapons@/assets/weapons"
       "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/assets/models/characters@/assets/characters"
+      "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/assets/models/animations@/assets/animations"
       --shell-file ${CMAKE_SOURCE_DIR}/web/shell.html)
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
       target_link_options(solo_ascent PRIVATE -gsource-map)
