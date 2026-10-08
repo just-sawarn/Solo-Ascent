@@ -27,11 +27,11 @@ void test_scene_set_rack(bool on) { g_rack = on; }
 void test_scene_set_showcase(bool on) { g_showcase = on; }
 
 void test_scene_submit(float t, Vector3 hero, float hero_yaw) {
-    static CharDesc bram, lyra, mirelle, shadow;
+    static CharDesc bram, lyra, mirelle;
     static bool init;
     if (!init) {
         bram = proc_preset(OUTFIT_TANK); lyra = proc_preset(OUTFIT_MAGE);
-        mirelle = proc_preset(OUTFIT_HEALER); shadow = proc_preset(OUTFIT_SHADOW);
+        mirelle = proc_preset(OUTFIT_HEALER);
         init = true;
     }
     proc_submit_ground(120.0f, C(54, 56, 76));
@@ -45,15 +45,9 @@ void test_scene_submit(float t, Vector3 hero, float hero_yaw) {
         }
         return;
     }
-    proc_submit_character(&bram, (Vector3){-1.7f, 0, -0.5f}, 0.35f, t + 0.7f);
-    proc_submit_character(&lyra, (Vector3){1.6f, 0, -0.35f}, -0.40f, t + 1.4f);
-    proc_submit_character(&mirelle, (Vector3){0.0f, 0, -1.8f}, 0.0f, t + 2.1f);
-
-    /* shadow soldiers in the distance */
-    for (int i = 0; i < 5; ++i) {
-        float a = 3.14159f + ((float)i - 2.0f) * 0.42f;
-        proc_submit_character(&shadow, (Vector3){sinf(a) * 8.5f, 0, cosf(a) * 8.5f - 1.0f}, a + 3.14159f, t + (float)i);
-    }
+    proc_submit_character(&bram, (Vector3){-3.2f, 0, 1.0f}, 3.14159f, t + 0.7f);
+    proc_submit_character(&lyra, (Vector3){3.2f, 0, 1.0f}, 3.14159f, t + 1.4f);
+    proc_submit_character(&mirelle, (Vector3){-5.0f, 0, 3.0f}, 3.14159f, t + 2.1f);
 
     /* ruins + crystal */
     proc_submit_box((Vector3){-2.65f, 4.9f, -10.05f}, (Vector3){2.65f, 5.7f, -8.95f}, C(70, 72, 96)); /* lintel */
@@ -70,13 +64,4 @@ void test_scene_build_physics(PhysWorld *w) {
     phys_add_box(w, vec3(-2.65f, 4.9f, -10.05f), vec3(2.65f, 5.7f, -8.95f)); /* lintel */
     for (unsigned i = 0; i < sizeof PILLARS / sizeof PILLARS[0]; ++i)
         phys_add_cyl(w, PILLARS[i].x, PILLARS[i].z, PILLARS[i].r * 1.25f, 0.0f, PILLARS[i].h + 0.5f);
-}
-
-int test_scene_targets(Vector3 *out, int max) {
-    int n = 0;
-    for (int i = 0; i < 5 && n < max; ++i) {
-        float a = 3.14159f + ((float)i - 2.0f) * 0.42f;
-        out[n++] = (Vector3){sinf(a) * 8.5f, 0, cosf(a) * 8.5f - 1.0f};
-    }
-    return n;
 }

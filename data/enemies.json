@@ -1,0 +1,153 @@
+{
+ "enemies": [
+  {
+   "id": "shadow_soldier",
+   "name": "Shadow Soldier",
+   "level": 1,
+   "stats": {
+    "str": 9,
+    "int": 4,
+    "vit": 8,
+    "wis": 4,
+    "agi": 6
+   },
+   "speed": 3.6,
+   "aggro_range": 13,
+   "leash": 26,
+   "poise": 60,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash"
+   ],
+   "xp": 20,
+   "resist": {
+    "shadow": 0.5,
+    "holy": 1.5
+   },
+   "scale": 1.0,
+   "paint": {
+    "top": [
+     16,
+     12,
+     30
+    ],
+    "bottom": [
+     12,
+     10,
+     22
+    ],
+    "shoes": [
+     8,
+     6,
+     14
+    ],
+    "eye": [
+     190,
+     90,
+     255
+    ]
+   }
+  },
+  {
+   "id": "shadow_archer",
+   "name": "Shadow Archer",
+   "level": 2,
+   "stats": {
+    "str": 8,
+    "int": 6,
+    "vit": 6,
+    "wis": 5,
+    "agi": 9
+   },
+   "speed": 3.2,
+   "aggro_range": 16,
+   "leash": 28,
+   "poise": 35,
+   "behavior": "ranged",
+   "preferred_range": 8,
+   "skills": [
+    "shadow_arrow"
+   ],
+   "xp": 28,
+   "resist": {
+    "shadow": 0.5,
+    "holy": 1.5
+   },
+   "scale": 0.97,
+   "paint": {
+    "top": [
+     24,
+     14,
+     44
+    ],
+    "bottom": [
+     14,
+     10,
+     26
+    ],
+    "shoes": [
+     8,
+     6,
+     14
+    ],
+    "eye": [
+     120,
+     200,
+     255
+    ]
+   }
+  },
+  {
+   "id": "shadow_brute",
+   "name": "Shadow Brute",
+   "level": 4,
+   "stats": {
+    "str": 18,
+    "int": 3,
+    "vit": 20,
+    "wis": 6,
+    "agi": 3
+   },
+   "speed": 2.6,
+   "aggro_range": 12,
+   "leash": 24,
+   "poise": 220,
+   "behavior": "brute",
+   "preferred_range": 2.2,
+   "skills": [
+    "brute_smash",
+    "shadow_slash"
+   ],
+   "xp": 70,
+   "resist": {
+    "shadow": 0.5,
+    "holy": 1.5,
+    "phys": 0.8
+   },
+   "scale": 1.25,
+   "paint": {
+    "top": [
+     40,
+     10,
+     34
+    ],
+    "bottom": [
+     22,
+     8,
+     20
+    ],
+    "shoes": [
+     10,
+     6,
+     12
+    ],
+    "eye": [
+     255,
+     90,
+     90
+    ]
+   }
+  }
+ ]
+}

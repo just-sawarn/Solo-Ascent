@@ -93,6 +93,33 @@ try {
       `frame time within ${REGRESSION_FACTOR}x of baseline (${base.toFixed(2)} ms)`);
   }
 
+  // combat arena: one soldier in front of the player. Attacking must hurt it; it must hurt back; killing it must count.
+  {
+    const pa = await browser.newPage({ viewport: { width: 800, height: 450 } });
+    const ea = [];
+    pa.on('console', (m) => { if (m.type() === 'error') ea.push(m.text()); });
+    pa.on('pageerror', (e) => ea.push('pageerror: ' + e.message));
+    await pa.goto(base + '?arena=1&tier=mobile&still=1');
+    await pa.waitForFunction(() => window.__sa && window.__sa.state === 'title', null, { timeout: 60000 });
+    await pa.click('#start'); await pa.waitForTimeout(300);
+    await pa.keyboard.down('Enter'); await pa.waitForTimeout(500); await pa.keyboard.up('Enter');
+    await pa.waitForFunction(() => window.__sa.combat && window.__sa.combat.enemies === 1, null, { timeout: 10000 });
+    const c0 = await pa.evaluate(() => window.__sa.combat);
+    let kills = 0, minPlayer = c0.playerHp, minEnemy = c0.enemyHp;
+    for (let i = 0; i < 40 && kills === 0; i++) {            // mash attack (J) and the sunder skill (2)
+      await pa.keyboard.down('j'); await pa.waitForTimeout(120); await pa.keyboard.up('j');
+      if (i % 4 === 3) { await pa.keyboard.down('2'); await pa.waitForTimeout(120); await pa.keyboard.up('2'); }
+      await pa.waitForTimeout(350);
+      const c = await pa.evaluate(() => window.__sa.combat);
+      kills = c.kills; minPlayer = Math.min(minPlayer, c.playerHp); minEnemy = Math.min(minEnemy, c.enemyHp);
+    }
+    check(minEnemy < c0.enemyHp, `attacks damage the enemy (${c0.enemyHp.toFixed(0)} -> ${minEnemy.toFixed(0)})`);
+    check(minPlayer < c0.playerHp, `the enemy fights back (player ${c0.playerHp.toFixed(0)} -> ${minPlayer.toFixed(0)})`);
+    check(kills >= 1, `the enemy can be defeated (kills: ${kills})`);
+    check(ea.length === 0, `no console errors in combat${ea.length ? ': ' + ea.join(' | ') : ''}`);
+    await pa.close();
+  }
+
   // unsupported-WebGL2 path: friendly page instead of a crash
   const ctx2 = await browser.newContext();
   const p2 = await ctx2.newPage();

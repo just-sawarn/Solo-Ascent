@@ -47,9 +47,10 @@ void player_step(PlayerCtl *p, PhysWorld *w, const PlayerIn *in, float dt) {
     }
     /* start an attack (grounded, not rolling); turn toward the input direction at the start */
     if (in->attack && !busy && p->attack_t <= 0 && grounded) {
-        p->attack_t = PLAYER_ATTACK_TIME;
+        p->attack_t = in->attack_time > 0 ? in->attack_time : PLAYER_ATTACK_TIME;
         p->ev_attack = true;
-        if (mag > 1e-3f) p->yaw = atan2f(dx, dz);
+        if (in->has_aim) p->yaw = in->aim_yaw;
+        else if (mag > 1e-3f) p->yaw = atan2f(dx, dz);
         else if (in->has_lock) p->yaw = atan2f(in->lock_x - p->ch.pos.x, in->lock_z - p->ch.pos.z);
     }
 

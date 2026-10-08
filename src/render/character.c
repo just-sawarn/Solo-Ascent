@@ -176,21 +176,21 @@ void character_submit(const CharStyle *st, const Pose *pose, Matrix root) {
     for (int i = 0; i < pose->count; ++i) bones[i] = MatrixTranspose(bones[i]);
 #endif
 
-    RenderMat body = {.base = st->skin_tint, .spec = 0.35f, .rim = 1.0f, .smooth = 0.0f, .flags = RM_PAINT,
+    RenderMat body = {.base = st->skin_tint, .spec = st->skin_detail < 0 ? 0.04f : 0.35f, .rim = 1.0f, .smooth = 0.0f, .flags = RM_PAINT, .flash = st->flash, .skin_detail = st->skin_detail > 0 ? st->skin_detail : (st->skin_detail < 0 ? 0.0f : 0.22f),
                       .tex = st->light_skin ? b->skin_light : b->skin_dark,
                       .paint = {st->top, st->bottom, st->shoes},
                       .paint_cfg = {st->sleeve_reach, st->hem_y, st->shoe_h, st->waist_y}};
     renderer_submit_skinned(&b->model.meshes[b->body_mesh], root, body, bones, pose->count);
 
-    RenderMat brow = {.base = st->hair_color, .spec = 0.0f, .rim = 0.6f, .flags = RM_NO_OUTLINE | RM_NO_SHADOW_CAST, .tex = g_hair_tex};
+    RenderMat brow = {.base = st->hair_color, .spec = 0.0f, .rim = 0.6f, .flags = RM_NO_OUTLINE | RM_NO_SHADOW_CAST, .flash = st->flash, .tex = g_hair_tex};
     renderer_submit_skinned(&b->model.meshes[b->brow_mesh], root, brow, bones, pose->count);
-    RenderMat eye = {.base = st->eye_color, .spec = 0.0f, .rim = 0.0f, .emissive = 0.15f, .flags = RM_NO_OUTLINE | RM_NO_SHADOW_CAST, .tex = {0}};
+    RenderMat eye = {.base = st->eye_color, .spec = 0.0f, .rim = 0.0f, .emissive = st->eye_glow > 0 ? st->eye_glow : 0.15f, .flags = RM_NO_OUTLINE | RM_NO_SHADOW_CAST, .flash = st->flash, .tex = {0}};
     renderer_submit_skinned(&b->model.meshes[b->eye_mesh], root, eye, bones, pose->count);
 
     if (st->hair != HAIRSTYLE_NONE && g_hair_ok[st->hair]) {
         int head = character_bone(st->sex, "Head");
         Matrix hx = MatrixMultiply(pose->skin[head], root); /* rigid on the head bone */
-        RenderMat hm = {.base = st->hair_color, .spec = 0.5f, .rim = 1.0f, .flags = RM_HAIR, .tex = g_hair_tex};
+        RenderMat hm = {.base = st->hair_color, .spec = 0.5f, .rim = 1.0f, .flags = RM_HAIR, .flash = st->flash, .tex = g_hair_tex};
         for (int i = 0; i < g_hair[st->hair].meshCount; ++i) renderer_submit(&g_hair[st->hair].meshes[i], hx, hm);
     }
 }

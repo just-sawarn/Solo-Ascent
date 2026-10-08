@@ -28,6 +28,8 @@ typedef struct {
     bool sprint, walk;
     bool jump, attack, roll;   /* pressed */
     bool has_lock; float lock_x, lock_z; /* lock-on target position (world xz) */
+    float attack_time;         /* action lock for this attack (0 = default) */
+    bool has_aim; float aim_yaw; /* face this way when the attack starts */
 } PlayerIn;
 
 void player_init(PlayerCtl *p, Vec3 pos);

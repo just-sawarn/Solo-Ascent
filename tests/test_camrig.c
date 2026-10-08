@@ -1,4 +1,5 @@
 #include "testutil.h"
+#include <math.h>
 #include "core/camrig.h"
 
 static PhysWorld W;
@@ -34,5 +35,10 @@ int main(void) {
     c.locked = true; c.lock_pos = vec3(10, 0, 0);
     for (int i = 0; i < 180; ++i) camrig_update(&c, &W, focus, 0, 0, DT);
     CHECK(c.eye.x < -4.0f); CHECK(fabsf(c.eye.z) < 0.5f);
+    /* shake decays to nothing and is capped */
+    camrig_init(&c, 0.0f, 0.2f, 6.0f);
+    camrig_shake(&c, 1.0f); CHECK(c.shake <= 0.35f + 1e-6f);
+    for (int i = 0; i < 120; ++i) camrig_update(&c, &W, focus, 0, 0, DT);
+    CHECK(c.shake == 0.0f);
     TEST_DONE();
 }

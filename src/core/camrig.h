@@ -9,10 +9,13 @@ typedef struct {
     float dist, cur_dist;
     Vec3 eye, target;
     bool locked; Vec3 lock_pos;
+    float shake, shake_t;      /* impact shake amplitude (metres) and phase */
 } CamRig;
 
 void camrig_init(CamRig *c, float yaw, float pitch, float dist);
 /* look_dx/dy in radians this frame (ignored while locked). */
+/* Add camera shake; amplitudes accumulate (max 0.35 m) and decay quickly. */
+void camrig_shake(CamRig *c, float amount);
 void camrig_update(CamRig *c, PhysWorld *w, Vec3 focus, float look_dx, float look_dy, float dt);
 
 #endif

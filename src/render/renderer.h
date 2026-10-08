@@ -35,6 +35,8 @@ typedef struct {
     uint8_t flags;
     Texture2D tex;   /* optional albedo (palette) texture; id 0 = none */
     /* RM_PAINT: outfit colours painted by bind-space body region (top, bottom, shoes) */
+    float flash;     /* 0..1 white hit flash */
+    float skin_detail; /* RM_PAINT: texture detail kept on top of the flat skin colour (0.22 default; 0 = flat) */
     Color paint[3];
     float paint_cfg[4]; /* sleeve reach |x|, pants hem y, shoe height y, waist y */
 } RenderMat;

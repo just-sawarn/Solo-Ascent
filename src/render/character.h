@@ -29,6 +29,9 @@ typedef struct {
     HairModel hair;
     Color eye_color;
     /* outfit paint, see RM_PAINT */
+    float flash;         /* 0..1 white hit flash */
+    float skin_detail;   /* 0 = perfectly flat skin colour; default (0) is treated as 0.22 */
+    float eye_glow;      /* 0 = default eye look; > 0 makes the eyes emissive (shadow soldiers) */
     Color top, bottom, shoes;
     float sleeve_reach, hem_y, shoe_h, waist_y;
 } CharStyle;

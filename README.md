@@ -26,11 +26,13 @@ First time: `cd tools && npm install && npx playwright install chromium`.
 | Look | mouse (click once to capture; Esc releases) | right stick | swipe the right side |
 | Sprint / walk | Shift / Ctrl | RB / LB | joystick edge |
 | Jump | Space | A | JUMP |
-| Attack | J or left-click | X | ATK |
-| Dodge roll | Q or right-click | B | ROLL |
+| Attack (3-hit combo) | J or left-click (press again during a swing to chain) | X | ATK |
+| Skills 1-4 (Heroic Slash, Sunder, Gale Rush, Dawn Arc) | 1 2 3 4 | hold LT + X / Y / B / A | 1 2 3 |
+| Guard (press just before a hit to parry) | E (hold) | RT (hold) | GUARD |
+| Dodge roll (i-frames) | Q or right-click | B | ROLL |
 | Lock on | Tab or middle-click | Y / R3 | LOCK |
 | Debug overlay | F3 (or a three-finger tap); G god mode, K quest skip | | |
-| Look / quality | 1-3 switch look, `[` `]` change quality tier | | |
+| Look / quality | L cycles the look, `[` `]` change quality tier | | |
 
 ## Hosting
 Plain static files; no COOP/COEP headers or SharedArrayBuffer needed. `dist/` contains `.br`/`.gz` precompressed siblings.

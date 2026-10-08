@@ -9,12 +9,13 @@ typedef struct {
     float move_x, move_y;      /* -1..1, y: +1 = forward */
     float look_dx, look_dy;    /* radians this frame */
     bool jump, attack, roll, lock;   /* latched presses */
-    bool sprint, walk;               /* held */
+    bool skill[4];                   /* latched skill-slot presses */
+    bool sprint, walk, guard;        /* held */
     bool touch_ui;                   /* a touch was seen: show on-screen controls */
     /* touch tracking */
     int joy_id, look_id;
     Vector2 joy_origin, joy_pos, look_last;
-    int btn_id[4];                   /* touch id holding each button, -1 none */
+    int btn_id[8];                   /* touch id holding each button, -1 none */
 } Input;
 
 void input_init(Input *in);

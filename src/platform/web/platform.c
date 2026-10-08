@@ -30,7 +30,16 @@ void platform_report_player(float x, float y, float z, int grounded, float speed
         s["player"] = o;
     }, x, y, z, grounded, speed);
 }
+void platform_report_combat(int enemies_alive, float enemy_hp_total, float player_hp, int kills, float last_damage) {
+    EM_ASM({
+        var s = (window["__sa"] = window["__sa"] || {});
+        var o = {};
+        o["enemies"] = $0; o["enemyHp"] = $1; o["playerHp"] = $2; o["kills"] = $3; o["lastDamage"] = $4;
+        s["combat"] = o;
+    }, enemies_alive, enemy_hp_total, player_hp, kills, last_damage);
+}
 #else
+void platform_report_combat(int a, float b, float c, int d, float e) { (void)a; (void)b; (void)c; (void)d; (void)e; }
 void platform_report_player(float x, float y, float z, int grounded, float speed) { (void)x; (void)y; (void)z; (void)grounded; (void)speed; }
 void platform_init(void) {}
 size_t platform_heap_bytes(void) { return 0; }

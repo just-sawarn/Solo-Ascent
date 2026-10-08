@@ -24,8 +24,9 @@ static Vector3 tr(Vector3 v, Matrix m) { return Vector3Transform(v, m); }
 
 typedef struct {
     AnimPlayer anim;
-    int idle, walk, jog, sprint, attack, roll, jump_start, jump_loop, jump_land;
-    bool was_air;
+    int idle, walk, jog, sprint, attack, roll, jump_start, jump_loop, jump_land, hit, death, guard;
+    bool was_air, was_staggered;
+    float flash;
     float land_t;
     bool ready;
 } KaelAnim;
@@ -36,6 +37,7 @@ void heroes_init(void) {
     if (!anims_load("assets/animations/ual.sanim")) return;
     K.idle = anim_find("Idle_Loop"); K.walk = anim_find("Walk_Loop"); K.jog = anim_find("Jog_Fwd_Loop");
     K.sprint = anim_find("Sprint_Loop"); K.attack = anim_find("Sword_Attack"); K.roll = anim_find("Roll");
+    K.hit = anim_find("Hit_Chest"); K.death = anim_find("Death01"); K.guard = anim_find("Sword_Idle");
     K.jump_start = anim_find("Jump_Start"); K.jump_loop = anim_find("Jump_Loop"); K.jump_land = anim_find("Jump_Land");
     anim_player_init(&K.anim, K.idle);
     K.ready = K.idle >= 0;
@@ -50,6 +52,20 @@ static void play_fit(int clip, float fade, float gameplay_seconds) {
 
 void heroes_update_kael(float dt, const KaelMotion *m) {
     if (!K.ready) return;
+    K.flash = m->flash;
+    if (m->dead) {
+        if (K.anim.clip[0] != K.death) { anim_play(&K.anim, K.death, 0.08f, true); K.anim.speed = 1.0f; }
+        if (!K.anim.finished) anim_update(&K.anim, dt);
+        return;
+    }
+    if (m->staggered) {
+        if (!K.was_staggered) { anim_play(&K.anim, K.hit, 0.04f, true); K.anim.speed = 1.3f; }
+        K.was_staggered = true; anim_update(&K.anim, dt); return;
+    }
+    K.was_staggered = false;
+    if (m->guarding && !m->attacking && !m->rolling && m->grounded && K.guard >= 0) {
+        anim_play(&K.anim, K.guard, 0.1f, false); K.anim.speed = 1.0f; anim_update(&K.anim, dt); return;
+    }
     if (m->ev_roll && K.roll >= 0) play_fit(K.roll, 0.06f, m->roll_seconds);
     else if (m->ev_attack && K.attack >= 0) play_fit(K.attack, 0.06f, m->attack_seconds);
     else if (m->rolling || m->attacking) { /* keep playing the one-shot */ }
@@ -81,7 +97,7 @@ void heroes_submit_kael(Vector3 pos, float yaw, float t) {
 
     CharStyle st = {
         .sex = S, .light_skin = true, .skin_tint = C(252, 224, 204), .hair_color = C(22, 24, 38), .hair = HAIRSTYLE_PARTED,
-        .eye_color = C(28, 36, 92),
+        .eye_color = C(28, 36, 92), .flash = K.flash,
         .top = C(236, 241, 250), .bottom = C(40, 34, 52), .shoes = C(98, 114, 152),
         .sleeve_reach = 0.0f, .hem_y = 0.085f, .shoe_h = 0.10f, .waist_y = 0.95f,
     };

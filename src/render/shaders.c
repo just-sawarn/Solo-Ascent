@@ -90,6 +90,8 @@ const char *SH_FS_TOON =
 "uniform vec3 uFogCol;\n"
 "uniform float uFogDen;\n"
 "uniform vec4 uMat;\n"         /* rimMul, specMul, emissive, flags */
+"uniform float uSkinDetail;\n"  /* how much of the skin texture shows through the flat skin colour */
+"uniform float uFlash;\n"      /* hit flash 0..1 */
 "uniform vec3 uPaint1;\n"      /* outfit paint: top, bottom, shoes (bind-space regions) */
 "uniform vec3 uPaint2;\n"
 "uniform vec3 uPaint3;\n"
@@ -123,7 +125,7 @@ const char *SH_FS_TOON =
 "    base *= tone * (1.0 - 0.45 * line);\n"
 "  }\n"
 "  if ((fl & 8) != 0) {\n"                     /* outfit paint by bind-space body region */
-"    base = mix(pow(colDiffuse.rgb, vec3(2.2)), base, 0.22);\n"   /* flat anime skin: keep only a little texture detail */
+"    base = mix(pow(colDiffuse.rgb, vec3(2.2)), base, uSkinDetail);\n"   /* flat anime skin: keep only a little texture detail */
 "    float ax = abs(vBind.x), y = vBind.y;\n"
 "    float torso = step(ax, 0.30) * smoothstep(uPaintCfg.w - 0.015, uPaintCfg.w + 0.015, y) * (1.0 - smoothstep(1.50, 1.54, y));\n"
 "    float sleeve = step(0.30, ax) * (1.0 - smoothstep(uPaintCfg.x - 0.01, uPaintCfg.x + 0.01, ax)) * step(1.30, y) * step(0.01, uPaintCfg.x);\n"
@@ -153,6 +155,7 @@ const char *SH_FS_TOON =
 "  float rim = smoothstep(0.35, 0.55, fres) * uRimStr * uMat.x;\n"
 "  col += rim * uRimCol * (0.4 + 0.6 * smoothstep(-0.4, 0.4, -dot(N, L) + 0.2));\n"
 "  col = mix(col, base * 1.25 + vec3(0.04), uMat.z);\n"
+"  col = mix(col, vec3(1.0), clamp(uFlash, 0.0, 1.0) * 0.85);\n"
 "  float dist = length(viewPos - vWorld);\n"
 "  float fog = (1.0 - exp(-dist * uFogDen)) * exp(-max(vWorld.y, 0.0) * 0.12);\n"
 "  col = mix(col, pow(uFogCol, vec3(2.2)), clamp(fog, 0.0, 0.95));\n"

@@ -12,16 +12,29 @@ if(SA_SANITIZE)
   set(SA_SAN_FLAGS -fsanitize=address,undefined -fno-omit-frame-pointer)
 endif()
 
+include(FetchContent)
+# cJSON: fetched but built here (its own CMake predates CMake 4 policy rules); SOURCE_SUBDIR skips its CMakeLists.
+FetchContent_Declare(cjson GIT_REPOSITORY https://github.com/DaveGamble/cJSON.git GIT_TAG v1.7.18 GIT_SHALLOW TRUE SOURCE_SUBDIR sa_no_cmake)
+FetchContent_MakeAvailable(cjson)
+add_library(cjson STATIC ${cjson_SOURCE_DIR}/cJSON.c)
+target_include_directories(cjson PUBLIC ${cjson_SOURCE_DIR})
+target_compile_options(cjson PRIVATE -w)
+
 # ---- Engine-agnostic game logic (no raylib, no browser calls; natively testable) ----
 add_library(sa_core STATIC
   src/core/ecs.c
   src/core/physics.c
   src/core/player.c
   src/core/camrig.c
+  src/core/data.c
+  src/core/combat.c
+  src/core/enemy_ai.c
   src/core/gameloop.c
   src/core/vec.c
   src/core/log.c)
 target_include_directories(sa_core PUBLIC src)
+target_link_libraries(sa_core PUBLIC cjson)
+target_compile_definitions(sa_core PUBLIC SA_DATA_DIR="${CMAKE_SOURCE_DIR}/data")
 target_compile_options(sa_core PRIVATE ${SA_WARN} ${SA_SAN_FLAGS})
 target_link_options(sa_core PUBLIC ${SA_SAN_FLAGS})
 if(NOT EMSCRIPTEN)
@@ -31,7 +44,7 @@ endif()
 # ---- Native tests ----
 if(SA_NATIVE_TESTS AND NOT EMSCRIPTEN)
   enable_testing()
-  foreach(t ecs gameloop physics player camrig)
+  foreach(t ecs gameloop physics player camrig data combat enemy_ai)
     add_executable(test_${t} tests/test_${t}.c)
     target_link_libraries(test_${t} PRIVATE sa_core)
     target_compile_options(test_${t} PRIVATE ${SA_WARN} ${SA_SAN_FLAGS})
@@ -60,6 +73,8 @@ if(EMSCRIPTEN OR SA_BUILD_NATIVE_GAME)
     src/main.c
     src/ui/debug_overlay.c
     src/ui/input.c
+    src/ui/hud.c
+    src/render/actors.c
     src/render/renderer.c
     src/render/shaders.c
     src/render/procmodels.c
@@ -82,6 +97,7 @@ if(EMSCRIPTEN OR SA_BUILD_NATIVE_GAME)
       "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/assets/models/weapons@/assets/weapons"
       "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/assets/models/characters@/assets/characters"
       "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/assets/models/animations@/assets/animations"
+      "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/data@/data"
       --shell-file ${CMAKE_SOURCE_DIR}/web/shell.html)
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
       target_link_options(solo_ascent PRIVATE -gsource-map)

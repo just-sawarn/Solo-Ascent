@@ -10,6 +10,8 @@ typedef struct {
     bool grounded, attacking, rolling;     /* state from the player controller */
     bool ev_attack, ev_roll;               /* started this frame */
     float attack_seconds, roll_seconds;    /* gameplay durations the clips are fitted into */
+    bool dead, staggered, guarding;        /* combat state */
+    float flash;                           /* white hit flash 0..1 */
 } KaelMotion;
 void heroes_update_kael(float dt, const KaelMotion *m);
 /* Kael, the Ascendant: `pos`/`yaw` place him in the world, `t` drives the idle sway. */

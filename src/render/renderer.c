@@ -380,6 +380,8 @@ static void set_cmd_uniforms(Shader s, const DrawCmd *c) {
     if (c->mat.flags & RM_PAINT) fl |= 8;
     float um[4] = {c->mat.rim, c->mat.spec, c->mat.emissive, (float)fl};
     SetShaderValue(s, loc(s, "uMat"), um, SHADER_UNIFORM_VEC4);
+    setf(s, "uFlash", c->mat.flash);
+    setf(s, "uSkinDetail", c->mat.skin_detail);
     if (c->mat.flags & RM_PAINT) {
         Vector3 p1 = {c->mat.paint[0].r / 255.0f, c->mat.paint[0].g / 255.0f, c->mat.paint[0].b / 255.0f};
         Vector3 p2 = {c->mat.paint[1].r / 255.0f, c->mat.paint[1].g / 255.0f, c->mat.paint[1].b / 255.0f};

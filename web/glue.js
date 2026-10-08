@@ -82,6 +82,7 @@
       ['look', 'tier'].forEach(function (k) { if (q.has(k)) args.push('--' + k, q.get(k)); });
       if (q.has('still')) args.push('--still');
       if (q.has('hero')) args.push('--hero');
+      if (q.has('arena')) args.push('--arena');
       if (q.has('rack')) args.push('--rack');
       if (window.matchMedia && matchMedia('(pointer: coarse)').matches) args.push('--mobile');
 
