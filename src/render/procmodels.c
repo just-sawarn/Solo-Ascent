@@ -28,8 +28,8 @@ CharDesc proc_preset(Outfit o) {
     CharDesc d = {.outfit = o, .skin = C(244, 212, 188), .height = 1.75f, .hair_style = HAIR_SPIKY};
     switch (o) {
     case OUTFIT_HERO: /* Kael: black hair, dark coat with gold trim, golden eyes */
-        d.hair = C(24, 24, 36); d.coat = C(34, 38, 62); d.trim = C(236, 190, 70); d.pants = C(22, 24, 38);
-        d.boots = C(18, 16, 24); d.eye = C(255, 214, 90); d.hair_style = HAIR_SPIKY; d.height = 1.72f; break;
+        d.hair = C(22, 24, 38); d.coat = C(52, 58, 106); d.trim = C(236, 190, 70); d.pants = C(40, 34, 52);
+        d.boots = C(98, 114, 152); d.eye = C(28, 36, 92); d.hair_style = HAIR_SPIKY; d.height = 1.86f; d.skin = C(246, 214, 190); break;
     case OUTFIT_TANK: /* Bram: steel armor, short grey-brown hair */
         d.hair = C(92, 78, 70); d.coat = C(120, 134, 160); d.trim = C(214, 170, 70); d.pants = C(58, 62, 80);
         d.boots = C(40, 36, 44); d.eye = C(130, 190, 240); d.hair_style = HAIR_SHORT; d.height = 1.92f; d.skin = C(226, 188, 160); break;
@@ -113,6 +113,105 @@ static void build_face(const Rig *g, const CharDesc *c, float hy) {
     }
 }
 
+
+/* ---- Kael: tall, slim, long open hooded coat, white tee, dark pants, sneakers, messy black hair ---- */
+static Matrix limb(Vector3 a, Vector3 b, float rx, float rz) {
+    Vector3 d = Vector3Subtract(b, a);
+    float len = Vector3Length(d);
+    d = Vector3Scale(d, 1.0f / len);
+    Vector3 axis = Vector3CrossProduct((Vector3){0, 1, 0}, d);
+    float sn = Vector3Length(axis);
+    Matrix rot = sn < 1e-5f ? (d.y > 0 ? MatrixIdentity() : MatrixRotateX(3.14159265f))
+                            : MatrixRotate(Vector3Scale(axis, 1.0f / sn), atan2f(sn, d.y));
+    Matrix m = MatrixMultiply(MatrixScale(rx, len, rz), rot);
+    return MatrixMultiply(m, MatrixTranslate(a.x, a.y, a.z));
+}
+
+static void build_kael(const Rig *g, const CharDesc *c, float t) {
+    Color navy = c->coat, navy_lt = (Color){(unsigned char)(c->coat.r + 22), (unsigned char)(c->coat.g + 24), (unsigned char)(c->coat.b + 34), 255};
+    Color tee = (Color){206, 214, 232, 255}, pants = c->pants, skin = c->skin;
+    Color shoe = (Color){98, 114, 152, 255}, sole = (Color){236, 238, 244, 255};
+    float sw = sinf(t * 1.3f) * 0.03f; /* coat sway */
+#define P(mesh, xf, mt) part(g, &(mesh), (xf), (mt))
+    /* sneakers: left foot (world +x) planted forward, right foot trailing: a relaxed walking stance */
+    for (int sd = -1; sd <= 1; sd += 2) {
+        float x = 0.095f * (float)sd, z = sd > 0 ? 0.10f : -0.04f;
+        P(M_SPHERE, local(0.060f, 0.050f, 0.135f, 0, 0, 0, x, 0.055f, z + 0.03f), matb(shoe));
+        P(M_CUBE, local(0.115f, 0.022f, 0.265f, 0, 0, 0, x, 0.012f, z + 0.03f), matb(sole));
+        P(M_SPHERE, local(0.050f, 0.040f, 0.060f, 0, 0, 0, x, 0.105f, z - 0.05f), matb(shoe)); /* collar */
+        /* legs: slim, slightly bent for the stride */
+        Vector3 a = {x, 0.10f, z - 0.03f}, b = {x * 0.9f, 1.00f, -0.01f};
+        P(M_CYL, limb(a, b, 0.056f, 0.058f), matb(pants));
+    }
+    P(M_CYL, local(0.150f, 0.14f, 0.105f, 0, 0, 0, 0, 0.90f, -0.005f), matb(pants));
+    /* white tee (loose hem) */
+    P(M_CYL, local(0.150f, 0.56f, 0.100f, 0, 0, 0, 0, 0.90f, 0), mat(tee, 0.2f, 0.8f, 0, 0));
+    P(M_CONE, local(0.165f, 0.10f, 0.115f, 3.14159f, 0, 0, 0, 1.00f, 0.003f), mat(tee, 0.2f, 0.8f, 0, RM_NO_OUTLINE));
+    /* neck, head */
+    P(M_CYL, local(0.040f, 0.13f, 0.042f, 0, 0, 0, 0, 1.46f, 0), matb(skin));
+    P(M_SPHERE, local(0.094f, 0.112f, 0.100f, 0, 0, 0, 0, 1.665f, 0), matb(skin));
+    P(M_SPHERE, local(0.062f, 0.070f, 0.074f, 0, 0, 0, 0, 1.590f, 0.030f), matb(skin)); /* narrow jaw */
+    /* face: calm, slightly narrowed dark-blue eyes, straight brows */
+    for (int sd = -1; sd <= 1; sd += 2) {
+        float x = 0.041f * (float)sd;
+        P(M_SPHERE, local(0.025f, 0.011f, 0.010f, 0, 0, -0.10f * (float)sd, x, 1.658f, 0.096f),
+          mat((Color){28, 36, 92, 255}, 0, 0, 0.25f, RM_NO_OUTLINE | RM_NO_SHADOW_CAST));
+        P(M_CUBE, local(0.042f, 0.007f, 0.008f, 0, 0, 0.08f * (float)sd, x, 1.683f, 0.098f),
+          mat((Color){18, 18, 30, 255}, 0, 0, 0, RM_NO_OUTLINE | RM_NO_SHADOW_CAST));
+    }
+    P(M_CUBE, local(0.028f, 0.004f, 0.006f, 0, 0, 0, 0, 1.606f, 0.103f), mat((Color){150, 90, 90, 255}, 0, 0, 0, RM_NO_OUTLINE | RM_NO_SHADOW_CAST));
+    /* hair: skull cap + messy swept clumps */
+    RenderMat hm = mat(c->hair, 0.5f, 1.0f, 0.0f, RM_HAIR);
+    P(M_SPHERE, local(0.103f, 0.098f, 0.107f, 0, 0, 0, 0, 1.700f, -0.006f), hm);
+    static const float H[][6] = {
+        {-0.05f, 1.75f, 0.02f, -0.11f, 1.81f, 0.01f}, {0.00f, 1.76f, 0.03f, 0.02f, 1.83f, 0.06f},
+        {0.05f, 1.75f, 0.00f, 0.13f, 1.80f, -0.02f}, {-0.03f, 1.76f, -0.04f, -0.07f, 1.82f, -0.11f},
+        {0.04f, 1.75f, -0.05f, 0.11f, 1.80f, -0.13f}, {-0.095f, 1.70f, 0.00f, -0.13f, 1.61f, -0.02f},
+        {0.095f, 1.70f, 0.00f, 0.13f, 1.61f, -0.02f}, {0.00f, 1.70f, -0.095f, 0.00f, 1.60f, -0.13f},
+        {-0.06f, 1.75f, 0.075f, -0.095f, 1.655f, 0.105f}, {-0.02f, 1.76f, 0.085f, -0.035f, 1.670f, 0.112f},
+        {0.02f, 1.76f, 0.085f, 0.055f, 1.680f, 0.116f}, {0.06f, 1.75f, 0.075f, 0.100f, 1.655f, 0.102f},
+        {0.078f, 1.74f, 0.060f, 0.118f, 1.590f, 0.080f},
+    };
+    for (unsigned i = 0; i < sizeof H / sizeof H[0]; ++i)
+        P(M_CONE, limb((Vector3){H[i][0], H[i][1], H[i][2]}, (Vector3){H[i][3], H[i][4], H[i][5]}, 0.040f, 0.036f), hm);
+
+    /* coat: open front, A-line back, collar, hood draped behind the neck, long flowing train */
+    RenderMat cm = mat(navy, 0.4f, 1.0f, 0.0f, 0);
+    P(M_CONE, local(0.22f, 1.05f, 0.030f, 0, 0, 0, 0, 0.36f, -0.095f), cm);                      /* back panel */
+    for (int sd = -1; sd <= 1; sd += 2) {
+        float f = (float)sd;
+        P(M_CONE, local(0.095f, 1.02f, 0.026f, 0, 0, 0.05f * f, 0.165f * f, 0.38f, 0.092f), cm);   /* front panels (lapels) */
+        P(M_CONE, local(0.030f, 0.94f, 0.14f, 0, 0, -0.05f * f, 0.195f * f, 0.40f, -0.01f), cm);   /* side panels */
+        P(M_SPHERE, local(0.072f, 0.072f, 0.075f, 0, 0, 0, 0.205f * f, 1.395f, 0), cm);            /* shoulders */
+    }
+    P(M_TORUS, local(0.150f, 0.150f, 0.150f, 0, 0, 0, 0, 1.435f, -0.01f), mat(navy_lt, 0.4f, 1, 0, 0)); /* collar */
+    P(M_SPHERE, local(0.115f, 0.090f, 0.085f, 0.5f, 0, 0, 0, 1.485f, -0.095f), mat(navy_lt, 0.4f, 1, 0, 0)); /* hood bunch */
+    P(M_CONE, limb((Vector3){0.03f, 1.50f, -0.11f}, (Vector3){0.22f, 1.60f, -0.20f}, 0.075f, 0.045f), mat(navy_lt, 0.4f, 1, 0, 0)); /* hood peak, drooping to his left shoulder */
+    /* the swooping train (viewer's right) and a shorter one on the blade side */
+    P(M_CONE, limb((Vector3){0.14f, 0.92f, -0.10f}, (Vector3){0.78f + sw, 0.12f, -0.50f}, 0.30f, 0.022f), cm);
+    P(M_CONE, limb((Vector3){-0.12f, 0.80f, -0.10f}, (Vector3){-0.40f - sw, 0.10f, -0.28f}, 0.11f, 0.018f), cm);
+
+    /* arms. Right (viewer's left, world -x): blade held low. Left (world +x): hand in pocket. */
+    Vector3 shR = {-0.205f, 1.385f, 0}, elR = {-0.285f, 1.15f, 0.06f}, haR = {-0.345f, 0.985f, 0.20f};
+    P(M_CYL, limb(shR, elR, 0.050f, 0.050f), cm);
+    P(M_TORUS, local(0.052f, 0.052f, 0.052f, 0, 0, 0, elR.x, elR.y, elR.z), mat(navy_lt, 0.4f, 1, 0, RM_NO_OUTLINE)); /* rolled cuff */
+    P(M_CYL, limb(elR, haR, 0.040f, 0.040f), matb(skin));
+    P(M_SPHERE, local(0.050f, 0.052f, 0.050f, 0, 0, 0, haR.x, haR.y, haR.z), matb(skin));
+    Vector3 shL = {0.205f, 1.385f, 0}, elL = {0.235f, 1.13f, -0.01f}, haL = {0.185f, 0.90f, 0.05f};
+    P(M_CYL, limb(shL, elL, 0.050f, 0.050f), cm);
+    P(M_TORUS, local(0.052f, 0.052f, 0.052f, 0, 0, 0, elL.x, elL.y, elL.z), mat(navy_lt, 0.4f, 1, 0, RM_NO_OUTLINE));
+    P(M_CYL, limb(elL, haL, 0.040f, 0.040f), matb(skin));
+    /* Dawnbrand (Lv1): plain steel blade, reverse grip, thin Ascendant-gold glow along the edge */
+    Vector3 gr0 = {haR.x + 0.012f, haR.y + 0.07f, haR.z - 0.01f}, gr1 = {haR.x - 0.012f, haR.y - 0.07f, haR.z + 0.01f};
+    Vector3 tip = {haR.x - 0.14f, haR.y - 0.62f, haR.z + 0.10f};
+    P(M_CYL, limb(gr0, gr1, 0.020f, 0.020f), matb((Color){40, 36, 44, 255}));
+    P(M_CUBE, local(0.13f, 0.022f, 0.030f, 0, 0, 0.22f, gr1.x, gr1.y, gr1.z), mat(c->trim, 1.4f, 1.0f, 0.15f, 0));
+    P(M_CONE, limb(gr1, tip, 0.036f, 0.010f), mat((Color){140, 154, 188, 255}, 1.6f, 1.2f, 0.0f, 0));
+    P(M_CONE, limb((Vector3){gr1.x, gr1.y - 0.02f, gr1.z}, (Vector3){tip.x + 0.004f, tip.y + 0.03f, tip.z}, 0.012f, 0.014f),
+      mat((Color){255, 214, 120, 255}, 0, 0, 0.9f, RM_NO_OUTLINE | RM_NO_SHADOW_CAST));
+#undef P
+}
+
 void proc_submit_character(const CharDesc *c, Vector3 pos, float yaw, float t) {
     float s = c->height / 1.75f;
     float bob = sinf(t * 1.9f) * 0.006f;
@@ -120,6 +219,7 @@ void proc_submit_character(const CharDesc *c, Vector3 pos, float yaw, float t) {
     g.s = s;
     g.root = MatrixMultiply(MatrixMultiply(MatrixScale(s, s, s), MatrixRotateY(yaw)), MatrixTranslate(pos.x, pos.y + bob, pos.z));
     float sway = sinf(t * 1.9f + 1.0f) * 0.03f;
+    if (c->outfit == OUTFIT_HERO) { build_kael(&g, c, t); return; }
 
     Color coat = c->coat, trim = c->trim;
     bool robe = c->outfit == OUTFIT_MAGE || c->outfit == OUTFIT_HEALER;

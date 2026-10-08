@@ -4,6 +4,9 @@
 
 static Color C(int r, int g, int b) { return (Color){(unsigned char)r, (unsigned char)g, (unsigned char)b, 255}; }
 
+static bool g_showcase;
+void test_scene_set_showcase(bool on) { g_showcase = on; }
+
 void test_scene_submit(float t, Vector3 hero, float hero_yaw) {
     static CharDesc kael, bram, lyra, mirelle, shadow;
     static bool init;
@@ -16,6 +19,7 @@ void test_scene_submit(float t, Vector3 hero, float hero_yaw) {
 
     /* the party, in a loose arc around the hero's start; the hero is driven by the ECS player */
     proc_submit_character(&kael, hero, hero_yaw, t);
+    if (g_showcase) return;
     proc_submit_character(&bram, (Vector3){-1.7f, 0, -0.5f}, 0.35f, t + 0.7f);
     proc_submit_character(&lyra, (Vector3){1.6f, 0, -0.35f}, -0.40f, t + 1.4f);
     proc_submit_character(&mirelle, (Vector3){0.0f, 0, -1.8f}, 0.0f, t + 2.1f);
