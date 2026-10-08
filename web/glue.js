@@ -45,6 +45,10 @@
       document.addEventListener(n, function (e) { e.preventDefault(); });
     });
     document.addEventListener('touchmove', function (e) { e.preventDefault(); }, { passive: false });
+    // keys the game uses that the browser would otherwise act on (focus change, page scroll)
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Tab' || (e.key === ' ' && e.target === document.body) || e.key === 'ArrowUp' || e.key === 'ArrowDown') e.preventDefault();
+    });
     window.addEventListener('wheel', function (e) { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
   }
 

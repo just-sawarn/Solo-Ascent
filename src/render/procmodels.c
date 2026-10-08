@@ -392,3 +392,18 @@ const Mesh *proc_mesh(ProcMesh m) {
     default: return &M_TORUS;
     }
 }
+
+void proc_submit_marker(Vector3 p, float t) {
+    RenderMat m = mat((Color){255, 214, 90, 255}, 1.0f, 0.0f, 1.0f, RM_NO_OUTLINE | RM_NO_SHADOW_CAST);
+    float bob = sinf(t * 3.0f) * 0.06f;
+    Matrix a = MatrixMultiply(MatrixMultiply(MatrixScale(0.14f, 0.20f, 0.14f), MatrixRotateY(t * 2.0f)), MatrixTranslate(p.x, p.y + bob, p.z));
+    Matrix b = MatrixMultiply(MatrixMultiply(MatrixScale(0.14f, 0.20f, 0.14f), MatrixRotateXYZ((Vector3){3.14159f, t * 2.0f, 0})), MatrixTranslate(p.x, p.y + bob, p.z));
+    renderer_submit(&M_CONE, a, m);
+    renderer_submit(&M_CONE, b, m);
+}
+
+void proc_submit_box(Vector3 mn, Vector3 mx, Color c) {
+    Vector3 ctr = {(mn.x + mx.x) * 0.5f, (mn.y + mx.y) * 0.5f, (mn.z + mx.z) * 0.5f};
+    Matrix m = MatrixMultiply(MatrixScale(mx.x - mn.x, mx.y - mn.y, mx.z - mn.z), MatrixTranslate(ctr.x, ctr.y, ctr.z));
+    renderer_submit(&M_CUBE, m, matbox(c));
+}

@@ -21,7 +21,17 @@ void platform_report_state(const char *state) {
     /* bracket access: closure must not rename properties read by glue/tests */
     EM_ASM({ window['__sa'] = window['__sa'] || {}; window['__sa']['state'] = UTF8ToString($0); }, state);
 }
+void platform_report_player(float x, float y, float z, int grounded, float speed) {
+    /* NOTE: no commas outside parentheses inside EM_ASM bodies (the preprocessor would split them) */
+    EM_ASM({
+        var s = (window["__sa"] = window["__sa"] || {});
+        var o = {};
+        o["x"] = $0; o["y"] = $1; o["z"] = $2; o["grounded"] = !!$3; o["speed"] = $4;
+        s["player"] = o;
+    }, x, y, z, grounded, speed);
+}
 #else
+void platform_report_player(float x, float y, float z, int grounded, float speed) { (void)x; (void)y; (void)z; (void)grounded; (void)speed; }
 void platform_init(void) {}
 size_t platform_heap_bytes(void) { return 0; }
 void platform_report_state(const char *state) { (void)state; }

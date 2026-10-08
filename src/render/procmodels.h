@@ -34,6 +34,9 @@ Matrix proc_limb(Vector3 a, Vector3 b, float rx, float rz);
 void proc_submit_pillar(Vector3 pos, float h, float r, Color c);
 void proc_submit_crystal(Vector3 pos, float h, Color c, float t);
 void proc_submit_ground(float size, Color c);
+/* Lock-on marker: a spinning gold diamond. */
+void proc_submit_marker(Vector3 pos, float t);
+void proc_submit_box(Vector3 mn, Vector3 mx, Color c);
 void proc_submit_arch(Vector3 pos, float yaw, Color c);
 
 #endif

@@ -24,8 +24,9 @@ static Vector3 tr(Vector3 v, Matrix m) { return Vector3Transform(v, m); }
 
 typedef struct {
     AnimPlayer anim;
-    int idle, walk, jog, sprint, attack, roll;
-    int action; /* 0 none, 1 attack, 2 roll */
+    int idle, walk, jog, sprint, attack, roll, jump_start, jump_loop, jump_land;
+    bool was_air;
+    float land_t;
     bool ready;
 } KaelAnim;
 static KaelAnim K;
@@ -35,24 +36,39 @@ void heroes_init(void) {
     if (!anims_load("assets/animations/ual.sanim")) return;
     K.idle = anim_find("Idle_Loop"); K.walk = anim_find("Walk_Loop"); K.jog = anim_find("Jog_Fwd_Loop");
     K.sprint = anim_find("Sprint_Loop"); K.attack = anim_find("Sword_Attack"); K.roll = anim_find("Roll");
+    K.jump_start = anim_find("Jump_Start"); K.jump_loop = anim_find("Jump_Loop"); K.jump_land = anim_find("Jump_Land");
     anim_player_init(&K.anim, K.idle);
     K.ready = K.idle >= 0;
 }
 
-void heroes_update_kael(float dt, float speed, bool attack, bool roll) {
-    if (!K.ready) return;
-    if (K.action == 0) {
-        if (attack && K.attack >= 0) { anim_play(&K.anim, K.attack, 0.08f, true); K.action = 1; }
-        else if (roll && K.roll >= 0) { anim_play(&K.anim, K.roll, 0.08f, true); K.action = 2; }
-        else {
-            int c = speed < 0.2f ? K.idle : speed < 3.2f ? K.walk : speed < 6.2f ? K.jog : K.sprint;
-            anim_play(&K.anim, c, 0.18f, false);
-        }
-    }
-    anim_update(&K.anim, dt);
-    if (K.action != 0 && K.anim.finished) { K.action = 0; anim_play(&K.anim, K.idle, 0.15f, true); }
+/* Fit a one-shot clip into the gameplay duration so animation and hit timing agree. */
+static void play_fit(int clip, float fade, float gameplay_seconds) {
+    anim_play(&K.anim, clip, fade, true);
+    float len = anim_clip_length(clip);
+    K.anim.speed = (len > 0.01f && gameplay_seconds > 0.01f) ? len / gameplay_seconds : 1.0f;
 }
 
+void heroes_update_kael(float dt, const KaelMotion *m) {
+    if (!K.ready) return;
+    if (m->ev_roll && K.roll >= 0) play_fit(K.roll, 0.06f, m->roll_seconds);
+    else if (m->ev_attack && K.attack >= 0) play_fit(K.attack, 0.06f, m->attack_seconds);
+    else if (m->rolling || m->attacking) { /* keep playing the one-shot */ }
+    else if (!m->grounded) {
+        if (!K.was_air) { anim_play(&K.anim, K.jump_start, 0.08f, true); K.anim.speed = 1.0f; }
+        else if (K.anim.clip[0] == K.jump_start && K.anim.finished) anim_play(&K.anim, K.jump_loop, 0.1f, true);
+        K.was_air = true;
+    } else {
+        if (K.was_air) { K.was_air = false; K.land_t = m->speed > 3.0f ? 0.0f : 0.25f; if (K.land_t > 0) { anim_play(&K.anim, K.jump_land, 0.05f, true); K.anim.speed = 1.0f; } }
+        if (K.land_t > 0) K.land_t -= dt;
+        else {
+            int c = m->speed < 0.2f ? K.idle : m->speed < 3.2f ? K.walk : m->speed < 6.2f ? K.jog : K.sprint;
+            anim_play(&K.anim, c, 0.18f, false);
+            K.anim.speed = 1.0f;
+        }
+    }
+    if (!m->grounded) K.was_air = true;
+    anim_update(&K.anim, dt);
+}
 
 void heroes_submit_kael(Vector3 pos, float yaw, float t) {
     if (!characters_ready()) return;

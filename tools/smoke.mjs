@@ -47,6 +47,23 @@ try {
   await page.waitForFunction(() => window.__sa.state === 'playing', null, { timeout: 10000 });
   check(true, 'new game started (state=playing)');
 
+  // gameplay: the player stands on the ground, moves when W is held, and leaves the ground when Space is pressed
+  const pl = () => page.evaluate(() => window.__sa.player);
+  await page.waitForTimeout(600);
+  const p0 = await pl();
+  check(p0 && p0.grounded && Math.abs(p0.y) < 0.01, 'player grounded at spawn');
+  await page.keyboard.down('w'); await page.waitForTimeout(1500);
+  const p1 = await pl();
+  await page.keyboard.up('w');
+  check(Math.hypot(p1.x - p0.x, p1.z - p0.z) > 2.0, `player moved with W (${Math.hypot(p1.x - p0.x, p1.z - p0.z).toFixed(1)} m)`);
+  let maxY = 0;
+  await page.keyboard.down('Space');
+  for (let i = 0; i < 12; i++) { await page.waitForTimeout(60); maxY = Math.max(maxY, (await pl()).y); }
+  await page.keyboard.up('Space');
+  check(maxY > 0.3, `jump leaves the ground (peak sample ${maxY.toFixed(2)} m)`);
+  await page.waitForTimeout(1200);
+  check((await pl()).grounded, 'player lands again');
+
   // hold a movement key, toggle the debug overlay, then measure frame times
   await page.keyboard.down('F3'); await page.waitForTimeout(200); await page.keyboard.up('F3');
   await page.keyboard.down('d');

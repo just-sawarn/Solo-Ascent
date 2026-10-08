@@ -15,6 +15,9 @@ endif()
 # ---- Engine-agnostic game logic (no raylib, no browser calls; natively testable) ----
 add_library(sa_core STATIC
   src/core/ecs.c
+  src/core/physics.c
+  src/core/player.c
+  src/core/camrig.c
   src/core/gameloop.c
   src/core/vec.c
   src/core/log.c)
@@ -28,7 +31,7 @@ endif()
 # ---- Native tests ----
 if(SA_NATIVE_TESTS AND NOT EMSCRIPTEN)
   enable_testing()
-  foreach(t ecs gameloop)
+  foreach(t ecs gameloop physics player camrig)
     add_executable(test_${t} tests/test_${t}.c)
     target_link_libraries(test_${t} PRIVATE sa_core)
     target_compile_options(test_${t} PRIVATE ${SA_WARN} ${SA_SAN_FLAGS})
@@ -56,6 +59,7 @@ if(EMSCRIPTEN OR SA_BUILD_NATIVE_GAME)
   add_executable(solo_ascent
     src/main.c
     src/ui/debug_overlay.c
+    src/ui/input.c
     src/render/renderer.c
     src/render/shaders.c
     src/render/procmodels.c

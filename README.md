@@ -19,8 +19,18 @@ cmake ≥ 3.20, Emscripten (`~/emsdk`, `emsdk install latest && emsdk activate l
 
 First time: `cd tools && npm install && npx playwright install chromium`.
 
-## Controls (Milestone 1 demo)
-Enter / click / tap: start. WASD or arrows: move. **F3 or a three-finger tap**: debug overlay (G god mode, K quest skip).
+## Controls
+| Action | Keyboard / mouse | Gamepad | Touch |
+|---|---|---|---|
+| Move | WASD / arrows | left stick | floating joystick (left side); push to the edge to sprint |
+| Look | mouse (click once to capture; Esc releases) | right stick | swipe the right side |
+| Sprint / walk | Shift / Ctrl | RB / LB | joystick edge |
+| Jump | Space | A | JUMP |
+| Attack | J or left-click | X | ATK |
+| Dodge roll | Q or right-click | B | ROLL |
+| Lock on | Tab or middle-click | Y / R3 | LOCK |
+| Debug overlay | F3 (or a three-finger tap); G god mode, K quest skip | | |
+| Look / quality | 1-3 switch look, `[` `]` change quality tier | | |
 
 ## Hosting
 Plain static files; no COOP/COEP headers or SharedArrayBuffer needed. `dist/` contains `.br`/`.gz` precompressed siblings.

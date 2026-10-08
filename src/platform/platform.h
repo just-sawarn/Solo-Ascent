@@ -6,6 +6,8 @@
 void   platform_init(void);
 size_t platform_heap_bytes(void);                 /* WASM heap size; 0 on native */
 void   platform_report_state(const char *state);  /* exposes state to JS test hooks */
+/* test hook: exposes the player's position/state as window.__sa.player */
+void   platform_report_player(float x, float y, float z, int grounded, float speed);
 int    platform_is_hidden(void);                  /* tab hidden => sim paused */
 int    platform_context_lost(void);
 int    platform_take_context_restored(void);      /* true once after a restore */

@@ -1,0 +1,25 @@
+#ifndef SA_INPUT_H
+#define SA_INPUT_H
+/* Unified input: keyboard + pointer-locked mouse, gamepad, and touch (floating joystick, swipe-to-look,
+ * on-screen buttons). One-shot actions are latched until the simulation consumes them. */
+#include <stdbool.h>
+#include <raylib.h>
+
+typedef struct {
+    float move_x, move_y;      /* -1..1, y: +1 = forward */
+    float look_dx, look_dy;    /* radians this frame */
+    bool jump, attack, roll, lock;   /* latched presses */
+    bool sprint, walk;               /* held */
+    bool touch_ui;                   /* a touch was seen: show on-screen controls */
+    /* touch tracking */
+    int joy_id, look_id;
+    Vector2 joy_origin, joy_pos, look_last;
+    int btn_id[4];                   /* touch id holding each button, -1 none */
+} Input;
+
+void input_init(Input *in);
+void input_update(Input *in, float dt, bool gameplay_active);
+void input_consume(Input *in);       /* clear latched presses after the sim has seen them */
+void input_draw_touch(const Input *in);
+
+#endif

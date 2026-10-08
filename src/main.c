@@ -3,14 +3,18 @@
 #include <stdlib.h>
 #include <string.h>
 #include <raylib.h>
+#include "core/camrig.h"
 #include "core/ecs.h"
 #include "core/gameloop.h"
 #include "core/log.h"
+#include "core/physics.h"
+#include "core/player.h"
 #include "platform/platform.h"
 #include "render/heroes.h"
 #include "render/procmodels.h"
 #include "render/renderer.h"
 #include "ui/debug_overlay.h"
+#include "ui/input.h"
 #include "world/test_scene.h"
 
 #ifdef __EMSCRIPTEN__
@@ -19,21 +23,28 @@
 
 typedef enum { STATE_TITLE, STATE_PLAYING } GameState;
 
+#define MAX_TARGETS 8
+
 typedef struct {
     World world;
     GameLoop loop;
     DebugState dbg;
     GameState state;
     Entity player;
-    /* orbit camera */
-    float cam_yaw, cam_pitch, cam_dist;
-    bool auto_orbit;
-    bool governor_on;
+    PlayerCtl pc;
+    PhysWorld phys;
+    CamRig cam;
+    Input input;
+    Vector3 targets[MAX_TARGETS];
+    int ntargets, lock_idx;
+    bool auto_orbit, governor_on;
     double title_t, time;
     double toast_t; char toast[96];
+    /* events accumulated over the sim steps of one frame */
+    bool ev_attack, ev_roll;
 } Game;
 
-static Game G; /* static: World is large, no per-frame allocation anywhere */
+static Game G; /* static: World and PhysWorld are large, no per-frame allocation anywhere */
 
 static void toast(Game *g, const char *fmt, int a, const char *b) {
     snprintf(g->toast, sizeof g->toast, fmt, a, b);
@@ -45,31 +56,38 @@ static void new_game(Game *g) {
     gameloop_init(&g->loop);
     g->player = ecs_create(&g->world, C_TRANSFORM | C_VELOCITY | C_HEALTH | C_FACTION);
     g->world.faction[ecs_index(g->player)] = FACTION_PLAYER;
-    g->world.pos[ecs_index(g->player)] = vec3(0, 0, 0.5f);
-    g->world.prev_pos[ecs_index(g->player)] = g->world.pos[ecs_index(g->player)];
+    player_init(&g->pc, vec3(0, 0, 0.5f));
+    uint32_t p = ecs_index(g->player);
+    g->world.pos[p] = g->world.prev_pos[p] = g->pc.ch.pos;
+    g->lock_idx = -1;
+    g->cam.locked = false;
+}
+
+static PlayerIn make_player_input(const Game *g, bool first_step) {
+    const Input *in = &g->input;
+    /* camera-relative movement */
+    float cs = cosf(g->cam.yaw), sn = sinf(g->cam.yaw);
+    PlayerIn pin = {0};
+    pin.mx = in->move_x * cs - in->move_y * sn;
+    pin.mz = -in->move_x * sn - in->move_y * cs;
+    pin.sprint = in->sprint; pin.walk = in->walk;
+    if (first_step) { pin.jump = in->jump; pin.attack = in->attack; pin.roll = in->roll; }
+    if (g->lock_idx >= 0) { pin.has_lock = true; pin.lock_x = g->targets[g->lock_idx].x; pin.lock_z = g->targets[g->lock_idx].z; }
+    return pin;
 }
 
 /* Fixed 60 Hz simulation step. */
-static void sim_step(Game *g) {
+static void sim_step(Game *g, bool first_step) {
     World *w = &g->world;
     ecs_snapshot_transforms(w);
-    float ix = (float)(IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) - (float)(IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT));
-    float iz = (float)(IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) - (float)(IsKeyDown(KEY_W) || IsKeyDown(KEY_UP));
+    PlayerIn pin = make_player_input(g, first_step);
+    player_step(&g->pc, &g->phys, &pin, SIM_DT);
+    g->ev_attack |= g->pc.ev_attack;
+    g->ev_roll |= g->pc.ev_roll;
     uint32_t p = ecs_index(g->player);
-    float len = sqrtf(ix * ix + iz * iz);
-    if (len > 0) {
-        ix /= len; iz /= len;
-        /* camera-relative movement */
-        float cs = cosf(g->cam_yaw), sn = sinf(g->cam_yaw);
-        float wx = ix * cs + iz * sn, wz = -ix * sn + iz * cs;
-        float spd = IsKeyDown(KEY_LEFT_SHIFT) ? 7.5f : IsKeyDown(KEY_LEFT_CONTROL) ? 2.0f : 5.0f;
-        w->pos[p].x += wx * spd * SIM_DT;
-        w->pos[p].z += wz * spd * SIM_DT;
-        w->yaw[p] = atan2f(wx, wz);
-        w->vel[p] = vec3(wx * spd, 0, wz * spd);
-    } else {
-        w->vel[p] = vec3(0, 0, 0);
-    }
+    w->pos[p] = g->pc.ch.pos;
+    w->yaw[p] = g->pc.yaw;
+    w->vel[p] = g->pc.ch.vel;
 }
 
 static void handle_render_keys(Game *g) {
@@ -84,25 +102,19 @@ static void handle_render_keys(Game *g) {
     if (IsKeyPressed(KEY_RIGHT_BRACKET) && t > TIER_ULTRA) { g->governor_on = false; renderer_set_tier((QualityTier)(t - 1)); toast(g, "Quality %d: %s", t - 1, renderer_tier_settings(renderer_tier())->name); }
 }
 
-static void update_camera(Game *g, float dt, Camera3D *cam, Vector3 focus) {
-    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && g->state == STATE_PLAYING) {
-        Vector2 d = GetMouseDelta();
-        g->cam_yaw -= d.x * 0.006f;
-        g->cam_pitch += d.y * 0.004f;
-        g->auto_orbit = false;
+static void toggle_lock(Game *g) {
+    if (g->lock_idx >= 0) { g->lock_idx = -1; return; }
+    Vector3 pp = {g->pc.ch.pos.x, 0, g->pc.ch.pos.z};
+    float best = 25.0f * 25.0f; int bi = -1;
+    for (int i = 0; i < g->ntargets; ++i) {
+        float dx = g->targets[i].x - pp.x, dz = g->targets[i].z - pp.z, d2 = dx * dx + dz * dz;
+        /* prefer targets in front of the camera */
+        float fx = -sinf(g->cam.yaw), fz = -cosf(g->cam.yaw);
+        float facing = (dx * fx + dz * fz) / (sqrtf(d2) + 1e-4f);
+        if (facing < -0.2f) continue;
+        if (d2 < best) { best = d2; bi = i; }
     }
-    float wheel = GetMouseWheelMove();
-    if (wheel != 0.0f) g->cam_dist -= wheel * 0.6f;
-    if (g->auto_orbit) g->cam_yaw += dt * 0.12f;
-    if (g->cam_pitch < 0.02f) g->cam_pitch = 0.02f;
-    if (g->cam_pitch > 1.3f) g->cam_pitch = 1.3f;
-    if (g->cam_dist < 3.0f) g->cam_dist = 3.0f;
-    if (g->cam_dist > 22.0f) g->cam_dist = 22.0f;
-    cam->target = (Vector3){focus.x, focus.y + 1.15f, focus.z};
-    cam->position = (Vector3){
-        cam->target.x + sinf(g->cam_yaw) * cosf(g->cam_pitch) * g->cam_dist,
-        cam->target.y + sinf(g->cam_pitch) * g->cam_dist,
-        cam->target.z + cosf(g->cam_yaw) * cosf(g->cam_pitch) * g->cam_dist};
+    g->lock_idx = bi;
 }
 
 static void frame(void) {
@@ -114,10 +126,18 @@ static void frame(void) {
 
     if (platform_take_context_restored()) LOGI("WebGL context restored (GPU resource rebuild lands with the lifecycle milestone)");
 
+    bool playing = g->state == STATE_PLAYING;
+    input_update(&g->input, dt, playing && !hidden);
+    /* desktop: the first click in game grabs the mouse (pointer lock); Esc releases it */
+    if (playing && !g->input.touch_ui && !IsCursorHidden() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) DisableCursor();
+    if (IsKeyPressed(KEY_ESCAPE) && IsCursorHidden()) EnableCursor();
+
     int steps = 0;
-    if (g->state == STATE_PLAYING) {
+    if (playing) {
+        if (g->input.lock) toggle_lock(g);
         steps = gameloop_advance(&g->loop, (double)dt);
-        for (int s = 0; s < steps; ++s) sim_step(g);
+        for (int s = 0; s < steps; ++s) sim_step(g, s == 0);
+        if (steps > 0) input_consume(&g->input);
         g->dbg.quest_skip_request = false; /* no quest system yet */
     } else {
         g->title_t += (double)dt;
@@ -125,10 +145,12 @@ static void frame(void) {
             GetTouchPointCount() > 0) {
             new_game(g);
             g->state = STATE_PLAYING;
+            g->auto_orbit = false;
             platform_report_state("playing");
         }
     }
 
+    if (playing) platform_report_player(g->pc.ch.pos.x, g->pc.ch.pos.y, g->pc.ch.pos.z, g->pc.ch.grounded, g->pc.speed_xz);
     dbg_update(&g->dbg, dt, steps);
     g->dbg.draw_calls = 0;
     handle_render_keys(g);
@@ -137,17 +159,31 @@ static void frame(void) {
     float alpha = gameloop_alpha(&g->loop);
     Vec3 pp = ecs_render_pos(&g->world, ecs_index(g->player), alpha);
     float yaw = ecs_render_yaw(&g->world, ecs_index(g->player), alpha);
-    Camera3D cam = {.up = {0, 1, 0}, .fovy = 38.0f, .projection = CAMERA_PERSPECTIVE};
-    update_camera(g, dt, &cam, (Vector3){pp.x, pp.y, pp.z});
+
+    /* camera */
+    float ldx = g->input.look_dx, ldy = g->input.look_dy;
+    if (g->auto_orbit) g->cam.yaw += dt * 0.12f;
+    g->cam.locked = g->lock_idx >= 0;
+    if (g->cam.locked) { g->cam.lock_pos = vec3(g->targets[g->lock_idx].x, 0, g->targets[g->lock_idx].z); }
+    camrig_update(&g->cam, &g->phys, vec3(pp.x, pp.y + 1.3f, pp.z), ldx, ldy, dt);
+    float wheel = GetMouseWheelMove();
+    if (wheel != 0.0f) g->cam.dist -= wheel * 0.6f;
+    Camera3D cam = {.position = {g->cam.eye.x, g->cam.eye.y, g->cam.eye.z}, .target = {g->cam.target.x, g->cam.target.y, g->cam.target.z},
+                    .up = {0, 1, 0}, .fovy = 38.0f, .projection = CAMERA_PERSPECTIVE};
 
     {
-        float spd = vec3_len(g->world.vel[ecs_index(g->player)]);
-        bool atk = g->state == STATE_PLAYING && (IsKeyPressed(KEY_J) || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT));
-        bool roll = g->state == STATE_PLAYING && IsKeyPressed(KEY_SPACE);
-        heroes_update_kael(g->state == STATE_PLAYING ? dt : dt * 0.0f, spd, atk, roll);
+        KaelMotion km = {.speed = g->pc.speed_xz, .grounded = g->pc.ch.grounded, .attacking = player_attacking(&g->pc),
+                         .rolling = player_rolling(&g->pc), .ev_attack = g->ev_attack, .ev_roll = g->ev_roll,
+                         .attack_seconds = PLAYER_ATTACK_TIME, .roll_seconds = PLAYER_ROLL_TIME};
+        g->ev_attack = g->ev_roll = false;
+        heroes_update_kael(playing && !hidden ? dt : 0.0f, &km);
     }
     renderer_begin_frame(cam, (float)g->time);
     test_scene_submit((float)g->time, (Vector3){pp.x, pp.y, pp.z}, yaw);
+    if (g->lock_idx >= 0) {
+        Vector3 t = g->targets[g->lock_idx];
+        proc_submit_marker((Vector3){t.x, t.y + 2.3f, t.z}, (float)g->time);
+    }
     g->dbg.draw_calls = renderer_queue_count();
 
     BeginDrawing();
@@ -165,19 +201,24 @@ static void frame(void) {
             DrawText(p, (sw - MeasureText(p, 24)) / 2, sh * 6 / 7, 24, RAYWHITE);
         }
     } else {
-        DrawText("WASD move (Shift sprint, Ctrl walk)  |  J / right-click: attack  |  Space: roll  |  drag: orbit  |  wheel: zoom  |  1-3: look  |  [ ]: quality  |  F3: debug", 10, sh - 26, 18, (Color){255, 255, 255, 170});
+        if (!g->input.touch_ui)
+            DrawText(IsCursorHidden() ? "WASD move | Shift sprint | Ctrl walk | Space jump | LMB/J attack | RMB/Q roll | Tab lock | Esc free mouse"
+                                      : "Click to capture the mouse | WASD move | Shift sprint | Space jump | J attack | Q roll | Tab lock | F3 debug",
+                     10, sh - 26, 18, (Color){255, 255, 255, 170});
+        input_draw_touch(&g->input);
     }
     if (g->toast_t > 0) {
         g->toast_t -= (double)dt;
         DrawText(g->toast, 14, 14, 24, (Color){255, 255, 255, 230});
     }
     if (hidden) DrawText("PAUSED", sw / 2 - 40, sh / 2, 30, WHITE);
-    char extra[128];
+    char extra[160];
     int rw, rh;
     renderer_target_size(&rw, &rh);
-    snprintf(extra, sizeof extra, "%s%s %dx%d | look: %s | %d meshes", renderer_tier_settings(renderer_tier())->name,
+    snprintf(extra, sizeof extra, "%s%s %dx%d | look: %s | %d meshes | %s%s", renderer_tier_settings(renderer_tier())->name,
              g->governor_on ? (renderer_governor_settled() ? " (auto)" : " (benchmarking)") : " (manual)", rw, rh,
-             renderer_look_name(renderer_look()), renderer_queue_count());
+             renderer_look_name(renderer_look()), renderer_queue_count(), g->pc.ch.grounded ? "grounded" : "airborne",
+             player_invulnerable(&g->pc) ? " | I-FRAMES" : "");
     dbg_draw(&g->dbg, g->world.alive_count, g->loop.sim_ticks, (unsigned long)platform_heap_bytes(), extra);
     EndDrawing();
 }
@@ -189,7 +230,7 @@ static QualityTier parse_tier(const char *s) {
 }
 
 int main(int argc, char **argv) {
-    /* args (from URL query on web): --look N  --tier name  --still  --mobile */
+    /* args (from URL query on web): --look N  --tier name  --still  --mobile  --hero  --rack */
     int look = 2;
     QualityTier tier = TIER_HIGH;
     bool tier_forced = false, still = false, hero_only = false, rack = false;
@@ -210,13 +251,16 @@ int main(int argc, char **argv) {
     ecs_init(&G.world);
     gameloop_init(&G.loop);
     dbg_init(&G.dbg);
+    input_init(&G.input);
+    test_scene_build_physics(&G.phys);
+    G.ntargets = test_scene_targets(G.targets, MAX_TARGETS);
     new_game(&G);
     G.state = STATE_TITLE;
-    G.cam_yaw = -0.45f; G.cam_pitch = 0.14f; G.cam_dist = 6.0f;
+    camrig_init(&G.cam, -0.45f, 0.14f, 6.0f);
     G.auto_orbit = !still;
     G.governor_on = !tier_forced;
 
-    if (hero_only) { test_scene_set_showcase(true); test_scene_set_rack(rack); G.cam_dist = rack ? 7.5f : 4.4f; G.cam_pitch = rack ? 0.25f : 0.04f; G.cam_yaw = rack ? 0.0f : 0.35f; }
+    if (hero_only) { test_scene_set_showcase(true); test_scene_set_rack(rack); G.cam.dist = rack ? 7.5f : 4.4f; G.cam.cur_dist = G.cam.dist; G.cam.pitch = rack ? 0.25f : 0.04f; G.cam.yaw = rack ? 0.0f : 0.35f; }
     proc_init();
     heroes_init();
     renderer_init(GetScreenWidth(), GetScreenHeight(), tier, look);
