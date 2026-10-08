@@ -15,12 +15,17 @@ typedef struct {
     float height; /* world units, ~1.8 for adults */
 } CharDesc;
 
+typedef enum { WEAPON_DAGGER, WEAPON_SHORT_SWORD, WEAPON_LONG_SWORD, WEAPON_KATANA, WEAPON_AXE, WEAPON_CLUB, WEAPON_SPEAR, WEAPON_COUNT } WeaponId;
+
 void proc_init(void);
 void proc_shutdown(void);
 CharDesc proc_preset(Outfit o);
 
 /* Queue a character for rendering. t = seconds for idle animation. */
 void proc_submit_character(const CharDesc *c, Vector3 pos, float yaw, float t);
+/* CC0 weapon models (assets/models/weapons, see ATTRIBUTIONS.md). `grip_to_tip` maps weapon space
+ * (grip at origin, +Y toward the tip, metres) into the world; length_m is the visual blade+handle length. */
+void proc_submit_weapon(WeaponId id, Matrix grip_to_tip, float length_m);
 /* Scene props */
 void proc_submit_pillar(Vector3 pos, float h, float r, Color c);
 void proc_submit_crystal(Vector3 pos, float h, Color c, float t);

@@ -181,12 +181,13 @@ int main(int argc, char **argv) {
     /* args (from URL query on web): --look N  --tier name  --still  --mobile */
     int look = 2;
     QualityTier tier = TIER_HIGH;
-    bool tier_forced = false, still = false, hero_only = false;
+    bool tier_forced = false, still = false, hero_only = false, rack = false;
     for (int i = 1; i < argc; ++i) {
         if (!strcmp(argv[i], "--look") && i + 1 < argc) look = atoi(argv[++i]) - 1 < 0 ? 0 : atoi(argv[i]) - 1;
         else if (!strcmp(argv[i], "--tier") && i + 1 < argc) { tier = parse_tier(argv[++i]); tier_forced = true; }
         else if (!strcmp(argv[i], "--still")) still = true;
         else if (!strcmp(argv[i], "--hero")) hero_only = true;
+        else if (!strcmp(argv[i], "--rack")) rack = true;
         else if (!strcmp(argv[i], "--mobile") && !tier_forced) tier = TIER_LOW;
     }
 
@@ -204,7 +205,7 @@ int main(int argc, char **argv) {
     G.auto_orbit = !still;
     G.governor_on = !tier_forced;
 
-    if (hero_only) { test_scene_set_showcase(true); G.cam_dist = 4.4f; G.cam_pitch = 0.04f; G.cam_yaw = 0.35f; }
+    if (hero_only) { test_scene_set_showcase(true); test_scene_set_rack(rack); G.cam_dist = rack ? 7.5f : 4.4f; G.cam_pitch = rack ? 0.25f : 0.04f; G.cam_yaw = rack ? 0.0f : 0.35f; }
     proc_init();
     renderer_init(GetScreenWidth(), GetScreenHeight(), tier, look);
     platform_report_state("title");

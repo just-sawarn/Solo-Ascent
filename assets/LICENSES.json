@@ -1,0 +1,10 @@
+{
+  "assets/models/weapons": {
+    "name": "Low poly medieval weapons",
+    "author": "Quaternius",
+    "license": "CC0-1.0",
+    "source": "https://opengameart.org/content/low-poly-medieval-weapons",
+    "retrieved": "2026-10-09",
+    "modifications": "OBJ n-gons triangulated (tools/triangulate_obj.py)"
+  }
+}

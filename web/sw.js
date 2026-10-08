@@ -1,6 +1,6 @@
 /* Service worker: cache-first for the versioned core build, network-first for the HTML page. */
 const VERSION = 'sa-core-v1';
-const CORE = ['./', 'index.html', 'index.js', 'index.wasm', 'glue.js', 'game.css', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
+const CORE = ['./', 'index.html', 'index.js', 'index.wasm', 'index.data', 'glue.js', 'game.css', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));

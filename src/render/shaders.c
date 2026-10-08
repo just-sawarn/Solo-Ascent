@@ -24,15 +24,18 @@ const char *SH_VS_MESH = "";
 const char *SH_VS_TOON =
 "in vec3 vertexPosition;\n"
 "in vec3 vertexNormal;\n"
+"in vec2 vertexTexCoord;\n"
 "uniform mat4 mvp;\n"
 "uniform mat4 matModel;\n"
 "uniform mat4 matNormal;\n"
 "uniform mat4 uLightVP;\n"
+"out vec2 vUv;\n"
 "out vec3 vWorld;\n"
 "out vec3 vNormal;\n"
 "out vec4 vLight;\n"
 "void main(){\n"
 "  vec4 w = matModel * vec4(vertexPosition, 1.0);\n"
+"  vUv = vertexTexCoord;\n"
 "  vWorld = w.xyz;\n"
 "  vNormal = normalize(mat3(matNormal) * vertexNormal);\n"
 "  vLight = uLightVP * w;\n"
@@ -40,10 +43,12 @@ const char *SH_VS_TOON =
 "}\n";
 
 const char *SH_FS_TOON =
+"in vec2 vUv;\n"
 "in vec3 vWorld;\n"
 "in vec3 vNormal;\n"
 "in vec4 vLight;\n"
 "out vec4 finalColor;\n"
+"uniform sampler2D texture0;\n"
 "uniform vec4 colDiffuse;\n"
 "uniform vec3 viewPos;\n"
 "uniform vec3 uLightDir;\n"   /* direction TO the light */
@@ -83,7 +88,7 @@ const char *SH_FS_TOON =
 "  if (!gl_FrontFacing) N = -N;\n"
 "  vec3 V = normalize(viewPos - vWorld);\n"
 "  vec3 L = normalize(uLightDir);\n"
-"  vec3 base = pow(colDiffuse.rgb, vec3(2.2));\n"
+"  vec3 base = pow(colDiffuse.rgb * texture(texture0, vUv).rgb, vec3(2.2));\n"
 "  if ((fl & 1) != 0) {\n"                     /* stylized stone-tile ground */
 "    vec2 g = vWorld.xz / 3.0;\n"
 "    vec2 f = abs(fract(g - 0.5) - 0.5) / fwidth(g);\n"

@@ -364,6 +364,7 @@ static void run_scene_pass(void) {
         um[0] = c->mat.rim; um[1] = c->mat.spec; um[2] = c->mat.emissive; um[3] = (float)fl;
         SetShaderValue(r.toon, loc(r.toon, "uMat"), um, SHADER_UNIFORM_VEC4);
         m.maps[MATERIAL_MAP_DIFFUSE].color = c->mat.base;
+        m.maps[MATERIAL_MAP_DIFFUSE].texture = c->mat.tex.id ? c->mat.tex : r.white;
         DrawMesh(*c->mesh, m, c->xf);
     }
     if (T->outlines) {

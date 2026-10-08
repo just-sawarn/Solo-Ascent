@@ -33,6 +33,7 @@ typedef struct {
     float emissive;  /* 0..1: unlit glow, feeds bloom */
     float smooth;    /* outline direction blend toward radial (0 for smooth meshes, ~0.8 for cubes) */
     uint8_t flags;
+    Texture2D tex;   /* optional albedo (palette) texture; id 0 = none */
 } RenderMat;
 
 #define LOOK_COUNT 3

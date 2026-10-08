@@ -1,9 +1,32 @@
 #include "render/procmodels.h"
 #include <math.h>
 #include <raymath.h>
+#include "core/log.h"
 
 static Mesh M_SPHERE, M_CYL, M_CONE, M_CUBE, M_TORUS, M_PLANE;
 static bool g_ready;
+
+typedef struct {
+    const char *file, *tex;
+    int axis_sign;     /* +1: tip toward +Z in the OBJ, -1: toward -Z */
+    float grip_z;      /* position of the grip along Z in the OBJ */
+    float z_min, z_max;
+    Model model;
+    Texture2D palette;
+    bool ok;
+} WeaponDef;
+
+/* Orientations measured from the OBJ bounds: blades run along Z. */
+static WeaponDef WEAPONS[WEAPON_COUNT] = {
+    [WEAPON_DAGGER] = {.file = "Dagger.obj", .tex = "SwordTexture.png", .axis_sign = -1, .grip_z = 0.35f, .z_min = -1.16f, .z_max = 0.98f},
+    [WEAPON_SHORT_SWORD] = {.file = "ShortSword.obj", .tex = "SwordTexture.png", .axis_sign = -1, .grip_z = 0.65f, .z_min = -2.18f, .z_max = 1.28f},
+    [WEAPON_LONG_SWORD] = {.file = "LongSword.obj", .tex = "SwordTexture.png", .axis_sign = -1, .grip_z = 0.65f, .z_min = -3.69f, .z_max = 1.28f},
+    [WEAPON_KATANA] = {.file = "Katana.obj", .tex = "KatanaTexture.png", .axis_sign = +1, .grip_z = 0.0f, .z_min = -1.01f, .z_max = 3.33f},
+    [WEAPON_AXE] = {.file = "SimpleAxe.obj", .tex = "SimpleAxeTexture.png", .axis_sign = +1, .grip_z = 0.0f, .z_min = -2.03f, .z_max = 1.11f},
+    [WEAPON_CLUB] = {.file = "Club.obj", .tex = "ClubTexture.png", .axis_sign = +1, .grip_z = 0.0f, .z_min = -0.46f, .z_max = 3.00f},
+    [WEAPON_SPEAR] = {.file = "Spear.obj", .tex = "SpearTexture.png", .axis_sign = +1, .grip_z = 0.0f, .z_min = -2.12f, .z_max = 3.02f},
+};
+
 
 void proc_init(void) {
     M_SPHERE = GenMeshSphere(1.0f, 14, 20);
@@ -12,6 +35,14 @@ void proc_init(void) {
     M_CUBE = GenMeshCube(1.0f, 1.0f, 1.0f);
     M_TORUS = GenMeshTorus(0.12f, 1.0f, 8, 28);
     M_PLANE = GenMeshPlane(1.0f, 1.0f, 1, 1);
+    for (int i = 0; i < WEAPON_COUNT; ++i) {
+        WeaponDef *w = &WEAPONS[i];
+        w->model = LoadModel(TextFormat("assets/weapons/%s", w->file));
+        w->palette = LoadTexture(TextFormat("assets/weapons/%s", w->tex));
+        w->ok = w->model.meshCount > 0 && w->palette.id != 0;
+        if (w->ok) SetTextureFilter(w->palette, TEXTURE_FILTER_POINT);
+        else LOGE("weapon %s failed to load", w->file);
+    }
     g_ready = true;
 }
 
@@ -19,6 +50,7 @@ void proc_shutdown(void) {
     if (!g_ready) return;
     UnloadMesh(M_SPHERE); UnloadMesh(M_CYL); UnloadMesh(M_CONE);
     UnloadMesh(M_CUBE); UnloadMesh(M_TORUS); UnloadMesh(M_PLANE);
+    for (int i = 0; i < WEAPON_COUNT; ++i) { if (WEAPONS[i].ok) { UnloadModel(WEAPONS[i].model); UnloadTexture(WEAPONS[i].palette); } }
     g_ready = false;
 }
 
@@ -201,14 +233,11 @@ static void build_kael(const Rig *g, const CharDesc *c, float t) {
     P(M_CYL, limb(shL, elL, 0.050f, 0.050f), cm);
     P(M_TORUS, local(0.052f, 0.052f, 0.052f, 0, 0, 0, elL.x, elL.y, elL.z), mat(navy_lt, 0.4f, 1, 0, RM_NO_OUTLINE));
     P(M_CYL, limb(elL, haL, 0.040f, 0.040f), matb(skin));
-    /* Dawnbrand (Lv1): plain steel blade, reverse grip, thin Ascendant-gold glow along the edge */
-    Vector3 gr0 = {haR.x + 0.012f, haR.y + 0.07f, haR.z - 0.01f}, gr1 = {haR.x - 0.012f, haR.y - 0.07f, haR.z + 0.01f};
+    /* Dawnbrand (Lv1): CC0 short sword, reverse grip, tip pointing down and outward */
     Vector3 tip = {haR.x - 0.14f, haR.y - 0.62f, haR.z + 0.10f};
-    P(M_CYL, limb(gr0, gr1, 0.020f, 0.020f), matb((Color){40, 36, 44, 255}));
-    P(M_CUBE, local(0.13f, 0.022f, 0.030f, 0, 0, 0.22f, gr1.x, gr1.y, gr1.z), mat(c->trim, 1.4f, 1.0f, 0.15f, 0));
-    P(M_CONE, limb(gr1, tip, 0.036f, 0.010f), mat((Color){140, 154, 188, 255}, 1.6f, 1.2f, 0.0f, 0));
-    P(M_CONE, limb((Vector3){gr1.x, gr1.y - 0.02f, gr1.z}, (Vector3){tip.x + 0.004f, tip.y + 0.03f, tip.z}, 0.012f, 0.014f),
-      mat((Color){255, 214, 120, 255}, 0, 0, 0.9f, RM_NO_OUTLINE | RM_NO_SHADOW_CAST));
+    Vector3 gdir = Vector3Normalize(Vector3Subtract(tip, haR));
+    Matrix wm = limb((Vector3){haR.x, haR.y + 0.02f, haR.z}, (Vector3){haR.x + gdir.x, haR.y + 0.02f + gdir.y, haR.z + gdir.z}, 1.0f, 1.0f);
+    proc_submit_weapon(WEAPON_SHORT_SWORD, MatrixMultiply(wm, g->root), 0.78f);
 #undef P
 }
 
@@ -334,4 +363,19 @@ void proc_submit_arch(Vector3 p, float yaw, Color c) {
     renderer_submit(&M_CUBE, MatrixMultiply(MatrixMultiply(MatrixScale(0.9f, 5.0f, 0.9f), MatrixTranslate(-2.2f, 2.5f, 0)), rt), matbox(c));
     renderer_submit(&M_CUBE, MatrixMultiply(MatrixMultiply(MatrixScale(0.9f, 3.4f, 0.9f), MatrixTranslate(2.2f, 1.7f, 0)), rt), matbox(c));
     renderer_submit(&M_CUBE, MatrixMultiply(MatrixMultiply(MatrixScale(5.8f, 0.8f, 1.1f), MatrixTranslate(0, 5.3f, 0)), rt), matbox(c));
+}
+
+void proc_submit_weapon(WeaponId id, Matrix grip_to_tip, float length_m) {
+    WeaponDef *w = &WEAPONS[id];
+    if (!w->ok) return;
+    /* OBJ axes: blade along Z (axe/spear/club: see bounds). Map: grip -> origin, tip direction -> +Y, scale to length. */
+    float len = w->z_max - w->z_min;
+    float s = length_m / len;
+    Matrix fit = MatrixTranslate(0, 0, -w->grip_z);
+    /* rotate so that the tip axis (+/-Z) becomes +Y */
+    Matrix rot = w->axis_sign > 0 ? MatrixRotateX(-1.5707963f) : MatrixRotateX(1.5707963f);
+    Matrix local = MatrixMultiply(MatrixMultiply(fit, MatrixScale(s, s, s)), rot);
+    RenderMat m = {.base = (Color){196, 208, 232, 255}, .spec = 1.5f, .rim = 1.0f, .emissive = 0, .smooth = 0.3f, .flags = 0, .tex = w->palette};
+    for (int i = 0; i < w->model.meshCount; ++i)
+        renderer_submit(&w->model.meshes[i], MatrixMultiply(local, grip_to_tip), m);
 }
