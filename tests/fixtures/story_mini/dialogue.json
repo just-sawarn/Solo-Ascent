@@ -1,0 +1,205 @@
+{
+ "trees": [
+  {
+   "id": "greet.hanna",
+   "entries": [
+    {
+     "if": [
+      "mq >= 2"
+     ],
+     "node": "hanna.late"
+    },
+    {
+     "if": [],
+     "node": "hanna.early"
+    }
+   ]
+  },
+  {
+   "id": "greet.pip",
+   "entries": [
+    {
+     "if": [],
+     "node": "pip.hi"
+    }
+   ]
+  },
+  {
+   "id": "offer.mq2",
+   "entries": [
+    {
+     "if": [],
+     "node": "o2.1"
+    }
+   ]
+  },
+  {
+   "id": "prog.mq2",
+   "entries": [
+    {
+     "if": [],
+     "node": "p2.1"
+    }
+   ]
+  },
+  {
+   "id": "done.mq2",
+   "entries": [
+    {
+     "if": [],
+     "node": "d2.1"
+    }
+   ]
+  },
+  {
+   "id": "offer.sq1",
+   "entries": [
+    {
+     "if": [],
+     "node": "os.1"
+    }
+   ]
+  },
+  {
+   "id": "prog.sq1",
+   "entries": [
+    {
+     "if": [],
+     "node": "ps.1"
+    }
+   ]
+  },
+  {
+   "id": "done.sq1",
+   "entries": [
+    {
+     "if": [],
+     "node": "ds.1"
+    }
+   ]
+  }
+ ],
+ "nodes": [
+  {
+   "id": "hanna.early",
+   "speaker": "hanna",
+   "text": "hanna.greet.early",
+   "next": ""
+  },
+  {
+   "id": "hanna.late",
+   "speaker": "hanna",
+   "text": "hanna.greet.late",
+   "next": ""
+  },
+  {
+   "id": "pip.hi",
+   "speaker": "pip",
+   "text": "pip.hi",
+   "next": "pip.menu"
+  },
+  {
+   "id": "pip.menu",
+   "speaker": "pip",
+   "text": "pip.ask",
+   "choices": [
+    {
+     "text": "pip.ask2",
+     "next": "pip.sec",
+     "if": [
+      "bond.bram >= 1"
+     ]
+    },
+    {
+     "text": "pip.leave",
+     "next": ""
+    }
+   ]
+  },
+  {
+   "id": "pip.sec",
+   "speaker": "pip",
+   "text": "pip.secret",
+   "next": "pip.skip"
+  },
+  {
+   "id": "pip.skip",
+   "speaker": "narrator",
+   "text": "narr",
+   "if": [
+    "flag.never"
+   ],
+   "next": ""
+  },
+  {
+   "id": "o2.1",
+   "speaker": "hanna",
+   "text": "hanna.offer",
+   "choices": [
+    {
+     "text": "hanna.yes",
+     "do": [
+      "quest.start:MQ02"
+     ],
+     "next": "o2.2"
+    },
+    {
+     "text": "hanna.no",
+     "next": ""
+    }
+   ]
+  },
+  {
+   "id": "o2.2",
+   "speaker": "hanna",
+   "text": "hanna.thanks",
+   "next": ""
+  },
+  {
+   "id": "p2.1",
+   "speaker": "hanna",
+   "text": "hanna.thanks",
+   "next": ""
+  },
+  {
+   "id": "d2.1",
+   "speaker": "hanna",
+   "text": "hanna.done",
+   "do": [
+    "quest.complete:MQ02",
+    "flag.set:hanna_thanked:3",
+    "bond.add:lyra:2"
+   ],
+   "next": ""
+  },
+  {
+   "id": "os.1",
+   "speaker": "pip",
+   "text": "pip.offer",
+   "choices": [
+    {
+     "text": "pip.accept",
+     "do": [
+      "quest.start:SQ01"
+     ],
+     "next": ""
+    }
+   ]
+  },
+  {
+   "id": "ps.1",
+   "speaker": "pip",
+   "text": "pip.prog",
+   "next": ""
+  },
+  {
+   "id": "ds.1",
+   "speaker": "pip",
+   "text": "pip.done",
+   "do": [
+    "quest.complete:SQ01"
+   ],
+   "next": ""
+  }
+ ]
+}

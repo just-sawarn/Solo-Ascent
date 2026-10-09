@@ -35,12 +35,12 @@ typedef struct {
     float speed, aggro_range, leash, poise, preferred_range, scale;
     AiBehavior behavior;
     int skills[4], nskills;
-    int xp;
+    int xp; bool boss;
     float resist[EL_COUNT];
     unsigned char paint[3][3], eye[3];
 } EnemyDef;
 
-#define DB_MAX_ENEMIES 32
+#define DB_MAX_ENEMIES 64
 typedef struct { EnemyDef e[DB_MAX_ENEMIES]; int n; } EnemyDB;
 
 bool skilldb_load(SkillDB *db, const char *path);

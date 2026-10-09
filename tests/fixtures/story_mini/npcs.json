@@ -1,0 +1,59 @@
+{
+ "npcs": [
+  {
+   "id": "hanna",
+   "name": "Hanna",
+   "region": "aurelheim",
+   "role": "guildmaster",
+   "archetype": "guild",
+   "personality": "npc.hanna.personality",
+   "tree": "greet.hanna",
+   "sex": 1,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 1,
+     "z": 1
+    },
+    {
+     "place": "work",
+     "x": 2,
+     "z": 2
+    },
+    {
+     "place": "tavern",
+     "x": 3,
+     "z": 3
+    }
+   ],
+   "required": true
+  },
+  {
+   "id": "pip",
+   "name": "Pip",
+   "region": "aurelheim",
+   "role": "clerk",
+   "archetype": "guild",
+   "personality": "npc.pip.personality",
+   "tree": "greet.pip",
+   "sex": 0,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 1,
+     "z": 1
+    },
+    {
+     "place": "work",
+     "x": 2,
+     "z": 2
+    },
+    {
+     "place": "tavern",
+     "x": 3,
+     "z": 3
+    }
+   ]
+  }
+ ]
+}

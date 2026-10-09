@@ -52,7 +52,7 @@ try {
   await page.waitForTimeout(600);
   const p0 = await pl();
   check(p0 && p0.grounded && Math.abs(p0.y) < 0.01, 'player grounded at spawn');
-  await page.keyboard.down('w'); await page.waitForTimeout(1500);
+  await page.keyboard.down('w'); await page.waitForTimeout(2600);
   const p1 = await pl();
   await page.keyboard.up('w');
   check(Math.hypot(p1.x - p0.x, p1.z - p0.z) > 2.0, `player moved with W (${Math.hypot(p1.x - p0.x, p1.z - p0.z).toFixed(1)} m)`);
@@ -69,7 +69,7 @@ try {
   await page.waitForTimeout(2500);
   const pf = await party();
   check(pf && pf.followerDist < 14, `companions keep up with the leader (${pf.followerDist.toFixed(1)} m)`);
-  const hold = async (k, ms = 700) => { await page.keyboard.down(k); await page.waitForTimeout(ms); await page.keyboard.up(k); await page.waitForTimeout(300); };
+  const hold = async (k, ms = 1100) => { await page.keyboard.down(k); await page.waitForTimeout(ms); await page.keyboard.up(k); await page.waitForTimeout(300); };
   const cmd0 = (await party()).command;
   await hold('b');
   check((await party()).command === (cmd0 + 1) % 3, 'B cycles the party command');
@@ -90,6 +90,21 @@ try {
   check(Math.hypot(pz1.x - pz0.x, pz1.z - pz0.z) < 0.05, 'the game is paused while the menu is open');
   await page.keyboard.down('Escape'); await page.waitForTimeout(700); await page.keyboard.up('Escape'); await page.waitForTimeout(400);
   check(!(await page.evaluate(() => window.__sa.inventory.menu)), 'Esc closes the menu');
+
+  // story: NPCs spawned, a main quest is active and tracked, K (dev skip) advances it
+  const st0 = await page.evaluate(() => window.__sa.story);
+  check(st0 && st0.npcs >= 5, `NPCs populate the town (${st0 && st0.npcs})`);
+  check(st0 && st0.active >= 1 && st0.tracked >= 0, `a quest is active (${st0 && st0.active} active)`);
+  await page.keyboard.down('F3'); await page.waitForTimeout(300); await page.keyboard.up('F3'); await page.waitForTimeout(300);
+  await page.keyboard.down('k'); await page.waitForTimeout(900); await page.keyboard.up('k'); await page.waitForTimeout(1200);
+  await page.keyboard.down('F3'); await page.waitForTimeout(300); await page.keyboard.up('F3'); await page.waitForTimeout(300);
+  const st1 = await page.evaluate(() => window.__sa.story);
+  check(st1.completed > st0.completed || st1.mq !== st0.mq || st1.active !== st0.active || st1.act !== st0.act, 'K dev-skip (overlay) advances the quest state');
+  // completing a quest can open a cutscene; Esc must always be able to skip it
+  for (let i = 0; i < 4 && (await page.evaluate(() => window.__sa.story.dialogue)); ++i) {
+    await page.keyboard.down('Escape'); await page.waitForTimeout(700); await page.keyboard.up('Escape'); await page.waitForTimeout(500);
+  }
+  check(!(await page.evaluate(() => window.__sa.story.dialogue)), 'Esc skips any cutscene/dialogue');
 
   // hold a movement key, toggle the debug overlay, then measure frame times
   await page.keyboard.down('F3'); await page.waitForTimeout(200); await page.keyboard.up('F3');

@@ -1,0 +1,143 @@
+{
+ "quests": [
+  {
+   "id": "MQ01",
+   "type": "main",
+   "act": 1,
+   "number": 1,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "aurelheim",
+   "auto_start": true,
+   "title": "q.mq1.title",
+   "summary": "q.mq1.sum",
+   "objectives": [
+    {
+     "kind": "flag",
+     "target": "awakened",
+     "count": 1,
+     "text": "q.mq1.o"
+    }
+   ],
+   "rewards": {
+    "xp": 50,
+    "gold": 10,
+    "items": [
+     {
+      "item": "hp_small",
+      "qty": 2
+     }
+    ],
+    "bond": [
+     {
+      "name": "bram",
+      "n": 1
+     }
+    ],
+    "rep": {
+     "region": "aurelheim",
+     "n": 3
+    }
+   },
+   "on_complete": [
+    "flag.set:mq1_seen"
+   ]
+  },
+  {
+   "id": "MQ02",
+   "type": "main",
+   "act": 1,
+   "number": 2,
+   "giver": "hanna",
+   "turn_in": "hanna",
+   "region": "aurelheim",
+   "prereq": [
+    "quest.MQ01 == complete"
+   ],
+   "title": "q.mq2.title",
+   "summary": "q.mq2.sum",
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "shadow_soldier",
+     "count": 2,
+     "text": "q.mq2.o",
+     "marker": "plaza"
+    },
+    {
+     "kind": "talk",
+     "target": "hanna",
+     "count": 1,
+     "text": "q.mq2.o2"
+    }
+   ],
+   "rewards": {
+    "xp": 100,
+    "gold": 50
+   },
+   "offer_tree": "offer.mq2",
+   "progress_tree": "prog.mq2",
+   "complete_tree": "done.mq2"
+  },
+  {
+   "id": "SQ01",
+   "type": "side",
+   "act": 1,
+   "giver": "pip",
+   "turn_in": "pip",
+   "region": "aurelheim",
+   "prereq": [
+    "act >= 1",
+    "mq >= 1"
+   ],
+   "title": "q.sq1.title",
+   "summary": "q.sq1.sum",
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "hp_small",
+     "count": 3,
+     "text": "q.sq1.o"
+    }
+   ],
+   "rewards": {
+    "gold": 30,
+    "skills": [
+     {
+      "member": "kael",
+      "skill": "focus_strike"
+     }
+    ]
+   },
+   "offer_tree": "offer.sq1",
+   "progress_tree": "prog.sq1",
+   "complete_tree": "done.sq1"
+  },
+  {
+   "id": "BQ01",
+   "type": "bounty",
+   "act": 1,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "aurelheim",
+   "repeatable": true,
+   "auto_start": true,
+   "prereq": [
+    "flag.bounties_open"
+   ],
+   "title": "q.b1.title",
+   "summary": "q.b1.sum",
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "*",
+     "count": 2,
+     "text": "q.b1.o"
+    }
+   ],
+   "rewards": {
+    "gold": 5
+   }
+  }
+ ]
+}

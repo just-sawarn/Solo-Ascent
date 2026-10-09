@@ -55,7 +55,16 @@ void platform_report_inventory(int gold, int item_count, int menu_open, float at
         s["inventory"] = o;
     }, gold, item_count, menu_open, atk_kael);
 }
+void platform_report_story(int mq, int act, int npcs, int dialogue_open, int active_quests, int tracked, int completed) {
+    EM_ASM({
+        var s = (window["__sa"] = window["__sa"] || {});
+        var o = {};
+        o["mq"] = $0; o["act"] = $1; o["npcs"] = $2; o["dialogue"] = !!$3; o["active"] = $4; o["tracked"] = $5; o["completed"] = $6;
+        s["story"] = o;
+    }, mq, act, npcs, dialogue_open, active_quests, tracked, completed);
+}
 #else
+void platform_report_story(int a, int b, int c, int d, int e, int f, int h) { (void)a; (void)b; (void)c; (void)d; (void)e; (void)f; (void)h; }
 void platform_report_inventory(int a, int b, int c, float d) { (void)a; (void)b; (void)c; (void)d; }
 void platform_report_party(int a, int b, int c, float d, float e, float f, float g, float h) { (void)a; (void)b; (void)c; (void)d; (void)e; (void)f; (void)g; (void)h; }
 void platform_report_combat(int a, float b, float c, int d, float e) { (void)a; (void)b; (void)c; (void)d; (void)e; }

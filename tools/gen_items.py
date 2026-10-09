@@ -26,7 +26,7 @@ def price(base, rarity):
 
 # ---------------- weapons ----------------
 W_ATK = [6, 12, 20, 30, 42, 56]; W_MATK = [9, 17, 28, 40, 55, 72]
-HERO_N = ["Ironbrand", "Briarblade", "Sunglass Saber", "Rimeblade", "Emberedge", "Dawnreaver"]
+HERO_N = ["Dawnbrand", "Briarblade", "Sunglass Saber", "Rimeblade", "Emberedge", "Dawnreaver"]
 HERO_M = ["short_sword", "short_sword", "long_sword", "long_sword", "katana", "katana"]
 TANK_N = ["Iron Bulwark", "Heartwood Aegis", "Sunbronze Ward", "Rimeguard", "Cinder Bastion", "Hollow Ward"]
 MAGE_N = ["Hedge Staff", "Moonpetal Staff", "Sandglass Staff", "Rime Spire", "Ember Scepter", "Void Spire"]
@@ -144,6 +144,11 @@ for i, n, r, b, d in [("coal", "Coal", "common", 6, "Fuel for the forge."), ("li
                       ("polished_gem", "Polished Gem", "rare", 120, "For fine settings.")]:
     mat(i, n, r, b, d)
 
+# ---------------- quest items ----------------
+for i, n, d in [("pip_ledger", "Guild Rank-Up Ledger", "Pip's very important, very leather-bound ledger."), ("lyra_notes", "Charred Research Page", "A page of Lyra's research, singed at the edges."),
+                ("lost_tome_page", "Lost Grimoire Page", "A page that hums faintly in your hand.")]:
+    add(id=i, name=n, type="key", rarity="uncommon", stack=20, desc=d)
+
 # ---------------- tomes and key items ----------------
 for i, n, skill, role, lv in [("tome_focus_strike", "Tome: Focus Strike", "focus_strike", "hero", 5), ("tome_wind_cutter", "Tome: Wind Cutter", "wind_cutter", "hero", 8), ("tome_fireball", "Tome: Fireball", "fireball", "mage", 3),
                               ("tome_starfall", "Tome: Starfall", "starfall", "mage", 18), ("tome_sanctuary", "Tome: Sanctuary", "sanctuary", "healer", 10), ("tome_radiant", "Tome: Radiant Renewal", "radiant_renewal", "healer", 20),
@@ -225,6 +230,24 @@ json.dump({"shops": shops}, open(os.path.join(out, "shops.json"), "w"), indent=1
 loot = [
     {"enemy": "shadow_soldier", "gold": [8, 18], "drops": [{"item": "shadow_residue", "chance": 0.45, "qty": [1, 2]}, {"item": "iron_ore", "chance": 0.30, "qty": [1, 2]}, {"item": "hp_small", "chance": 0.20, "qty": [1, 1]}, {"item": "spark_dust", "chance": 0.08, "qty": [1, 1]}, {"item": "acc_lucky_coin", "chance": 0.01, "qty": [1, 1]}]},
     {"enemy": "shadow_archer", "gold": [12, 26], "drops": [{"item": "shadow_residue", "chance": 0.50, "qty": [1, 2]}, {"item": "linen_thread", "chance": 0.30, "qty": [1, 3]}, {"item": "mp_small", "chance": 0.20, "qty": [1, 1]}, {"item": "wolf_pelt", "chance": 0.20, "qty": [1, 1]}, {"item": "acc_swift_anklet", "chance": 0.02, "qty": [1, 1]}]},
+    {"enemy": "bandit_thug", "gold": [6, 16], "drops": [{"item": "pip_ledger", "chance": 0.35, "qty": [1, 1]}, {"item": "hp_small", "chance": 0.2, "qty": [1, 1]}, {"item": "iron_ore", "chance": 0.25, "qty": [1, 2]}]},
+    {"enemy": "goblin_grunt", "gold": [4, 10], "drops": [{"item": "goblin_ear", "chance": 0.6, "qty": [1, 1]}, {"item": "iron_ore", "chance": 0.3, "qty": [1, 2]}, {"item": "coal", "chance": 0.3, "qty": [1, 2]}]},
+    {"enemy": "wolf", "gold": [0, 4], "drops": [{"item": "wolf_pelt", "chance": 0.5, "qty": [1, 1]}, {"item": "meadow_herb", "chance": 0.15, "qty": [1, 1]}]},
+    {"enemy": "rootling", "gold": [6, 14], "drops": [{"item": "dryad_bark", "chance": 0.4, "qty": [1, 2]}, {"item": "lost_tome_page", "chance": 0.22, "qty": [1, 1]}, {"item": "moonpetal", "chance": 0.2, "qty": [1, 1]}]},
+    {"enemy": "thorn_minion", "gold": [8, 18], "drops": [{"item": "dryad_bark", "chance": 0.4, "qty": [1, 2]}, {"item": "lost_tome_page", "chance": 0.2, "qty": [1, 1]}, {"item": "life_essence", "chance": 0.1, "qty": [1, 1]}]},
+    {"enemy": "cult_acolyte", "gold": [10, 24], "drops": [{"item": "lyra_notes", "chance": 0.3, "qty": [1, 1]}, {"item": "shadow_residue", "chance": 0.4, "qty": [1, 2]}]},
+    {"enemy": "cult_zealot", "gold": [10, 24], "drops": [{"item": "shadow_residue", "chance": 0.5, "qty": [1, 2]}, {"item": "lyra_notes", "chance": 0.12, "qty": [1, 1]}, {"item": "mp_small", "chance": 0.2, "qty": [1, 1]}]},
+    {"enemy": "scorpion", "gold": [8, 18], "drops": [{"item": "scorpion_chitin", "chance": 0.5, "qty": [1, 2]}, {"item": "desert_bloom", "chance": 0.12, "qty": [1, 1]}]},
+    {"enemy": "sand_serpent", "gold": [10, 22], "drops": [{"item": "scorpion_chitin", "chance": 0.25, "qty": [1, 1]}, {"item": "time_sand", "chance": 0.06, "qty": [1, 1]}]},
+    {"enemy": "tomb_wraith", "gold": [12, 26], "drops": [{"item": "time_sand", "chance": 0.35, "qty": [1, 1]}, {"item": "spice_blend", "chance": 0.12, "qty": [1, 1]}]},
+    {"enemy": "caravan_raider", "gold": [12, 28], "drops": [{"item": "spice_blend", "chance": 0.2, "qty": [1, 1]}, {"item": "hp_medium", "chance": 0.25, "qty": [1, 1]}, {"item": "sun_bronze", "chance": 0.15, "qty": [1, 1]}]},
+    {"enemy": "frost_wolf", "gold": [10, 22], "drops": [{"item": "yeti_fur", "chance": 0.5, "qty": [1, 1]}, {"item": "frostcap", "chance": 0.12, "qty": [1, 1]}]},
+    {"enemy": "ice_wraith", "gold": [14, 30], "drops": [{"item": "spirit_shard", "chance": 0.3, "qty": [1, 1]}, {"item": "frostcap", "chance": 0.2, "qty": [1, 2]}]},
+    {"enemy": "choir_husk", "gold": [14, 30], "drops": [{"item": "spirit_shard", "chance": 0.25, "qty": [1, 1]}, {"item": "frost_silver", "chance": 0.15, "qty": [1, 1]}]},
+    {"enemy": "magma_golem", "gold": [30, 60], "drops": [{"item": "magma_scale", "chance": 0.6, "qty": [1, 2]}, {"item": "ember_steel", "chance": 0.4, "qty": [1, 2]}, {"item": "coal", "chance": 0.6, "qty": [2, 4]}]},
+    {"enemy": "ember_imp", "gold": [14, 30], "drops": [{"item": "coal", "chance": 0.5, "qty": [1, 3]}, {"item": "flame_core", "chance": 0.07, "qty": [1, 1]}, {"item": "lava_fish_raw", "chance": 0.08, "qty": [1, 1]}]},
+    {"enemy": "demon_legionary", "gold": [20, 44], "drops": [{"item": "shadow_residue", "chance": 0.5, "qty": [1, 3]}, {"item": "void_crystal", "chance": 0.08, "qty": [1, 1]}, {"item": "hp_grand", "chance": 0.1, "qty": [1, 1]}]},
+    {"enemy": "greywall_ghost", "gold": [8, 20], "drops": [{"item": "spark_dust", "chance": 0.2, "qty": [1, 1]}, {"item": "iron_ore", "chance": 0.3, "qty": [1, 2]}]},
     {"enemy": "shadow_brute", "gold": [40, 80], "drops": [{"item": "shadow_residue", "chance": 0.80, "qty": [2, 4]}, {"item": "iron_ore", "chance": 0.60, "qty": [2, 4]}, {"item": "hp_medium", "chance": 0.40, "qty": [1, 2]}, {"item": "spark_dust", "chance": 0.30, "qty": [1, 2]}, {"item": "w_hero_dagger_t2", "chance": 0.04, "qty": [1, 1]}, {"item": "acc_oath_knot", "chance": 0.03, "qty": [1, 1]}]},
 ]
 json.dump({"loot": loot}, open(os.path.join(out, "loot.json"), "w"), indent=1)

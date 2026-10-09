@@ -32,7 +32,9 @@ First time: `cd tools && npm install && npx playwright install chromium`.
 | Dodge roll (i-frames) | Q or right-click | B | ROLL |
 | Lock on | Tab or middle-click | Y / R3 | LOCK |
 | Debug overlay | F3 (or a three-finger tap); G god mode, K quest skip | | |
-| Menu (items, gear, craft, smith, shop) | I | | MENU |
+| Menu (items, gear, craft, smith, shop, journal, map) | I (items) / M (map) | | MENU |
+| Talk to a nearby NPC / advance dialogue | F, Enter, click; 1-4 pick a reply; Esc skips cutscenes | dpad down | TALK (appears near an NPC) |
+| Dev: skip quest / next time slot / cycle region | K (overlay on) / N / F6 | | |
 | Quick use: HP potion / MP potion / revive / cleanse | Z / X / C / V | | |
 | Look / quality | L cycles the look, `[` `]` change quality tier | | |
 

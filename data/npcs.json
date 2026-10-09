@@ -1,0 +1,4026 @@
+{
+ "npcs": [
+  {
+   "id": "orwyn",
+   "name": "Elder Orwyn",
+   "region": "ashbrook",
+   "role": "mentor",
+   "archetype": "sage",
+   "personality": "npc.orwyn.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.orwyn",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    200,
+    200,
+    205
+   ],
+   "top": [
+    96,
+    84,
+    120
+   ],
+   "bottom": [
+    70,
+    60,
+    90
+   ],
+   "shoes": [
+    80,
+    60,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 1,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": 4,
+     "z": 16
+    },
+    {
+     "place": "home",
+     "x": 1,
+     "z": 37
+    }
+   ],
+   "visible_if": [
+    "quest.MQ03 != complete"
+   ]
+  },
+  {
+   "id": "tilly",
+   "name": "Tilly Brooke",
+   "region": "ashbrook",
+   "role": "friend",
+   "archetype": "villager",
+   "personality": "npc.tilly.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.tilly",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    150,
+    96,
+    60
+   ],
+   "top": [
+    180,
+    120,
+    90
+   ],
+   "bottom": [
+    110,
+    80,
+    70
+   ],
+   "shoes": [
+    80,
+    60,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -1,
+     "z": 35
+    },
+    {
+     "place": "work",
+     "x": -4,
+     "z": 18
+    },
+    {
+     "place": "home",
+     "x": -1,
+     "z": 35
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "haldor",
+   "name": "Brother Haldor",
+   "region": "ashbrook",
+   "role": "priest",
+   "archetype": "priest",
+   "personality": "npc.haldor.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.haldor",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    120,
+    120,
+    120
+   ],
+   "top": [
+    230,
+    230,
+    220
+   ],
+   "bottom": [
+    200,
+    190,
+    170
+   ],
+   "shoes": [
+    90,
+    70,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 3,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": 6,
+     "z": 14
+    },
+    {
+     "place": "home",
+     "x": 3,
+     "z": 37
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "mira",
+   "name": "Little Mira",
+   "region": "aurelheim",
+   "role": "orphan",
+   "archetype": "child",
+   "personality": "npc.mira.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.mira",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    190,
+    130,
+    70
+   ],
+   "top": [
+    210,
+    90,
+    90
+   ],
+   "bottom": [
+    90,
+    70,
+    60
+   ],
+   "shoes": [
+    70,
+    50,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 0.78,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -8,
+     "z": 32
+    },
+    {
+     "place": "work",
+     "x": -6,
+     "z": 16
+    },
+    {
+     "place": "home",
+     "x": -8,
+     "z": 32
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "hanna",
+   "name": "Guildmaster Hanna 'Iron Hanna' Ostrovsk",
+   "region": "aurelheim",
+   "role": "guildmaster",
+   "archetype": "guild",
+   "personality": "npc.hanna.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.hanna",
+   "sex": 1,
+   "hair": 1,
+   "hair_col": [
+    150,
+    150,
+    155
+   ],
+   "top": [
+    70,
+    80,
+    100
+   ],
+   "bottom": [
+    50,
+    55,
+    70
+   ],
+   "shoes": [
+    40,
+    36,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -12,
+     "z": 31
+    },
+    {
+     "place": "work",
+     "x": -12,
+     "z": 18
+    },
+    {
+     "place": "home",
+     "x": -12,
+     "z": 31
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "pip",
+   "name": "Pip Marlowe",
+   "region": "aurelheim",
+   "role": "receptionist",
+   "archetype": "guild",
+   "personality": "npc.pip.personality",
+   "shop": "guild_store",
+   "trainer": "",
+   "tree": "greet.pip",
+   "sex": 0,
+   "hair": 0,
+   "hair_col": [
+    110,
+    70,
+    40
+   ],
+   "top": [
+    190,
+    150,
+    90
+   ],
+   "bottom": [
+    90,
+    70,
+    50
+   ],
+   "shoes": [
+    60,
+    44,
+    36
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -7,
+     "z": 35
+    },
+    {
+     "place": "work",
+     "x": -10,
+     "z": 21
+    },
+    {
+     "place": "home",
+     "x": -7,
+     "z": 35
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "garrick",
+   "name": "Garrick Thorne",
+   "region": "aurelheim",
+   "role": "smith",
+   "archetype": "smith",
+   "personality": "npc.garrick.personality",
+   "shop": "garrick",
+   "trainer": "",
+   "tree": "greet.garrick",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    110,
+    60,
+    30
+   ],
+   "top": [
+    130,
+    100,
+    70
+   ],
+   "bottom": [
+    80,
+    60,
+    40
+   ],
+   "shoes": [
+    50,
+    40,
+    36
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 5,
+     "z": 34
+    },
+    {
+     "place": "work",
+     "x": 8,
+     "z": 27
+    },
+    {
+     "place": "tavern",
+     "x": -11,
+     "z": 27
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "selwyn",
+   "name": "Madame Selwyn",
+   "region": "aurelheim",
+   "role": "alchemist",
+   "archetype": "alchemist",
+   "personality": "npc.selwyn.personality",
+   "shop": "selwyn",
+   "trainer": "",
+   "tree": "greet.selwyn",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    120,
+    120,
+    140
+   ],
+   "top": [
+    110,
+    70,
+    130
+   ],
+   "bottom": [
+    70,
+    50,
+    90
+   ],
+   "shoes": [
+    60,
+    40,
+    70
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 1,
+     "z": 34
+    },
+    {
+     "place": "work",
+     "x": 4,
+     "z": 27
+    },
+    {
+     "place": "home",
+     "x": 1,
+     "z": 34
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "darius",
+   "name": "Darius Valecrest",
+   "region": "aurelheim",
+   "role": "rival",
+   "archetype": "noble",
+   "personality": "npc.darius.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.darius",
+   "sex": 0,
+   "hair": 0,
+   "hair_col": [
+    30,
+    24,
+    36
+   ],
+   "top": [
+    150,
+    40,
+    50
+   ],
+   "bottom": [
+    40,
+    32,
+    44
+   ],
+   "shoes": [
+    30,
+    24,
+    30
+   ],
+   "eye": [
+    255,
+    140,
+    60
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -11,
+     "z": 36
+    },
+    {
+     "place": "work",
+     "x": -14,
+     "z": 10
+    },
+    {
+     "place": "tavern",
+     "x": -11,
+     "z": 27
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "caldrin",
+   "name": "Archbishop Caldrin",
+   "region": "aurelheim",
+   "role": "churchman",
+   "archetype": "priest",
+   "personality": "npc.caldrin.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.caldrin",
+   "sex": 0,
+   "hair": 0,
+   "hair_col": [
+    230,
+    225,
+    220
+   ],
+   "top": [
+    245,
+    240,
+    230
+   ],
+   "bottom": [
+    210,
+    190,
+    120
+   ],
+   "shoes": [
+    150,
+    130,
+    90
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 9,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": 12,
+     "z": 22
+    },
+    {
+     "place": "home",
+     "x": 9,
+     "z": 37
+    }
+   ],
+   "visible_if": [
+    "quest.MQ20 != complete"
+   ]
+  },
+  {
+   "id": "dunmore",
+   "name": "Captain Rhea Dunmore",
+   "region": "aurelheim",
+   "role": "guard",
+   "archetype": "guard",
+   "personality": "npc.dunmore.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.dunmore",
+   "sex": 1,
+   "hair": 1,
+   "hair_col": [
+    90,
+    60,
+    40
+   ],
+   "top": [
+    90,
+    100,
+    120
+   ],
+   "bottom": [
+    60,
+    70,
+    90
+   ],
+   "shoes": [
+    50,
+    50,
+    60
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -3,
+     "z": 35
+    },
+    {
+     "place": "work",
+     "x": 0,
+     "z": 38
+    },
+    {
+     "place": "tavern",
+     "x": -13,
+     "z": 25
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "voss",
+   "name": "Dean Alaric Voss",
+   "region": "spire_academy",
+   "role": "dean",
+   "archetype": "scholar",
+   "personality": "npc.voss.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.voss",
+   "sex": 0,
+   "hair": 0,
+   "hair_col": [
+    200,
+    200,
+    210
+   ],
+   "top": [
+    60,
+    50,
+    110
+   ],
+   "bottom": [
+    40,
+    36,
+    80
+   ],
+   "shoes": [
+    40,
+    36,
+    60
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -3,
+     "z": 34
+    },
+    {
+     "place": "work",
+     "x": 0,
+     "z": 20
+    },
+    {
+     "place": "home",
+     "x": -3,
+     "z": 34
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "fenn",
+   "name": "Old Fenn",
+   "region": "whisperwood",
+   "role": "herbalist",
+   "archetype": "herbalist",
+   "personality": "npc.fenn.personality",
+   "shop": "old_fenn",
+   "trainer": "",
+   "tree": "greet.fenn",
+   "sex": 0,
+   "hair": 3,
+   "hair_col": [
+    200,
+    200,
+    200
+   ],
+   "top": [
+    90,
+    120,
+    80
+   ],
+   "bottom": [
+    70,
+    90,
+    60
+   ],
+   "shoes": [
+    80,
+    60,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -1,
+     "z": 34
+    },
+    {
+     "place": "work",
+     "x": -4,
+     "z": 18
+    },
+    {
+     "place": "home",
+     "x": -1,
+     "z": 34
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "kharim",
+   "name": "Kharim al-Sayyid",
+   "region": "qasr_amun",
+   "role": "tribal_leader",
+   "archetype": "tribal",
+   "personality": "npc.kharim.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.kharim",
+   "sex": 0,
+   "hair": 0,
+   "hair_col": [
+    30,
+    24,
+    20
+   ],
+   "top": [
+    190,
+    140,
+    60
+   ],
+   "bottom": [
+    150,
+    100,
+    40
+   ],
+   "shoes": [
+    90,
+    60,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 1,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -3,
+     "z": 35
+    },
+    {
+     "place": "work",
+     "x": 0,
+     "z": 18
+    },
+    {
+     "place": "home",
+     "x": -3,
+     "z": 35
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "zaira",
+   "name": "Zaira",
+   "region": "qasr_amun",
+   "role": "merchant",
+   "archetype": "merchant",
+   "personality": "npc.zaira.personality",
+   "shop": "zaira",
+   "trainer": "",
+   "tree": "greet.zaira",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    50,
+    30,
+    20
+   ],
+   "top": [
+    170,
+    60,
+    90
+   ],
+   "bottom": [
+    100,
+    40,
+    60
+   ],
+   "shoes": [
+    80,
+    50,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 1,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -3,
+     "z": 36
+    },
+    {
+     "place": "work",
+     "x": -6,
+     "z": 24
+    },
+    {
+     "place": "tavern",
+     "x": -8,
+     "z": 22
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "anwen",
+   "name": "Anwen the Archivist",
+   "region": "khemet_ruins",
+   "role": "scholar",
+   "archetype": "scholar",
+   "personality": "npc.anwen.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.anwen",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    200,
+    160,
+    100
+   ],
+   "top": [
+    150,
+    100,
+    60
+   ],
+   "bottom": [
+    110,
+    80,
+    50
+   ],
+   "shoes": [
+    80,
+    60,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -3,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": 0,
+     "z": 14
+    },
+    {
+     "place": "home",
+     "x": -3,
+     "z": 37
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "torvik",
+   "name": "Skald Torvik",
+   "region": "hrimvald",
+   "role": "guide",
+   "archetype": "guide",
+   "personality": "npc.torvik.personality",
+   "shop": "hrimvald",
+   "trainer": "",
+   "tree": "greet.torvik",
+   "sex": 0,
+   "hair": 0,
+   "hair_col": [
+    200,
+    200,
+    205
+   ],
+   "top": [
+    100,
+    130,
+    160
+   ],
+   "bottom": [
+    70,
+    90,
+    120
+   ],
+   "shoes": [
+    50,
+    60,
+    80
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -1,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": -4,
+     "z": 20
+    },
+    {
+     "place": "home",
+     "x": -1,
+     "z": 37
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "elowen",
+   "name": "Sister Elowen",
+   "region": "hrimvald",
+   "role": "caretaker",
+   "archetype": "priest",
+   "personality": "npc.elowen.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.elowen",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    190,
+    190,
+    200
+   ],
+   "top": [
+    200,
+    210,
+    235
+   ],
+   "bottom": [
+    150,
+    170,
+    210
+   ],
+   "shoes": [
+    110,
+    120,
+    150
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 3,
+     "z": 35
+    },
+    {
+     "place": "work",
+     "x": 6,
+     "z": 16
+    },
+    {
+     "place": "home",
+     "x": 3,
+     "z": 35
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "brandt",
+   "name": "Forgemaster Brandt Cinder",
+   "region": "emberforge",
+   "role": "forgemaster",
+   "archetype": "smith",
+   "personality": "npc.brandt.personality",
+   "shop": "brandt",
+   "trainer": "",
+   "tree": "greet.brandt",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    60,
+    50,
+    40
+   ],
+   "top": [
+    110,
+    70,
+    50
+   ],
+   "bottom": [
+    80,
+    50,
+    40
+   ],
+   "shoes": [
+    40,
+    30,
+    24
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 5,
+     "z": 35
+    },
+    {
+     "place": "work",
+     "x": 8,
+     "z": 26
+    },
+    {
+     "place": "home",
+     "x": 5,
+     "z": 35
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "ysolde",
+   "name": "Ysolde Ashfall",
+   "region": "emberforge",
+   "role": "guildleader",
+   "archetype": "miner",
+   "personality": "npc.ysolde.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.ysolde",
+   "sex": 1,
+   "hair": 1,
+   "hair_col": [
+    160,
+    160,
+    165
+   ],
+   "top": [
+    110,
+    100,
+    100
+   ],
+   "bottom": [
+    80,
+    70,
+    70
+   ],
+   "shoes": [
+    60,
+    50,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -7,
+     "z": 36
+    },
+    {
+     "place": "work",
+     "x": -10,
+     "z": 20
+    },
+    {
+     "place": "home",
+     "x": -7,
+     "z": 36
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "nox",
+   "name": "Nox",
+   "region": "front_camp",
+   "role": "informant",
+   "archetype": "broker",
+   "personality": "npc.nox.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.nox",
+   "sex": 0,
+   "hair": 3,
+   "hair_col": [
+    0,
+    0,
+    0
+   ],
+   "top": [
+    50,
+    40,
+    70
+   ],
+   "bottom": [
+    30,
+    24,
+    44
+   ],
+   "shoes": [
+    20,
+    14,
+    30
+   ],
+   "eye": [
+    190,
+    120,
+    255
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -5,
+     "z": 34
+    },
+    {
+     "place": "work",
+     "x": -8,
+     "z": 18
+    },
+    {
+     "place": "home",
+     "x": -5,
+     "z": 34
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "edda",
+   "name": "Mayor Edda",
+   "region": "qasr_amun",
+   "role": "mayor",
+   "archetype": "noble",
+   "personality": "npc.edda.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.edda",
+   "sex": 1,
+   "hair": 1,
+   "hair_col": [
+    170,
+    170,
+    175
+   ],
+   "top": [
+    120,
+    90,
+    50
+   ],
+   "bottom": [
+    90,
+    60,
+    40
+   ],
+   "shoes": [
+    70,
+    50,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 1,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -3,
+     "z": 33
+    },
+    {
+     "place": "work",
+     "x": 0,
+     "z": 22
+    },
+    {
+     "place": "home",
+     "x": -3,
+     "z": 33
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "marek",
+   "name": "Captain Marek",
+   "region": "hrimvald",
+   "role": "guard",
+   "archetype": "guard",
+   "personality": "npc.marek.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.marek",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    120,
+    100,
+    90
+   ],
+   "top": [
+    90,
+    110,
+    140
+   ],
+   "bottom": [
+    60,
+    80,
+    110
+   ],
+   "shoes": [
+    50,
+    60,
+    80
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -3,
+     "z": 36
+    },
+    {
+     "place": "work",
+     "x": -6,
+     "z": 12
+    },
+    {
+     "place": "tavern",
+     "x": -11,
+     "z": 21
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "lio",
+   "name": "Lio the Wandering Bard",
+   "region": "roaming",
+   "role": "bard",
+   "archetype": "bard",
+   "personality": "npc.lio.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.lio",
+   "sex": 0,
+   "hair": 2,
+   "hair_col": [
+    150,
+    90,
+    40
+   ],
+   "top": [
+    180,
+    90,
+    60
+   ],
+   "bottom": [
+    110,
+    60,
+    50
+   ],
+   "shoes": [
+    80,
+    50,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 3,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": 6,
+     "z": 20
+    },
+    {
+     "place": "tavern",
+     "x": -10,
+     "z": 24
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "bram",
+   "name": "Sir Bram Ironvale",
+   "region": "fort_greywall",
+   "role": "knight",
+   "archetype": "knight",
+   "personality": "npc.bram.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.bram",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    92,
+    78,
+    70
+   ],
+   "top": [
+    120,
+    134,
+    160
+   ],
+   "bottom": [
+    58,
+    62,
+    80
+   ],
+   "shoes": [
+    40,
+    36,
+    44
+   ],
+   "eye": [
+    130,
+    190,
+    240
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -3,
+     "z": 33
+    },
+    {
+     "place": "work",
+     "x": 0,
+     "z": 16
+    },
+    {
+     "place": "home",
+     "x": -3,
+     "z": 33
+    }
+   ],
+   "visible_if": [
+    "flag.bram_joined == 0"
+   ]
+  },
+  {
+   "id": "lyra",
+   "name": "Lyra Vesperine",
+   "region": "forbidden_library",
+   "role": "mage",
+   "archetype": "mage",
+   "personality": "npc.lyra.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.lyra",
+   "sex": 1,
+   "hair": 0,
+   "hair_col": [
+    206,
+    212,
+    240
+   ],
+   "top": [
+    72,
+    52,
+    140
+   ],
+   "bottom": [
+    40,
+    30,
+    80
+   ],
+   "shoes": [
+    30,
+    24,
+    52
+   ],
+   "eye": [
+    120,
+    230,
+    255
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -3,
+     "z": 33
+    },
+    {
+     "place": "work",
+     "x": 0,
+     "z": 14
+    },
+    {
+     "place": "home",
+     "x": -3,
+     "z": 33
+    }
+   ],
+   "visible_if": [
+    "flag.lyra_joined == 0"
+   ]
+  },
+  {
+   "id": "mirelle",
+   "name": "Sister Mirelle Dawnsong",
+   "region": "sanctum_of_dawn",
+   "role": "priestess",
+   "archetype": "priest",
+   "personality": "npc.mirelle.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.mirelle",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    236,
+    178,
+    168
+   ],
+   "top": [
+    242,
+    238,
+    232
+   ],
+   "bottom": [
+    236,
+    232,
+    224
+   ],
+   "shoes": [
+    150,
+    110,
+    80
+   ],
+   "eye": [
+    150,
+    235,
+    190
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": true,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -3,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": 0,
+     "z": 14
+    },
+    {
+     "place": "home",
+     "x": -3,
+     "z": 37
+    }
+   ],
+   "visible_if": [
+    "flag.mirelle_joined == 0"
+   ]
+  },
+  {
+   "id": "marta",
+   "name": "Marta Hale",
+   "region": "aurelheim",
+   "role": "innkeeper",
+   "archetype": "innkeeper",
+   "personality": "npc.marta.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.marta",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    150,
+    90,
+    50
+   ],
+   "top": [
+    200,
+    150,
+    110
+   ],
+   "bottom": [
+    110,
+    70,
+    50
+   ],
+   "shoes": [
+    70,
+    50,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -9,
+     "z": 33
+    },
+    {
+     "place": "work",
+     "x": -12,
+     "z": 25
+    },
+    {
+     "place": "tavern",
+     "x": -13,
+     "z": 25
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "voll",
+   "name": "Sergeant Voll",
+   "region": "aurelheim",
+   "role": "trainer",
+   "archetype": "trainer",
+   "personality": "npc.voll.personality",
+   "shop": "",
+   "trainer": "sword_trials",
+   "tree": "greet.voll",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    110,
+    80,
+    60
+   ],
+   "top": [
+    140,
+    60,
+    50
+   ],
+   "bottom": [
+    70,
+    50,
+    40
+   ],
+   "shoes": [
+    50,
+    40,
+    36
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -11,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": -14,
+     "z": 12
+    },
+    {
+     "place": "home",
+     "x": -11,
+     "z": 37
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "corin",
+   "name": "Adept Corin",
+   "region": "aurelheim",
+   "role": "trainer",
+   "archetype": "trainer",
+   "personality": "npc.corin.personality",
+   "shop": "",
+   "trainer": "magic_trials",
+   "tree": "greet.corin",
+   "sex": 0,
+   "hair": 0,
+   "hair_col": [
+    60,
+    40,
+    30
+   ],
+   "top": [
+    70,
+    60,
+    130
+   ],
+   "bottom": [
+    50,
+    40,
+    90
+   ],
+   "shoes": [
+    40,
+    30,
+    60
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 11,
+     "z": 35
+    },
+    {
+     "place": "work",
+     "x": 14,
+     "z": 14
+    },
+    {
+     "place": "home",
+     "x": 11,
+     "z": 35
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "perpetua",
+   "name": "Sister Perpetua",
+   "region": "aurelheim",
+   "role": "trainer",
+   "archetype": "trainer",
+   "personality": "npc.perpetua.personality",
+   "shop": "",
+   "trainer": "holy_trials",
+   "tree": "greet.perpetua",
+   "sex": 1,
+   "hair": 0,
+   "hair_col": [
+    220,
+    210,
+    200
+   ],
+   "top": [
+    240,
+    235,
+    225
+   ],
+   "bottom": [
+    225,
+    215,
+    195
+   ],
+   "shoes": [
+    160,
+    140,
+    100
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 9,
+     "z": 35
+    },
+    {
+     "place": "work",
+     "x": 12,
+     "z": 20
+    },
+    {
+     "place": "home",
+     "x": 9,
+     "z": 35
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "tavish",
+   "name": "Old Tavish",
+   "region": "aurelheim",
+   "role": "trainer",
+   "archetype": "trainer",
+   "personality": "npc.tavish.personality",
+   "shop": "",
+   "trainer": "shield_trials",
+   "tree": "greet.tavish",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    200,
+    200,
+    200
+   ],
+   "top": [
+    100,
+    100,
+    110
+   ],
+   "bottom": [
+    70,
+    70,
+    80
+   ],
+   "shoes": [
+    60,
+    60,
+    60
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -11,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": -14,
+     "z": 16
+    },
+    {
+     "place": "home",
+     "x": -11,
+     "z": 37
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "bao",
+   "name": "Bao the Cook",
+   "region": "aurelheim",
+   "role": "cook",
+   "archetype": "cook",
+   "personality": "npc.bao.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.bao",
+   "sex": 0,
+   "hair": 3,
+   "hair_col": [
+    0,
+    0,
+    0
+   ],
+   "top": [
+    240,
+    240,
+    235
+   ],
+   "bottom": [
+    200,
+    200,
+    190
+   ],
+   "shoes": [
+    80,
+    60,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 1,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -1,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": -4,
+     "z": 28
+    },
+    {
+     "place": "tavern",
+     "x": -13,
+     "z": 25
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "wick",
+   "name": "Wick the Stable Master",
+   "region": "aurelheim",
+   "role": "stable",
+   "archetype": "stable",
+   "personality": "npc.wick.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.wick",
+   "sex": 0,
+   "hair": 0,
+   "hair_col": [
+    130,
+    90,
+    50
+   ],
+   "top": [
+    120,
+    90,
+    60
+   ],
+   "bottom": [
+    70,
+    60,
+    50
+   ],
+   "shoes": [
+    60,
+    50,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 1,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": 4,
+     "z": 40
+    },
+    {
+     "place": "tavern",
+     "x": -11,
+     "z": 27
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "dorn",
+   "name": "Dorn the Angler",
+   "region": "aurelheim",
+   "role": "fisher",
+   "archetype": "fisher",
+   "personality": "npc.dorn.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.dorn",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    140,
+    110,
+    80
+   ],
+   "top": [
+    80,
+    120,
+    110
+   ],
+   "bottom": [
+    60,
+    80,
+    70
+   ],
+   "shoes": [
+    60,
+    60,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -15,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": -18,
+     "z": 30
+    },
+    {
+     "place": "tavern",
+     "x": -13,
+     "z": 25
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "kestrel",
+   "name": "Kestrel",
+   "region": "aurelheim",
+   "role": "rival",
+   "archetype": "rival",
+   "personality": "npc.kestrel.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.kestrel",
+   "sex": 1,
+   "hair": 0,
+   "hair_col": [
+    60,
+    50,
+    40
+   ],
+   "top": [
+    60,
+    120,
+    170
+   ],
+   "bottom": [
+    40,
+    70,
+    110
+   ],
+   "shoes": [
+    40,
+    40,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -5,
+     "z": 33
+    },
+    {
+     "place": "work",
+     "x": -8,
+     "z": 8
+    },
+    {
+     "place": "tavern",
+     "x": -13,
+     "z": 25
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "vane",
+   "name": "Vane",
+   "region": "aurelheim",
+   "role": "rival",
+   "archetype": "rival",
+   "personality": "npc.vane.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.vane",
+   "sex": 0,
+   "hair": 0,
+   "hair_col": [
+    120,
+    130,
+    220
+   ],
+   "top": [
+    100,
+    60,
+    150
+   ],
+   "bottom": [
+    60,
+    40,
+    100
+   ],
+   "shoes": [
+    40,
+    30,
+    60
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -3,
+     "z": 33
+    },
+    {
+     "place": "work",
+     "x": -6,
+     "z": 8
+    },
+    {
+     "place": "tavern",
+     "x": -11,
+     "z": 27
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "greta",
+   "name": "Greta Longstep",
+   "region": "aurelheim",
+   "role": "adventurer",
+   "archetype": "retired",
+   "personality": "npc.greta.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.greta",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    190,
+    190,
+    190
+   ],
+   "top": [
+    110,
+    100,
+    80
+   ],
+   "bottom": [
+    70,
+    60,
+    50
+   ],
+   "shoes": [
+    60,
+    50,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -7,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": -10,
+     "z": 28
+    },
+    {
+     "place": "tavern",
+     "x": -13,
+     "z": 25
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "ilse",
+   "name": "Ilse",
+   "region": "aurelheim",
+   "role": "herbalist",
+   "archetype": "herbalist",
+   "personality": "npc.ilse.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.ilse",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    110,
+    150,
+    80
+   ],
+   "top": [
+    110,
+    150,
+    100
+   ],
+   "bottom": [
+    90,
+    110,
+    80
+   ],
+   "shoes": [
+    60,
+    70,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 3,
+     "z": 33
+    },
+    {
+     "place": "work",
+     "x": 6,
+     "z": 28
+    },
+    {
+     "place": "home",
+     "x": 3,
+     "z": 33
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "alden",
+   "name": "Guard Alden",
+   "region": "aurelheim",
+   "role": "guard",
+   "archetype": "guard",
+   "personality": "npc.alden.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.alden",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    130,
+    90,
+    60
+   ],
+   "top": [
+    110,
+    120,
+    140
+   ],
+   "bottom": [
+    80,
+    90,
+    110
+   ],
+   "shoes": [
+    60,
+    60,
+    70
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 0,
+     "z": 35
+    },
+    {
+     "place": "work",
+     "x": -3,
+     "z": 36
+    },
+    {
+     "place": "home",
+     "x": 0,
+     "z": 35
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "verrin",
+   "name": "Lady Verrin",
+   "region": "aurelheim",
+   "role": "noble",
+   "archetype": "noble",
+   "personality": "npc.verrin.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.verrin",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    130,
+    70,
+    90
+   ],
+   "top": [
+    160,
+    80,
+    110
+   ],
+   "bottom": [
+    110,
+    50,
+    80
+   ],
+   "shoes": [
+    80,
+    50,
+    70
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 1,
+     "z": 36
+    },
+    {
+     "place": "work",
+     "x": 4,
+     "z": 14
+    },
+    {
+     "place": "home",
+     "x": 1,
+     "z": 36
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "penn",
+   "name": "Archivist Penn",
+   "region": "aurelheim",
+   "role": "scholar",
+   "archetype": "scholar",
+   "personality": "npc.penn.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.penn",
+   "sex": 0,
+   "hair": 0,
+   "hair_col": [
+    120,
+    110,
+    100
+   ],
+   "top": [
+    100,
+    90,
+    130
+   ],
+   "bottom": [
+    70,
+    60,
+    100
+   ],
+   "shoes": [
+    50,
+    40,
+    70
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 11,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": 14,
+     "z": 12
+    },
+    {
+     "place": "home",
+     "x": 11,
+     "z": 37
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "tobin",
+   "name": "Tobin",
+   "region": "aurelheim",
+   "role": "apprentice",
+   "archetype": "apprentice",
+   "personality": "npc.tobin.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.tobin",
+   "sex": 0,
+   "hair": 0,
+   "hair_col": [
+    150,
+    100,
+    60
+   ],
+   "top": [
+    130,
+    110,
+    90
+   ],
+   "bottom": [
+    80,
+    70,
+    60
+   ],
+   "shoes": [
+    60,
+    50,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 7,
+     "z": 35
+    },
+    {
+     "place": "work",
+     "x": 10,
+     "z": 28
+    },
+    {
+     "place": "tavern",
+     "x": -13,
+     "z": 25
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "ash",
+   "name": "Brother Ash",
+   "region": "aurelheim",
+   "role": "defector",
+   "archetype": "cultist",
+   "personality": "npc.ash.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.ash",
+   "sex": 0,
+   "hair": 3,
+   "hair_col": [
+    0,
+    0,
+    0
+   ],
+   "top": [
+    90,
+    70,
+    120
+   ],
+   "bottom": [
+    50,
+    40,
+    80
+   ],
+   "shoes": [
+    30,
+    24,
+    40
+   ],
+   "eye": [
+    190,
+    120,
+    255
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 1,
+     "z": 33
+    },
+    {
+     "place": "work",
+     "x": -2,
+     "z": 38
+    },
+    {
+     "place": "home",
+     "x": 1,
+     "z": 33
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "odile",
+   "name": "Wanderer Odile",
+   "region": "aurelheim",
+   "role": "healer",
+   "archetype": "healer",
+   "personality": "npc.odile.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.odile",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    180,
+    140,
+    90
+   ],
+   "top": [
+    200,
+    190,
+    140
+   ],
+   "bottom": [
+    150,
+    130,
+    90
+   ],
+   "shoes": [
+    110,
+    90,
+    60
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 7,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": 10,
+     "z": 18
+    },
+    {
+     "place": "tavern",
+     "x": -12,
+     "z": 26
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "halbrook",
+   "name": "Merchant Halbrook",
+   "region": "aurelheim",
+   "role": "merchant",
+   "archetype": "merchant",
+   "personality": "npc.halbrook.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.halbrook",
+   "sex": 0,
+   "hair": 0,
+   "hair_col": [
+    150,
+    120,
+    80
+   ],
+   "top": [
+    130,
+    100,
+    60
+   ],
+   "bottom": [
+    90,
+    70,
+    50
+   ],
+   "shoes": [
+    70,
+    60,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -5,
+     "z": 35
+    },
+    {
+     "place": "work",
+     "x": -8,
+     "z": 28
+    },
+    {
+     "place": "tavern",
+     "x": -11,
+     "z": 27
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "petra",
+   "name": "Petra the Florist",
+   "region": "aurelheim",
+   "role": "vendor",
+   "archetype": "vendor",
+   "personality": "npc.petra.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.petra",
+   "sex": 1,
+   "hair": 0,
+   "hair_col": [
+    200,
+    130,
+    100
+   ],
+   "top": [
+    200,
+    110,
+    140
+   ],
+   "bottom": [
+    120,
+    70,
+    90
+   ],
+   "shoes": [
+    100,
+    70,
+    60
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -1,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": 2,
+     "z": 30
+    },
+    {
+     "place": "home",
+     "x": -1,
+     "z": 37
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "eldric",
+   "name": "Farmer Eldric",
+   "region": "ashbrook",
+   "role": "farmer",
+   "archetype": "farmer",
+   "personality": "npc.eldric.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.eldric",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    140,
+    120,
+    90
+   ],
+   "top": [
+    140,
+    110,
+    80
+   ],
+   "bottom": [
+    90,
+    80,
+    60
+   ],
+   "shoes": [
+    70,
+    60,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -5,
+     "z": 36
+    },
+    {
+     "place": "work",
+     "x": -8,
+     "z": 20
+    },
+    {
+     "place": "tavern",
+     "x": -5,
+     "z": 21
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "bess",
+   "name": "Bess the Baker",
+   "region": "ashbrook",
+   "role": "cook",
+   "archetype": "cook",
+   "personality": "npc.bess.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.bess",
+   "sex": 1,
+   "hair": 0,
+   "hair_col": [
+    190,
+    150,
+    110
+   ],
+   "top": [
+    240,
+    235,
+    220
+   ],
+   "bottom": [
+    200,
+    190,
+    170
+   ],
+   "shoes": [
+    110,
+    90,
+    70
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 1,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": -2,
+     "z": 22
+    },
+    {
+     "place": "tavern",
+     "x": -6,
+     "z": 20
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "rolf",
+   "name": "Young Rolf",
+   "region": "ashbrook",
+   "role": "child",
+   "archetype": "child",
+   "personality": "npc.rolf.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.rolf",
+   "sex": 0,
+   "hair": 0,
+   "hair_col": [
+    150,
+    100,
+    60
+   ],
+   "top": [
+    110,
+    130,
+    170
+   ],
+   "bottom": [
+    70,
+    80,
+    110
+   ],
+   "shoes": [
+    70,
+    60,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 0.7,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 3,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": 6,
+     "z": 24
+    },
+    {
+     "place": "home",
+     "x": 3,
+     "z": 37
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "wren",
+   "name": "Granny Wren",
+   "region": "ashbrook",
+   "role": "healer",
+   "archetype": "elder",
+   "personality": "npc.wren.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.wren",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    220,
+    220,
+    220
+   ],
+   "top": [
+    150,
+    120,
+    150
+   ],
+   "bottom": [
+    110,
+    90,
+    110
+   ],
+   "shoes": [
+    80,
+    70,
+    80
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -3,
+     "z": 33
+    },
+    {
+     "place": "work",
+     "x": -6,
+     "z": 14
+    },
+    {
+     "place": "home",
+     "x": -3,
+     "z": 33
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "seren",
+   "name": "Monk Seren",
+   "region": "whisperwood",
+   "role": "monk",
+   "archetype": "monk",
+   "personality": "npc.seren.personality",
+   "shop": "",
+   "trainer": "focus_strike",
+   "tree": "greet.seren",
+   "sex": 1,
+   "hair": 3,
+   "hair_col": [
+    0,
+    0,
+    0
+   ],
+   "top": [
+    200,
+    150,
+    70
+   ],
+   "bottom": [
+    150,
+    110,
+    50
+   ],
+   "shoes": [
+    90,
+    70,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -3,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": 0,
+     "z": 16
+    },
+    {
+     "place": "home",
+     "x": -3,
+     "z": 37
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "ravi",
+   "name": "Hunter Ravi",
+   "region": "whisperwood",
+   "role": "hunter",
+   "archetype": "hunter",
+   "personality": "npc.ravi.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.ravi",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    60,
+    40,
+    30
+   ],
+   "top": [
+    80,
+    100,
+    60
+   ],
+   "bottom": [
+    60,
+    70,
+    50
+   ],
+   "shoes": [
+    60,
+    60,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -7,
+     "z": 35
+    },
+    {
+     "place": "work",
+     "x": -10,
+     "z": 20
+    },
+    {
+     "place": "tavern",
+     "x": 5,
+     "z": 17
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "moss",
+   "name": "Ranger Moss",
+   "region": "whisperwood",
+   "role": "ranger",
+   "archetype": "ranger",
+   "personality": "npc.moss.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.moss",
+   "sex": 1,
+   "hair": 0,
+   "hair_col": [
+    80,
+    120,
+    60
+   ],
+   "top": [
+    90,
+    130,
+    80
+   ],
+   "bottom": [
+    60,
+    90,
+    50
+   ],
+   "shoes": [
+    60,
+    70,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 3,
+     "z": 33
+    },
+    {
+     "place": "work",
+     "x": 6,
+     "z": 22
+    },
+    {
+     "place": "home",
+     "x": 3,
+     "z": 33
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "sahar",
+   "name": "Sahar",
+   "region": "qasr_amun",
+   "role": "innkeeper",
+   "archetype": "innkeeper",
+   "personality": "npc.sahar.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.sahar",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    30,
+    20,
+    20
+   ],
+   "top": [
+    180,
+    120,
+    50
+   ],
+   "bottom": [
+    130,
+    90,
+    40
+   ],
+   "shoes": [
+    90,
+    60,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 1,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -5,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": -8,
+     "z": 22
+    },
+    {
+     "place": "tavern",
+     "x": -8,
+     "z": 22
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "jalil",
+   "name": "Jalil the Mount Master",
+   "region": "qasr_amun",
+   "role": "stable",
+   "archetype": "stable",
+   "personality": "npc.jalil.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.jalil",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    30,
+    24,
+    20
+   ],
+   "top": [
+    140,
+    100,
+    60
+   ],
+   "bottom": [
+    100,
+    70,
+    40
+   ],
+   "shoes": [
+    70,
+    50,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 1,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 1,
+     "z": 33
+    },
+    {
+     "place": "work",
+     "x": 4,
+     "z": 36
+    },
+    {
+     "place": "tavern",
+     "x": -8,
+     "z": 22
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "fatima",
+   "name": "Fatima the Weaver",
+   "region": "qasr_amun",
+   "role": "craft",
+   "archetype": "weaver",
+   "personality": "npc.fatima.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.fatima",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    50,
+    30,
+    30
+   ],
+   "top": [
+    190,
+    80,
+    90
+   ],
+   "bottom": [
+    130,
+    60,
+    70
+   ],
+   "shoes": [
+    100,
+    60,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 1,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -7,
+     "z": 34
+    },
+    {
+     "place": "work",
+     "x": -10,
+     "z": 26
+    },
+    {
+     "place": "home",
+     "x": -7,
+     "z": 34
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "idris",
+   "name": "Scout Idris",
+   "region": "qasr_amun",
+   "role": "scout",
+   "archetype": "scout",
+   "personality": "npc.idris.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.idris",
+   "sex": 0,
+   "hair": 3,
+   "hair_col": [
+    0,
+    0,
+    0
+   ],
+   "top": [
+    150,
+    120,
+    80
+   ],
+   "bottom": [
+    110,
+    90,
+    60
+   ],
+   "shoes": [
+    80,
+    60,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 1,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -3,
+     "z": 35
+    },
+    {
+     "place": "work",
+     "x": 0,
+     "z": 38
+    },
+    {
+     "place": "home",
+     "x": -3,
+     "z": 35
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "nashu",
+   "name": "Excavator Nashu",
+   "region": "khemet_ruins",
+   "role": "excavator",
+   "archetype": "scholar",
+   "personality": "npc.nashu.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.nashu",
+   "sex": 0,
+   "hair": 0,
+   "hair_col": [
+    30,
+    20,
+    20
+   ],
+   "top": [
+    180,
+    150,
+    90
+   ],
+   "bottom": [
+    130,
+    100,
+    60
+   ],
+   "shoes": [
+    90,
+    70,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 1,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 3,
+     "z": 36
+    },
+    {
+     "place": "work",
+     "x": 6,
+     "z": 10
+    },
+    {
+     "place": "home",
+     "x": 3,
+     "z": 36
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "gudrun",
+   "name": "Gudrun",
+   "region": "hrimvald",
+   "role": "innkeeper",
+   "archetype": "innkeeper",
+   "personality": "npc.gudrun.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.gudrun",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    200,
+    190,
+    150
+   ],
+   "top": [
+    180,
+    140,
+    120
+   ],
+   "bottom": [
+    130,
+    100,
+    80
+   ],
+   "shoes": [
+    90,
+    70,
+    60
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -7,
+     "z": 35
+    },
+    {
+     "place": "work",
+     "x": -10,
+     "z": 22
+    },
+    {
+     "place": "tavern",
+     "x": -11,
+     "z": 21
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "halvar",
+   "name": "Bellwright Halvar",
+   "region": "hrimvald",
+   "role": "craft",
+   "archetype": "craft",
+   "personality": "npc.halvar.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.halvar",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    150,
+    150,
+    150
+   ],
+   "top": [
+    130,
+    130,
+    150
+   ],
+   "bottom": [
+    90,
+    90,
+    110
+   ],
+   "shoes": [
+    70,
+    70,
+    90
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 3,
+     "z": 35
+    },
+    {
+     "place": "work",
+     "x": 6,
+     "z": 14
+    },
+    {
+     "place": "home",
+     "x": 3,
+     "z": 35
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "sigrid",
+   "name": "Guide Sigrid",
+   "region": "hrimvald",
+   "role": "guide",
+   "archetype": "guide",
+   "personality": "npc.sigrid.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.sigrid",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    190,
+    160,
+    100
+   ],
+   "top": [
+    120,
+    150,
+    170
+   ],
+   "bottom": [
+    80,
+    100,
+    130
+   ],
+   "shoes": [
+    60,
+    70,
+    90
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -3,
+     "z": 34
+    },
+    {
+     "place": "work",
+     "x": -6,
+     "z": 16
+    },
+    {
+     "place": "tavern",
+     "x": -9,
+     "z": 23
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "cinda",
+   "name": "Cinda the Apprentice",
+   "region": "emberforge",
+   "role": "apprentice",
+   "archetype": "apprentice",
+   "personality": "npc.cinda.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.cinda",
+   "sex": 1,
+   "hair": 0,
+   "hair_col": [
+    210,
+    100,
+    50
+   ],
+   "top": [
+    150,
+    90,
+    60
+   ],
+   "bottom": [
+    100,
+    70,
+    50
+   ],
+   "shoes": [
+    60,
+    50,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 7,
+     "z": 34
+    },
+    {
+     "place": "work",
+     "x": 10,
+     "z": 24
+    },
+    {
+     "place": "tavern",
+     "x": 10,
+     "z": 24
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "magnus",
+   "name": "Stoker Magnus",
+   "region": "emberforge",
+   "role": "miner",
+   "archetype": "stoker",
+   "personality": "npc.magnus.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.magnus",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    80,
+    60,
+    50
+   ],
+   "top": [
+    100,
+    70,
+    60
+   ],
+   "bottom": [
+    70,
+    50,
+    40
+   ],
+   "shoes": [
+    50,
+    40,
+    36
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -1,
+     "z": 36
+    },
+    {
+     "place": "work",
+     "x": -4,
+     "z": 20
+    },
+    {
+     "place": "tavern",
+     "x": 11,
+     "z": 25
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "vesna",
+   "name": "Vesna the Cook",
+   "region": "emberforge",
+   "role": "cook",
+   "archetype": "cook",
+   "personality": "npc.vesna.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.vesna",
+   "sex": 1,
+   "hair": 2,
+   "hair_col": [
+    200,
+    80,
+    50
+   ],
+   "top": [
+    230,
+    190,
+    160
+   ],
+   "bottom": [
+    180,
+    140,
+    110
+   ],
+   "shoes": [
+    100,
+    80,
+    60
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -9,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": -12,
+     "z": 26
+    },
+    {
+     "place": "tavern",
+     "x": 10,
+     "z": 24
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "doro",
+   "name": "Miner Doro",
+   "region": "emberforge",
+   "role": "miner",
+   "archetype": "miner",
+   "personality": "npc.doro.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.doro",
+   "sex": 0,
+   "hair": 3,
+   "hair_col": [
+    0,
+    0,
+    0
+   ],
+   "top": [
+    110,
+    100,
+    100
+   ],
+   "bottom": [
+    80,
+    70,
+    70
+   ],
+   "shoes": [
+    60,
+    50,
+    50
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 1,
+     "z": 34
+    },
+    {
+     "place": "work",
+     "x": 4,
+     "z": 18
+    },
+    {
+     "place": "tavern",
+     "x": 10,
+     "z": 24
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "vale_d",
+   "name": "Deserter Vale",
+   "region": "front_camp",
+   "role": "deserter",
+   "archetype": "soldier",
+   "personality": "npc.vale_d.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.vale_d",
+   "sex": 0,
+   "hair": 1,
+   "hair_col": [
+    90,
+    70,
+    60
+   ],
+   "top": [
+    100,
+    90,
+    80
+   ],
+   "bottom": [
+    70,
+    60,
+    50
+   ],
+   "shoes": [
+    50,
+    40,
+    40
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": -7,
+     "z": 37
+    },
+    {
+     "place": "work",
+     "x": -10,
+     "z": 16
+    },
+    {
+     "place": "home",
+     "x": -7,
+     "z": 37
+    }
+   ],
+   "visible_if": []
+  },
+  {
+   "id": "reyna",
+   "name": "Field Medic Reyna",
+   "region": "front_camp",
+   "role": "medic",
+   "archetype": "healer",
+   "personality": "npc.reyna.personality",
+   "shop": "",
+   "trainer": "",
+   "tree": "greet.reyna",
+   "sex": 1,
+   "hair": 0,
+   "hair_col": [
+    120,
+    90,
+    70
+   ],
+   "top": [
+    240,
+    240,
+    235
+   ],
+   "bottom": [
+    190,
+    180,
+    160
+   ],
+   "shoes": [
+    130,
+    110,
+    90
+   ],
+   "eye": [
+    70,
+    60,
+    50
+   ],
+   "skin": 0,
+   "scale": 1.0,
+   "required": false,
+   "schedule": [
+    {
+     "place": "home",
+     "x": 1,
+     "z": 33
+    },
+    {
+     "place": "work",
+     "x": 4,
+     "z": 18
+    },
+    {
+     "place": "home",
+     "x": 1,
+     "z": 33
+    }
+   ],
+   "visible_if": []
+  }
+ ]
+}

@@ -1,0 +1,20 @@
+{
+ "locations": [
+  {
+   "id": "plaza",
+   "name": "Plaza",
+   "region": "aurelheim",
+   "kind": "town",
+   "map": [
+    0.5,
+    0.5
+   ],
+   "local": [
+    0,
+    10,
+    5
+   ],
+   "sandbox": true
+  }
+ ]
+}

@@ -1,0 +1,25 @@
+{
+ "quests": [
+  {
+   "id": "X1",
+   "type": "main",
+   "act": 1,
+   "number": 1,
+   "giver": "ghost",
+   "turn_in": "auto",
+   "title": "missing.title",
+   "summary": "a",
+   "prereq": [
+    "this is not a condition"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "dragon",
+     "count": 1,
+     "text": "a"
+    }
+   ]
+  }
+ ]
+}

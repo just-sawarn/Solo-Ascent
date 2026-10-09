@@ -1,0 +1,836 @@
+{
+ "locations": [
+  {
+   "id": "ashbrook",
+   "name": "Ashbrook Village",
+   "region": "vale",
+   "kind": "town",
+   "map": [
+    0.18,
+    0.62
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "ashbrook_shrine",
+   "name": "Ashbrook Shrine",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.17,
+    0.6
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "ashbrook_outskirts",
+   "name": "Ashbrook Outskirts",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.15,
+    0.66
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "refugee_camp",
+   "name": "Refugee Camp",
+   "region": "vale",
+   "kind": "town",
+   "map": [
+    0.22,
+    0.57
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "aurelheim",
+   "name": "Aurelheim",
+   "region": "vale",
+   "kind": "town",
+   "map": [
+    0.3,
+    0.5
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "aurelheim_gates",
+   "name": "Aurelheim Gates",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.28,
+    0.54
+   ],
+   "local": [
+    0,
+    40,
+    6
+   ],
+   "sandbox": true
+  },
+  {
+   "id": "aurelheim_plaza",
+   "name": "Aurelheim Plaza",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.3,
+    0.5
+   ],
+   "local": [
+    0,
+    18,
+    7
+   ],
+   "sandbox": true
+  },
+  {
+   "id": "guild_hall",
+   "name": "Adventurer Guild Hall",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.31,
+    0.49
+   ],
+   "local": [
+    -12,
+    20,
+    4
+   ],
+   "sandbox": true
+  },
+  {
+   "id": "aurelheim_cathedral",
+   "name": "Cathedral of the Dawn",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.32,
+    0.48
+   ],
+   "local": [
+    12,
+    22,
+    5
+   ],
+   "sandbox": true
+  },
+  {
+   "id": "aurelheim_market",
+   "name": "Aurelheim Market",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.29,
+    0.51
+   ],
+   "local": [
+    0,
+    27,
+    6
+   ],
+   "sandbox": true
+  },
+  {
+   "id": "aurelheim_arena",
+   "name": "Rank-Up Arena",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.33,
+    0.52
+   ],
+   "local": [
+    -14,
+    8,
+    6
+   ],
+   "sandbox": true
+  },
+  {
+   "id": "aurelheim_archive",
+   "name": "Aurelheim Archive",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.3,
+    0.47
+   ],
+   "local": [
+    14,
+    12,
+    4
+   ],
+   "sandbox": true
+  },
+  {
+   "id": "gilded_lantern",
+   "name": "The Gilded Lantern Inn",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.29,
+    0.5
+   ],
+   "local": [
+    -12,
+    26,
+    3
+   ],
+   "sandbox": true
+  },
+  {
+   "id": "convergence_shrine",
+   "name": "Convergence Shrine",
+   "region": "vale",
+   "kind": "shrine",
+   "map": [
+    0.36,
+    0.5
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "sanctum_of_dawn",
+   "name": "Sanctum of Dawn",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.28,
+    0.56
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "spire_academy",
+   "name": "Spire Academy",
+   "region": "vale",
+   "kind": "town",
+   "map": [
+    0.4,
+    0.4
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "forbidden_library",
+   "name": "The Forbidden Library",
+   "region": "vale",
+   "kind": "dungeon",
+   "map": [
+    0.41,
+    0.38
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "whisperwood_edge",
+   "name": "Whisperwood Edge",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.24,
+    0.42
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "whisperwood",
+   "name": "Whisperwood Forest",
+   "region": "vale",
+   "kind": "town",
+   "map": [
+    0.22,
+    0.38
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "fenns_hut",
+   "name": "Old Fenn's Hut",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.21,
+    0.4
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "fort_greywall",
+   "name": "Fort Greywall",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.34,
+    0.3
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "greywall_memorial",
+   "name": "Greywall Memorial",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.34,
+    0.29
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "goblin_warrens",
+   "name": "Goblin Warrens",
+   "region": "vale",
+   "kind": "dungeon",
+   "map": [
+    0.26,
+    0.66
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "rootheart_hollow",
+   "name": "Rootheart Hollow",
+   "region": "vale",
+   "kind": "dungeon",
+   "map": [
+    0.2,
+    0.3
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "moonpetal_glade",
+   "name": "Moonpetal Glade",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.19,
+    0.35
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "monks_clearing",
+   "name": "The Monk's Clearing",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.23,
+    0.33
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "lamb_meadow",
+   "name": "Lamb Meadow",
+   "region": "vale",
+   "kind": "poi",
+   "map": [
+    0.2,
+    0.58
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "qasr_amun",
+   "name": "Qasr Amun",
+   "region": "sunscar",
+   "kind": "town",
+   "map": [
+    0.38,
+    0.78
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "oasis_market",
+   "name": "Qasr Amun Bazaar",
+   "region": "sunscar",
+   "kind": "poi",
+   "map": [
+    0.39,
+    0.77
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "khemet_ruins",
+   "name": "Sunken Ruins of Khemet",
+   "region": "sunscar",
+   "kind": "town",
+   "map": [
+    0.46,
+    0.86
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "lost_mural",
+   "name": "The Lost Mural",
+   "region": "sunscar",
+   "kind": "poi",
+   "map": [
+    0.47,
+    0.88
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "scorpion_catacombs",
+   "name": "Scorpion Catacombs",
+   "region": "sunscar",
+   "kind": "dungeon",
+   "map": [
+    0.52,
+    0.8
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "hourglass_vault",
+   "name": "The Hourglass Vault",
+   "region": "sunscar",
+   "kind": "dungeon",
+   "map": [
+    0.55,
+    0.9
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "caravan_road",
+   "name": "Caravan Road",
+   "region": "sunscar",
+   "kind": "poi",
+   "map": [
+    0.42,
+    0.72
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "serpent_dunes",
+   "name": "Serpent Dunes",
+   "region": "sunscar",
+   "kind": "poi",
+   "map": [
+    0.44,
+    0.8
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "hrimvald",
+   "name": "Hrimvald",
+   "region": "frostspire",
+   "kind": "town",
+   "map": [
+    0.55,
+    0.18
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "whiteout_pass",
+   "name": "Whiteout Pass",
+   "region": "frostspire",
+   "kind": "dungeon",
+   "map": [
+    0.48,
+    0.24
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "choir_cathedral",
+   "name": "The Silent Choir Cathedral",
+   "region": "frostspire",
+   "kind": "dungeon",
+   "map": [
+    0.62,
+    0.1
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "frozen_lighthouse",
+   "name": "The Frozen Lighthouse",
+   "region": "frostspire",
+   "kind": "poi",
+   "map": [
+    0.52,
+    0.12
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "climbers_camp",
+   "name": "Climbers' Camp",
+   "region": "frostspire",
+   "kind": "poi",
+   "map": [
+    0.5,
+    0.21
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "singing_ice",
+   "name": "The Singing Ice",
+   "region": "frostspire",
+   "kind": "poi",
+   "map": [
+    0.58,
+    0.14
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "emberforge",
+   "name": "Emberforge",
+   "region": "cinderhold",
+   "kind": "town",
+   "map": [
+    0.78,
+    0.52
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "ashen_mines",
+   "name": "Ashen Mines",
+   "region": "cinderhold",
+   "kind": "dungeon",
+   "map": [
+    0.72,
+    0.62
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "molten_keep",
+   "name": "The Molten Keep",
+   "region": "cinderhold",
+   "kind": "dungeon",
+   "map": [
+    0.86,
+    0.44
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "singing_forge",
+   "name": "The Singing Anvil Forge",
+   "region": "cinderhold",
+   "kind": "poi",
+   "map": [
+    0.8,
+    0.54
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "lava_channels",
+   "name": "Lava Channels",
+   "region": "cinderhold",
+   "kind": "poi",
+   "map": [
+    0.76,
+    0.46
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "hollow_gate",
+   "name": "The Hollow Gate",
+   "region": "hollow",
+   "kind": "poi",
+   "map": [
+    0.86,
+    0.22
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "bone_bridge",
+   "name": "Bone Bridge Approach",
+   "region": "hollow",
+   "kind": "dungeon",
+   "map": [
+    0.9,
+    0.3
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "nox_hideout",
+   "name": "Nox's Hideout",
+   "region": "hollow",
+   "kind": "poi",
+   "map": [
+    0.88,
+    0.26
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "front_camp",
+   "name": "The Front Camp",
+   "region": "hollow",
+   "kind": "poi",
+   "map": [
+    0.84,
+    0.25
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "voidspire_castle",
+   "name": "Voidspire Castle",
+   "region": "hollow",
+   "kind": "dungeon",
+   "map": [
+    0.94,
+    0.14
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  },
+  {
+   "id": "voidspire_throne",
+   "name": "The Voidspire Throne",
+   "region": "hollow",
+   "kind": "poi",
+   "map": [
+    0.95,
+    0.12
+   ],
+   "local": [
+    0,
+    0,
+    6
+   ],
+   "sandbox": false
+  }
+ ]
+}

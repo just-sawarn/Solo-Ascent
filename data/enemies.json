@@ -26,6 +26,7 @@
     "holy": 1.5
    },
    "scale": 1.0,
+   "boss": false,
    "paint": {
     "top": [
      16,
@@ -62,7 +63,7 @@
    },
    "speed": 3.2,
    "aggro_range": 16,
-   "leash": 28,
+   "leash": 26,
    "poise": 35,
    "behavior": "ranged",
    "preferred_range": 8,
@@ -75,6 +76,7 @@
     "holy": 1.5
    },
    "scale": 0.97,
+   "boss": false,
    "paint": {
     "top": [
      24,
@@ -111,7 +113,7 @@
    },
    "speed": 2.6,
    "aggro_range": 12,
-   "leash": 24,
+   "leash": 26,
    "poise": 220,
    "behavior": "brute",
    "preferred_range": 2.2,
@@ -126,6 +128,7 @@
     "phys": 0.8
    },
    "scale": 1.25,
+   "boss": false,
    "paint": {
     "top": [
      40,
@@ -146,6 +149,1748 @@
      255,
      90,
      90
+    ]
+   }
+  },
+  {
+   "id": "demon_imp",
+   "name": "Demon Imp",
+   "level": 1,
+   "stats": {
+    "str": 7,
+    "int": 4,
+    "vit": 5,
+    "wis": 3,
+    "agi": 10
+   },
+   "speed": 4.4,
+   "aggro_range": 14,
+   "leash": 26,
+   "poise": 25,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "imp_claw"
+   ],
+   "xp": 12,
+   "resist": {
+    "fire": 0.5,
+    "holy": 1.5
+   },
+   "scale": 0.7,
+   "boss": false,
+   "paint": {
+    "top": [
+     110,
+     20,
+     30
+    ],
+    "bottom": [
+     70,
+     14,
+     22
+    ],
+    "shoes": [
+     40,
+     10,
+     14
+    ],
+    "eye": [
+     255,
+     200,
+     60
+    ]
+   }
+  },
+  {
+   "id": "bandit_thug",
+   "name": "Road Bandit",
+   "level": 2,
+   "stats": {
+    "str": 10,
+    "int": 3,
+    "vit": 8,
+    "wis": 4,
+    "agi": 6
+   },
+   "speed": 3.6,
+   "aggro_range": 12,
+   "leash": 26,
+   "poise": 70,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash"
+   ],
+   "xp": 16,
+   "resist": {},
+   "scale": 1.0,
+   "boss": false,
+   "paint": {
+    "top": [
+     90,
+     70,
+     50
+    ],
+    "bottom": [
+     60,
+     48,
+     36
+    ],
+    "shoes": [
+     40,
+     30,
+     24
+    ],
+    "eye": [
+     120,
+     90,
+     60
+    ]
+   }
+  },
+  {
+   "id": "goblin_grunt",
+   "name": "Goblin Grunt",
+   "level": 2,
+   "stats": {
+    "str": 8,
+    "int": 3,
+    "vit": 6,
+    "wis": 3,
+    "agi": 8
+   },
+   "speed": 4.0,
+   "aggro_range": 14,
+   "leash": 26,
+   "poise": 40,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "imp_claw"
+   ],
+   "xp": 14,
+   "resist": {},
+   "scale": 0.75,
+   "boss": false,
+   "paint": {
+    "top": [
+     70,
+     100,
+     50
+    ],
+    "bottom": [
+     60,
+     70,
+     40
+    ],
+    "shoes": [
+     40,
+     40,
+     30
+    ],
+    "eye": [
+     255,
+     220,
+     80
+    ]
+   }
+  },
+  {
+   "id": "goblin_archer",
+   "name": "Goblin Shortbowman",
+   "level": 2,
+   "stats": {
+    "str": 7,
+    "int": 3,
+    "vit": 5,
+    "wis": 3,
+    "agi": 10
+   },
+   "speed": 3.6,
+   "aggro_range": 16,
+   "leash": 26,
+   "poise": 30,
+   "behavior": "ranged",
+   "preferred_range": 8,
+   "skills": [
+    "shadow_arrow"
+   ],
+   "xp": 16,
+   "resist": {},
+   "scale": 0.75,
+   "boss": false,
+   "paint": {
+    "top": [
+     60,
+     110,
+     60
+    ],
+    "bottom": [
+     50,
+     70,
+     40
+    ],
+    "shoes": [
+     40,
+     40,
+     30
+    ],
+    "eye": [
+     255,
+     220,
+     80
+    ]
+   }
+  },
+  {
+   "id": "grukk",
+   "name": "Goblin Chieftain Grukk",
+   "level": 4,
+   "stats": {
+    "str": 16,
+    "int": 3,
+    "vit": 18,
+    "wis": 4,
+    "agi": 5
+   },
+   "speed": 3.0,
+   "aggro_range": 18,
+   "leash": 26,
+   "poise": 300,
+   "behavior": "brute",
+   "preferred_range": 2.2,
+   "skills": [
+    "brute_smash",
+    "shadow_slash"
+   ],
+   "xp": 160,
+   "resist": {},
+   "scale": 1.4,
+   "boss": true,
+   "paint": {
+    "top": [
+     80,
+     120,
+     50
+    ],
+    "bottom": [
+     80,
+     70,
+     40
+    ],
+    "shoes": [
+     40,
+     40,
+     30
+    ],
+    "eye": [
+     255,
+     90,
+     40
+    ]
+   }
+  },
+  {
+   "id": "demon_marked_goblin",
+   "name": "Demon-Marked Goblin",
+   "level": 3,
+   "stats": {
+    "str": 11,
+    "int": 5,
+    "vit": 8,
+    "wis": 4,
+    "agi": 8
+   },
+   "speed": 4.0,
+   "aggro_range": 14,
+   "leash": 26,
+   "poise": 60,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash"
+   ],
+   "xp": 30,
+   "resist": {
+    "shadow": 0.5,
+    "holy": 1.5
+   },
+   "scale": 0.8,
+   "boss": false,
+   "paint": {
+    "top": [
+     90,
+     40,
+     90
+    ],
+    "bottom": [
+     60,
+     30,
+     60
+    ],
+    "shoes": [
+     40,
+     30,
+     40
+    ],
+    "eye": [
+     190,
+     90,
+     255
+    ]
+   }
+  },
+  {
+   "id": "skarn_1",
+   "name": "Skarn, the Demon Scout",
+   "level": 6,
+   "stats": {
+    "str": 14,
+    "int": 12,
+    "vit": 14,
+    "wis": 8,
+    "agi": 14
+   },
+   "speed": 4.4,
+   "aggro_range": 20,
+   "leash": 26,
+   "poise": 320,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash",
+    "brute_smash"
+   ],
+   "xp": 220,
+   "resist": {
+    "fire": 0.7,
+    "holy": 1.3
+   },
+   "scale": 1.1,
+   "boss": true,
+   "paint": {
+    "top": [
+     60,
+     14,
+     40
+    ],
+    "bottom": [
+     40,
+     10,
+     30
+    ],
+    "shoes": [
+     20,
+     8,
+     20
+    ],
+    "eye": [
+     255,
+     60,
+     60
+    ]
+   }
+  },
+  {
+   "id": "cult_zealot",
+   "name": "Hollow Cultist",
+   "level": 5,
+   "stats": {
+    "str": 9,
+    "int": 8,
+    "vit": 8,
+    "wis": 6,
+    "agi": 7
+   },
+   "speed": 3.6,
+   "aggro_range": 14,
+   "leash": 26,
+   "poise": 55,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash"
+   ],
+   "xp": 36,
+   "resist": {
+    "shadow": 0.5,
+    "holy": 1.5
+   },
+   "scale": 1.0,
+   "boss": false,
+   "paint": {
+    "top": [
+     60,
+     20,
+     80
+    ],
+    "bottom": [
+     30,
+     14,
+     40
+    ],
+    "shoes": [
+     20,
+     10,
+     24
+    ],
+    "eye": [
+     210,
+     120,
+     255
+    ]
+   }
+  },
+  {
+   "id": "cult_acolyte",
+   "name": "Hollow Acolyte",
+   "level": 5,
+   "stats": {
+    "str": 5,
+    "int": 12,
+    "vit": 6,
+    "wis": 8,
+    "agi": 6
+   },
+   "speed": 3.2,
+   "aggro_range": 16,
+   "leash": 26,
+   "poise": 40,
+   "behavior": "ranged",
+   "preferred_range": 8,
+   "skills": [
+    "shadow_arrow"
+   ],
+   "xp": 38,
+   "resist": {
+    "shadow": 0.5,
+    "holy": 1.5
+   },
+   "scale": 0.95,
+   "boss": false,
+   "paint": {
+    "top": [
+     80,
+     30,
+     110
+    ],
+    "bottom": [
+     36,
+     16,
+     50
+    ],
+    "shoes": [
+     20,
+     10,
+     24
+    ],
+    "eye": [
+     210,
+     120,
+     255
+    ]
+   }
+  },
+  {
+   "id": "rootling",
+   "name": "Rootling",
+   "level": 6,
+   "stats": {
+    "str": 10,
+    "int": 3,
+    "vit": 10,
+    "wis": 3,
+    "agi": 5
+   },
+   "speed": 3.0,
+   "aggro_range": 14,
+   "leash": 26,
+   "poise": 70,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash"
+   ],
+   "xp": 30,
+   "resist": {
+    "fire": 1.6,
+    "ice": 0.8
+   },
+   "scale": 0.9,
+   "boss": false,
+   "paint": {
+    "top": [
+     50,
+     90,
+     40
+    ],
+    "bottom": [
+     40,
+     60,
+     30
+    ],
+    "shoes": [
+     30,
+     40,
+     20
+    ],
+    "eye": [
+     160,
+     255,
+     120
+    ]
+   }
+  },
+  {
+   "id": "thorn_minion",
+   "name": "Thorn Minion",
+   "level": 7,
+   "stats": {
+    "str": 12,
+    "int": 4,
+    "vit": 9,
+    "wis": 4,
+    "agi": 8
+   },
+   "speed": 3.8,
+   "aggro_range": 14,
+   "leash": 26,
+   "poise": 60,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "imp_claw"
+   ],
+   "xp": 34,
+   "resist": {
+    "fire": 1.6
+   },
+   "scale": 0.8,
+   "boss": false,
+   "paint": {
+    "top": [
+     70,
+     110,
+     40
+    ],
+    "bottom": [
+     50,
+     70,
+     30
+    ],
+    "shoes": [
+     30,
+     40,
+     20
+    ],
+    "eye": [
+     255,
+     120,
+     160
+    ]
+   }
+  },
+  {
+   "id": "wolf",
+   "name": "Whisperwood Wolf",
+   "level": 5,
+   "stats": {
+    "str": 11,
+    "int": 2,
+    "vit": 8,
+    "wis": 3,
+    "agi": 12
+   },
+   "speed": 5.0,
+   "aggro_range": 15,
+   "leash": 26,
+   "poise": 50,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "imp_claw"
+   ],
+   "xp": 22,
+   "resist": {},
+   "scale": 0.9,
+   "boss": false,
+   "paint": {
+    "top": [
+     100,
+     100,
+     100
+    ],
+    "bottom": [
+     80,
+     80,
+     80
+    ],
+    "shoes": [
+     50,
+     50,
+     50
+    ],
+    "eye": [
+     255,
+     220,
+     80
+    ]
+   }
+  },
+  {
+   "id": "greywall_ghost",
+   "name": "Greywall Soldier-Ghost",
+   "level": 7,
+   "stats": {
+    "str": 12,
+    "int": 5,
+    "vit": 10,
+    "wis": 8,
+    "agi": 6
+   },
+   "speed": 3.2,
+   "aggro_range": 14,
+   "leash": 26,
+   "poise": 90,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash"
+   ],
+   "xp": 40,
+   "resist": {
+    "phys": 0.7,
+    "holy": 1.6
+   },
+   "scale": 1.0,
+   "boss": false,
+   "paint": {
+    "top": [
+     120,
+     130,
+     160
+    ],
+    "bottom": [
+     90,
+     100,
+     130
+    ],
+    "shoes": [
+     70,
+     80,
+     100
+    ],
+    "eye": [
+     150,
+     220,
+     255
+    ]
+   }
+  },
+  {
+   "id": "library_guardian",
+   "name": "Library Guardian",
+   "level": 8,
+   "stats": {
+    "str": 16,
+    "int": 20,
+    "vit": 16,
+    "wis": 14,
+    "agi": 6
+   },
+   "speed": 2.8,
+   "aggro_range": 18,
+   "leash": 26,
+   "poise": 400,
+   "behavior": "brute",
+   "preferred_range": 2.2,
+   "skills": [
+    "brute_smash",
+    "shadow_arrow"
+   ],
+   "xp": 260,
+   "resist": {
+    "lightning": 0.5,
+    "phys": 0.8
+   },
+   "scale": 1.5,
+   "boss": true,
+   "paint": {
+    "top": [
+     60,
+     70,
+     140
+    ],
+    "bottom": [
+     40,
+     50,
+     100
+    ],
+    "shoes": [
+     30,
+     30,
+     70
+    ],
+    "eye": [
+     120,
+     220,
+     255
+    ]
+   }
+  },
+  {
+   "id": "shadow_self",
+   "name": "The Lonely Self",
+   "level": 9,
+   "stats": {
+    "str": 16,
+    "int": 12,
+    "vit": 14,
+    "wis": 10,
+    "agi": 14
+   },
+   "speed": 4.2,
+   "aggro_range": 20,
+   "leash": 26,
+   "poise": 450,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash",
+    "brute_smash"
+   ],
+   "xp": 300,
+   "resist": {
+    "shadow": 0.5,
+    "holy": 1.5
+   },
+   "scale": 1.0,
+   "boss": true,
+   "paint": {
+    "top": [
+     220,
+     190,
+     70
+    ],
+    "bottom": [
+     60,
+     50,
+     20
+    ],
+    "shoes": [
+     40,
+     34,
+     16
+    ],
+    "eye": [
+     255,
+     230,
+     120
+    ]
+   }
+  },
+  {
+   "id": "corrupted_beast",
+   "name": "Cult-Corrupted Beast",
+   "level": 7,
+   "stats": {
+    "str": 14,
+    "int": 3,
+    "vit": 12,
+    "wis": 3,
+    "agi": 9
+   },
+   "speed": 4.2,
+   "aggro_range": 14,
+   "leash": 26,
+   "poise": 90,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "imp_claw",
+    "shadow_slash"
+   ],
+   "xp": 44,
+   "resist": {
+    "shadow": 0.5,
+    "holy": 1.5
+   },
+   "scale": 1.0,
+   "boss": false,
+   "paint": {
+    "top": [
+     70,
+     30,
+     90
+    ],
+    "bottom": [
+     50,
+     20,
+     60
+    ],
+    "shoes": [
+     30,
+     14,
+     40
+    ],
+    "eye": [
+     230,
+     90,
+     255
+    ]
+   }
+  },
+  {
+   "id": "vessara",
+   "name": "Vessara, the Thornqueen",
+   "level": 10,
+   "stats": {
+    "str": 18,
+    "int": 20,
+    "vit": 20,
+    "wis": 16,
+    "agi": 8
+   },
+   "speed": 3.0,
+   "aggro_range": 22,
+   "leash": 26,
+   "poise": 700,
+   "behavior": "brute",
+   "preferred_range": 2.2,
+   "skills": [
+    "brute_smash",
+    "shadow_arrow"
+   ],
+   "xp": 600,
+   "resist": {
+    "fire": 1.8,
+    "ice": 0.7,
+    "lightning": 0.9
+   },
+   "scale": 1.6,
+   "boss": true,
+   "paint": {
+    "top": [
+     70,
+     130,
+     60
+    ],
+    "bottom": [
+     50,
+     90,
+     40
+    ],
+    "shoes": [
+     30,
+     60,
+     20
+    ],
+    "eye": [
+     255,
+     150,
+     190
+    ]
+   }
+  },
+  {
+   "id": "scorpion",
+   "name": "Sand Scorpion",
+   "level": 9,
+   "stats": {
+    "str": 14,
+    "int": 2,
+    "vit": 10,
+    "wis": 3,
+    "agi": 9
+   },
+   "speed": 4.2,
+   "aggro_range": 14,
+   "leash": 26,
+   "poise": 80,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "imp_claw"
+   ],
+   "xp": 40,
+   "resist": {
+    "ice": 1.5
+   },
+   "scale": 0.9,
+   "boss": false,
+   "paint": {
+    "top": [
+     150,
+     110,
+     50
+    ],
+    "bottom": [
+     120,
+     80,
+     40
+    ],
+    "shoes": [
+     80,
+     60,
+     30
+    ],
+    "eye": [
+     255,
+     120,
+     40
+    ]
+   }
+  },
+  {
+   "id": "sand_serpent",
+   "name": "Sand Serpent",
+   "level": 10,
+   "stats": {
+    "str": 15,
+    "int": 4,
+    "vit": 12,
+    "wis": 4,
+    "agi": 12
+   },
+   "speed": 5.0,
+   "aggro_range": 16,
+   "leash": 26,
+   "poise": 100,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash"
+   ],
+   "xp": 55,
+   "resist": {
+    "ice": 1.4
+   },
+   "scale": 1.2,
+   "boss": false,
+   "paint": {
+    "top": [
+     190,
+     150,
+     70
+    ],
+    "bottom": [
+     150,
+     110,
+     50
+    ],
+    "shoes": [
+     100,
+     80,
+     40
+    ],
+    "eye": [
+     255,
+     220,
+     60
+    ]
+   }
+  },
+  {
+   "id": "tomb_wraith",
+   "name": "Tomb Wraith",
+   "level": 11,
+   "stats": {
+    "str": 12,
+    "int": 14,
+    "vit": 10,
+    "wis": 12,
+    "agi": 8
+   },
+   "speed": 3.4,
+   "aggro_range": 16,
+   "leash": 26,
+   "poise": 80,
+   "behavior": "ranged",
+   "preferred_range": 8,
+   "skills": [
+    "shadow_arrow"
+   ],
+   "xp": 60,
+   "resist": {
+    "phys": 0.6,
+    "holy": 1.6
+   },
+   "scale": 1.0,
+   "boss": false,
+   "paint": {
+    "top": [
+     150,
+     170,
+     150
+    ],
+    "bottom": [
+     110,
+     130,
+     110
+    ],
+    "shoes": [
+     80,
+     100,
+     80
+    ],
+    "eye": [
+     120,
+     255,
+     180
+    ]
+   }
+  },
+  {
+   "id": "caravan_raider",
+   "name": "Caravan Raider",
+   "level": 9,
+   "stats": {
+    "str": 14,
+    "int": 3,
+    "vit": 11,
+    "wis": 3,
+    "agi": 9
+   },
+   "speed": 3.8,
+   "aggro_range": 14,
+   "leash": 26,
+   "poise": 90,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash"
+   ],
+   "xp": 42,
+   "resist": {},
+   "scale": 1.0,
+   "boss": false,
+   "paint": {
+    "top": [
+     160,
+     60,
+     50
+    ],
+    "bottom": [
+     100,
+     50,
+     40
+    ],
+    "shoes": [
+     60,
+     40,
+     30
+    ],
+    "eye": [
+     255,
+     190,
+     60
+    ]
+   }
+  },
+  {
+   "id": "khemet_ur",
+   "name": "Khemet-Ur, the Hourglass Tyrant",
+   "level": 14,
+   "stats": {
+    "str": 22,
+    "int": 20,
+    "vit": 24,
+    "wis": 18,
+    "agi": 10
+   },
+   "speed": 3.2,
+   "aggro_range": 24,
+   "leash": 26,
+   "poise": 900,
+   "behavior": "brute",
+   "preferred_range": 2.2,
+   "skills": [
+    "brute_smash",
+    "shadow_slash"
+   ],
+   "xp": 900,
+   "resist": {
+    "phys": 0.8,
+    "holy": 1.2
+   },
+   "scale": 1.7,
+   "boss": true,
+   "paint": {
+    "top": [
+     210,
+     170,
+     70
+    ],
+    "bottom": [
+     130,
+     100,
+     40
+    ],
+    "shoes": [
+     80,
+     60,
+     30
+    ],
+    "eye": [
+     255,
+     230,
+     120
+    ]
+   }
+  },
+  {
+   "id": "frost_wolf",
+   "name": "Frost Wolf",
+   "level": 12,
+   "stats": {
+    "str": 16,
+    "int": 2,
+    "vit": 12,
+    "wis": 3,
+    "agi": 13
+   },
+   "speed": 5.2,
+   "aggro_range": 16,
+   "leash": 26,
+   "poise": 80,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "imp_claw"
+   ],
+   "xp": 55,
+   "resist": {
+    "fire": 1.5,
+    "ice": 0.3
+   },
+   "scale": 1.0,
+   "boss": false,
+   "paint": {
+    "top": [
+     200,
+     220,
+     240
+    ],
+    "bottom": [
+     160,
+     190,
+     220
+    ],
+    "shoes": [
+     120,
+     150,
+     180
+    ],
+    "eye": [
+     120,
+     220,
+     255
+    ]
+   }
+  },
+  {
+   "id": "ice_wraith",
+   "name": "Ice Wraith",
+   "level": 13,
+   "stats": {
+    "str": 12,
+    "int": 16,
+    "vit": 10,
+    "wis": 12,
+    "agi": 9
+   },
+   "speed": 3.4,
+   "aggro_range": 18,
+   "leash": 26,
+   "poise": 80,
+   "behavior": "ranged",
+   "preferred_range": 8,
+   "skills": [
+    "shadow_arrow"
+   ],
+   "xp": 65,
+   "resist": {
+    "fire": 1.6,
+    "ice": 0.2
+   },
+   "scale": 1.0,
+   "boss": false,
+   "paint": {
+    "top": [
+     170,
+     210,
+     240
+    ],
+    "bottom": [
+     130,
+     170,
+     210
+    ],
+    "shoes": [
+     100,
+     140,
+     180
+    ],
+    "eye": [
+     180,
+     240,
+     255
+    ]
+   }
+  },
+  {
+   "id": "choir_husk",
+   "name": "Choir Husk",
+   "level": 13,
+   "stats": {
+    "str": 14,
+    "int": 6,
+    "vit": 14,
+    "wis": 10,
+    "agi": 6
+   },
+   "speed": 3.0,
+   "aggro_range": 15,
+   "leash": 26,
+   "poise": 120,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash"
+   ],
+   "xp": 70,
+   "resist": {
+    "holy": 1.4,
+    "ice": 0.5
+   },
+   "scale": 1.0,
+   "boss": false,
+   "paint": {
+    "top": [
+     180,
+     190,
+     220
+    ],
+    "bottom": [
+     130,
+     140,
+     180
+    ],
+    "shoes": [
+     100,
+     110,
+     150
+    ],
+    "eye": [
+     200,
+     220,
+     255
+    ]
+   }
+  },
+  {
+   "id": "isrevna",
+   "name": "Isrevna, the Winter Choir",
+   "level": 16,
+   "stats": {
+    "str": 18,
+    "int": 26,
+    "vit": 22,
+    "wis": 20,
+    "agi": 12
+   },
+   "speed": 3.2,
+   "aggro_range": 24,
+   "leash": 26,
+   "poise": 950,
+   "behavior": "ranged",
+   "preferred_range": 9,
+   "skills": [
+    "shadow_arrow",
+    "brute_smash"
+   ],
+   "xp": 1000,
+   "resist": {
+    "fire": 1.6,
+    "ice": 0.2
+   },
+   "scale": 1.6,
+   "boss": true,
+   "paint": {
+    "top": [
+     190,
+     220,
+     255
+    ],
+    "bottom": [
+     120,
+     160,
+     220
+    ],
+    "shoes": [
+     90,
+     120,
+     190
+    ],
+    "eye": [
+     220,
+     245,
+     255
+    ]
+   }
+  },
+  {
+   "id": "caldrin",
+   "name": "Archbishop Caldrin",
+   "level": 14,
+   "stats": {
+    "str": 14,
+    "int": 20,
+    "vit": 16,
+    "wis": 22,
+    "agi": 8
+   },
+   "speed": 3.0,
+   "aggro_range": 22,
+   "leash": 26,
+   "poise": 600,
+   "behavior": "ranged",
+   "preferred_range": 7,
+   "skills": [
+    "shadow_arrow",
+    "brute_smash"
+   ],
+   "xp": 700,
+   "resist": {
+    "shadow": 0.7,
+    "holy": 0.5
+   },
+   "scale": 1.05,
+   "boss": true,
+   "paint": {
+    "top": [
+     240,
+     235,
+     225
+    ],
+    "bottom": [
+     200,
+     190,
+     170
+    ],
+    "shoes": [
+     150,
+     130,
+     90
+    ],
+    "eye": [
+     255,
+     220,
+     120
+    ]
+   }
+  },
+  {
+   "id": "darius_duel",
+   "name": "Darius Valecrest",
+   "level": 5,
+   "stats": {
+    "str": 13,
+    "int": 8,
+    "vit": 11,
+    "wis": 6,
+    "agi": 12
+   },
+   "speed": 4.4,
+   "aggro_range": 20,
+   "leash": 26,
+   "poise": 260,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash",
+    "brute_smash"
+   ],
+   "xp": 180,
+   "resist": {},
+   "scale": 1.0,
+   "boss": true,
+   "paint": {
+    "top": [
+     170,
+     40,
+     50
+    ],
+    "bottom": [
+     40,
+     30,
+     40
+    ],
+    "shoes": [
+     30,
+     24,
+     30
+    ],
+    "eye": [
+     255,
+     140,
+     60
+    ]
+   }
+  },
+  {
+   "id": "ember_imp",
+   "name": "Ember Imp",
+   "level": 17,
+   "stats": {
+    "str": 14,
+    "int": 8,
+    "vit": 10,
+    "wis": 4,
+    "agi": 14
+   },
+   "speed": 4.6,
+   "aggro_range": 15,
+   "leash": 26,
+   "poise": 80,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "imp_claw"
+   ],
+   "xp": 70,
+   "resist": {
+    "fire": 0.1,
+    "ice": 1.6
+   },
+   "scale": 0.7,
+   "boss": false,
+   "paint": {
+    "top": [
+     230,
+     90,
+     30
+    ],
+    "bottom": [
+     160,
+     50,
+     20
+    ],
+    "shoes": [
+     100,
+     30,
+     12
+    ],
+    "eye": [
+     255,
+     230,
+     80
+    ]
+   }
+  },
+  {
+   "id": "magma_golem",
+   "name": "Magma Golem",
+   "level": 18,
+   "stats": {
+    "str": 22,
+    "int": 2,
+    "vit": 28,
+    "wis": 4,
+    "agi": 3
+   },
+   "speed": 2.4,
+   "aggro_range": 14,
+   "leash": 26,
+   "poise": 420,
+   "behavior": "brute",
+   "preferred_range": 2.2,
+   "skills": [
+    "brute_smash"
+   ],
+   "xp": 140,
+   "resist": {
+    "fire": 0.1,
+    "ice": 1.7,
+    "phys": 0.8
+   },
+   "scale": 1.7,
+   "boss": false,
+   "paint": {
+    "top": [
+     200,
+     70,
+     30
+    ],
+    "bottom": [
+     120,
+     40,
+     20
+    ],
+    "shoes": [
+     80,
+     30,
+     14
+    ],
+    "eye": [
+     255,
+     220,
+     80
+    ]
+   }
+  },
+  {
+   "id": "pyrrhax",
+   "name": "Pyrrhax, the Molten Warden",
+   "level": 20,
+   "stats": {
+    "str": 28,
+    "int": 12,
+    "vit": 32,
+    "wis": 14,
+    "agi": 6
+   },
+   "speed": 2.8,
+   "aggro_range": 24,
+   "leash": 26,
+   "poise": 1300,
+   "behavior": "brute",
+   "preferred_range": 2.2,
+   "skills": [
+    "brute_smash",
+    "shadow_slash"
+   ],
+   "xp": 1400,
+   "resist": {
+    "fire": 0.1,
+    "ice": 1.6,
+    "phys": 0.7
+   },
+   "scale": 2.0,
+   "boss": true,
+   "paint": {
+    "top": [
+     230,
+     100,
+     40
+    ],
+    "bottom": [
+     150,
+     60,
+     24
+    ],
+    "shoes": [
+     90,
+     36,
+     14
+    ],
+    "eye": [
+     255,
+     240,
+     120
+    ]
+   }
+  },
+  {
+   "id": "demon_legionary",
+   "name": "Demon Legionary",
+   "level": 22,
+   "stats": {
+    "str": 22,
+    "int": 8,
+    "vit": 18,
+    "wis": 8,
+    "agi": 10
+   },
+   "speed": 3.8,
+   "aggro_range": 16,
+   "leash": 26,
+   "poise": 150,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash"
+   ],
+   "xp": 90,
+   "resist": {
+    "shadow": 0.5,
+    "holy": 1.5
+   },
+   "scale": 1.1,
+   "boss": false,
+   "paint": {
+    "top": [
+     70,
+     20,
+     60
+    ],
+    "bottom": [
+     40,
+     14,
+     40
+    ],
+    "shoes": [
+     24,
+     10,
+     24
+    ],
+    "eye": [
+     255,
+     70,
+     90
+    ]
+   }
+  },
+  {
+   "id": "hollow_archer",
+   "name": "Hollow Marksman",
+   "level": 22,
+   "stats": {
+    "str": 16,
+    "int": 10,
+    "vit": 12,
+    "wis": 8,
+    "agi": 14
+   },
+   "speed": 3.4,
+   "aggro_range": 18,
+   "leash": 26,
+   "poise": 90,
+   "behavior": "ranged",
+   "preferred_range": 8,
+   "skills": [
+    "shadow_arrow"
+   ],
+   "xp": 90,
+   "resist": {
+    "shadow": 0.5,
+    "holy": 1.5
+   },
+   "scale": 1.0,
+   "boss": false,
+   "paint": {
+    "top": [
+     60,
+     20,
+     70
+    ],
+    "bottom": [
+     36,
+     14,
+     44
+    ],
+    "shoes": [
+     24,
+     10,
+     24
+    ],
+    "eye": [
+     255,
+     70,
+     90
+    ]
+   }
+  },
+  {
+   "id": "skarn_final",
+   "name": "Skarn, Herald of the Hollow King",
+   "level": 24,
+   "stats": {
+    "str": 26,
+    "int": 20,
+    "vit": 22,
+    "wis": 14,
+    "agi": 16
+   },
+   "speed": 4.8,
+   "aggro_range": 24,
+   "leash": 26,
+   "poise": 1400,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash",
+    "brute_smash"
+   ],
+   "xp": 1800,
+   "resist": {
+    "fire": 0.7,
+    "holy": 1.3
+   },
+   "scale": 1.3,
+   "boss": true,
+   "paint": {
+    "top": [
+     70,
+     10,
+     50
+    ],
+    "bottom": [
+     46,
+     8,
+     34
+    ],
+    "shoes": [
+     24,
+     6,
+     24
+    ],
+    "eye": [
+     255,
+     40,
+     70
+    ]
+   }
+  },
+  {
+   "id": "vorathis",
+   "name": "Vorathis, the Hollow King",
+   "level": 28,
+   "stats": {
+    "str": 34,
+    "int": 30,
+    "vit": 34,
+    "wis": 24,
+    "agi": 14
+   },
+   "speed": 3.4,
+   "aggro_range": 30,
+   "leash": 26,
+   "poise": 3000,
+   "behavior": "brute",
+   "preferred_range": 2.2,
+   "skills": [
+    "brute_smash",
+    "shadow_slash"
+   ],
+   "xp": 5000,
+   "resist": {
+    "shadow": 0.3,
+    "holy": 1.4
+   },
+   "scale": 2.1,
+   "boss": true,
+   "paint": {
+    "top": [
+     20,
+     14,
+     40
+    ],
+    "bottom": [
+     14,
+     10,
+     30
+    ],
+    "shoes": [
+     8,
+     6,
+     16
+    ],
+    "eye": [
+     180,
+     140,
+     255
     ]
    }
   }

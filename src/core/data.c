@@ -120,7 +120,7 @@ bool enemydb_load(EnemyDB *db, const SkillDB *skills, const char *path) {
         e->stats = (Stats){(int)num(st, "str", 5), (int)num(st, "int", 5), (int)num(st, "vit", 5), (int)num(st, "wis", 5), (int)num(st, "agi", 5)};
         e->speed = num(it, "speed", 3); e->aggro_range = num(it, "aggro_range", 12); e->leash = num(it, "leash", 24);
         e->poise = num(it, "poise", 50); e->preferred_range = num(it, "preferred_range", 2); e->scale = num(it, "scale", 1);
-        e->xp = (int)num(it, "xp", 10);
+        e->xp = (int)num(it, "xp", 10); e->boss = boolean(it, "boss");
         for (int k = 0; k < EL_COUNT; ++k) e->resist[k] = 1.0f;
         const cJSON *rs = cJSON_GetObjectItemCaseSensitive(it, "resist");
         for (int k = 0; k < EL_COUNT; ++k) e->resist[k] = num(rs, ELEMENT_NAMES[k], 1.0f);

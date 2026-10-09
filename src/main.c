@@ -14,6 +14,7 @@
 #include "core/log.h"
 #include "core/party.h"
 #include "core/physics.h"
+#include "core/story.h"
 #include "core/player.h"
 #include "platform/platform.h"
 #include "render/actors.h"
@@ -21,9 +22,12 @@
 #include "render/procmodels.h"
 #include "render/renderer.h"
 #include "ui/debug_overlay.h"
+#include "ui/dialogue.h"
 #include "ui/hud.h"
 #include "ui/input.h"
 #include "ui/menu.h"
+#include "ui/story_hud.h"
+#include "world/npc_world.h"
 #include "world/test_scene.h"
 
 #ifdef __EMSCRIPTEN__
@@ -48,6 +52,10 @@ typedef struct {
     Inventory inv;
     Menu menu;
     uint32_t loot_rng;
+    StoryDB story; StoryState ss; StoryHooks sh; NpcWorld npcs; DialogueUI dui;
+    char region[24];
+    float hour, story_timer;
+    int near_npc; bool loc_inside[128]; bool story_ok;
     struct { char text[72]; float t; Color col; } loot_log[6];
     int gear_level;
     EnemyPool enemies;
@@ -128,6 +136,38 @@ static void starting_kit(Game *g) {
     give_equipped(g, 0, "acc_guild_ring");
 }
 
+
+/* ---------------- story hooks: the engine-agnostic story core talks to the game through these ---------------- */
+static void h_give_item(void *u, const char *id, int n) {
+    Game *g = u; int it = itemdb_find(&g->idb, id);
+    if (it < 0) return;
+    int left = inv_add(&g->inv, &g->idb, it, n);
+    if (n - left > 0) log_loot(g, (Color){200, 240, 255, 255}, "%s x%d", g->idb.items[it].name, n - left);
+}
+static bool h_take_item(void *u, const char *id, int n) { Game *g = u; int it = itemdb_find(&g->idb, id); return it >= 0 && inv_remove(&g->inv, &g->idb, it, n); }
+static int h_item_count(void *u, const char *id) { Game *g = u; int it = itemdb_find(&g->idb, id); return it >= 0 ? inv_count(&g->inv, it) : 0; }
+static void h_give_gold(void *u, int n) { Game *g = u; g->inv.gold += n; char t[32]; snprintf(t, sizeof t, "+%d gold", n); log_loot(g, (Color){255, 220, 120, 255}, "%s", t, 0); }
+static int h_gold(void *u) { return ((Game *)u)->inv.gold; }
+static void h_give_xp(void *u, int n) { Game *g = u; char t[32]; snprintf(t, sizeof t, "+%d XP", n); log_loot(g, (Color){180, 255, 190, 255}, "%s", t, 0); }
+static void h_learn(void *u, const char *member, const char *skill) {
+    Game *g = u; int sk = skilldb_find(&g->skills, skill);
+    for (int i = 0; i < g->pdb.n && sk >= 0; ++i) if (!strcmp(g->pdb.m[i].id, member)) {
+        PartyDef *d = &g->pdb.m[i];
+        for (int k = 0; k < d->nskills; ++k) if (d->skills[k] == sk) return;
+        if (d->nskills < 16) { d->skills[d->nskills++] = sk; { char lt[96]; snprintf(lt, sizeof lt, "%s learned %s", d->name, g->skills.s[sk].name); log_loot(g, (Color){255, 214, 90, 255}, "%s", lt, 0); } }
+    }
+}
+static void h_open_shop(void *u, const char *shop) { Game *g = u; int s = itemdb_find_shop(&g->idb, shop); if (s >= 0) menu_open_shop(&g->menu, s); }
+static void h_cutscene(void *u, const char *name) { dui_queue_cutscene(&((Game *)u)->dui, name); }
+static void h_toast(void *u, const char *text) { toast_text((Game *)u, text); }
+
+static void story_bind(Game *g) {
+    g->sh = (StoryHooks){g, h_give_item, h_take_item, h_item_count, h_give_gold, h_gold, h_give_xp, h_learn, h_open_shop, h_cutscene, h_toast};
+}
+
+static void refresh_npcs(Game *g) { npcw_refresh(&g->npcs, &g->story, &g->ss, &g->sh, g->region, g->hour); }
+static void on_travel(void *u, const char *town) { Game *g = u; snprintf(g->region, sizeof g->region, "%s", town); npcw_init(&g->npcs); refresh_npcs(g); }
+
 static void new_game(Game *g) {
     ecs_init(&g->world);
     gameloop_init(&g->loop);
@@ -153,6 +193,19 @@ static void new_game(Game *g) {
     apply_all_gear(g);
     menu_init(&g->menu);
     memset(g->loot_log, 0, sizeof g->loot_log);
+    if (g->story_ok) {
+        story_bind(g);
+        story_init(&g->ss, &g->story, "Kael");
+        g->ss.level = 5;
+        snprintf(g->region, sizeof g->region, "aurelheim");
+        g->hour = 9.0f; g->story_timer = 0;
+        memset(g->loc_inside, 0, sizeof g->loc_inside);
+        dui_init(&g->dui);
+        npcw_init(&g->npcs);
+        story_update(&g->ss, &g->story, &g->sh);
+        refresh_npcs(g);
+        g->near_npc = -1;
+    }
 }
 
 static Vector3 lock_pos(const Game *g) {
@@ -217,6 +270,11 @@ static void process_events(Game *g) {
             if (!on_party) {
                 g->kills++; g->hitstop = fmaxf(g->hitstop, 0.10f); camrig_shake(&g->cam, 0.08f);
                 Enemy *en = enemy_of(&g->enemies, e->dst);
+                if (en && g->story_ok) {
+                    const EnemyDef *ed = &g->edb.e[en->def];
+                    if (ed->boss) story_on_boss(&g->ss, &g->story, &g->sh, ed->id);
+                    story_on_kill(&g->ss, &g->story, &g->sh, ed->id);
+                }
                 if (en) {
                     LootDrop drops[12]; int gold = 0, n = loot_roll(&g->idb, en->def, &g->loot_rng, drops, &gold);
                     if (gold > 0) { char gl[32]; snprintf(gl, sizeof gl, "+%d gold", gold); g->inv.gold += gold; log_loot(g, (Color){255, 220, 120, 255}, "%s", gl, 0); }
@@ -308,6 +366,76 @@ static void do_party_controls(Game *g) {
     }
 }
 
+
+static void skip_tracked_quest(Game *g) {
+    int q = g->ss.tracked;
+    if (q < 0) for (int i = 0; i < g->story.nquest; ++i) if (g->ss.q[i].state == QS_ACTIVE || g->ss.q[i].state == QS_READY) { q = i; break; }
+    if (q < 0) { toast_text(g, "No active quest to skip."); return; }
+    const QuestDef *d = &g->story.quest[q];
+    for (int k = 0; k < d->nobj; ++k) {
+        if (d->obj[k].kind == OBJ_FLAG) { char key[64]; snprintf(key, sizeof key, "flag.%s", d->obj[k].target); flag_set(&g->ss, key, 1); }
+        g->ss.q[q].prog[k] = (int16_t)d->obj[k].count;
+    }
+    story_update(&g->ss, &g->story, &g->sh);
+    if (g->ss.q[q].state == QS_READY) story_complete_quest(&g->ss, &g->story, &g->sh, q);
+    refresh_npcs(g);
+}
+
+static const char *DEV_REGIONS[] = {"aurelheim", "ashbrook", "whisperwood", "spire_academy", "fort_greywall", "forbidden_library", "sanctum_of_dawn", "qasr_amun", "khemet_ruins", "hrimvald", "emberforge", "front_camp"};
+
+static void story_frame(Game *g, float dt, bool hidden) {
+    bool paused = hidden || g->menu.open || g->dui.open;
+    Combatant *acb = combat_get(&g->cw, active_ent(g));
+    Vec3 ap = active_member(g)->pc.ch.pos;
+    Vector3 apos = {ap.x, ap.y, ap.z};
+    if (!paused) g->hour += dt / 60.0f;            /* one game hour per real minute */
+    if (g->hour >= 24.0f) g->hour -= 24.0f;
+    if (g->dbg.quest_skip_request) { skip_tracked_quest(g); g->dbg.quest_skip_request = false; }
+    if (IsKeyPressed(KEY_N)) { float next[3] = {6.0f, 12.0f, 19.0f}; int s = sched_slot(g->hour); g->hour = next[(s + 1) % 3]; toast_text(g, s == 2 ? "Morning." : s == 0 ? "Afternoon." : "Evening."); }
+    if (IsKeyPressed(KEY_F6)) {
+        int cur = 0; for (unsigned i = 0; i < sizeof DEV_REGIONS / sizeof DEV_REGIONS[0]; ++i) if (!strcmp(DEV_REGIONS[i], g->region)) cur = (int)i;
+        on_travel(g, DEV_REGIONS[(cur + 1) % (int)(sizeof DEV_REGIONS / sizeof DEV_REGIONS[0])]);
+        char b[64]; snprintf(b, sizeof b, "Dev travel: %s", g->region); toast_text(g, b);
+    }
+    g->story_timer += dt;
+    if (g->story_timer > 0.4f) {
+        g->story_timer = 0;
+        story_sync_collect(&g->ss, &g->story, &g->sh);
+        story_update(&g->ss, &g->story, &g->sh);
+        refresh_npcs(g);
+    }
+    /* explore objectives: entering a location hosted by this scene */
+    if (!paused && !strcmp(g->region, "aurelheim")) {
+        for (int i = 0; i < g->story.nloc && i < 128; ++i) {
+            const Location *l = &g->story.loc[i];
+            if (!l->in_sandbox) continue;
+            float dx = ap.x - l->lx, dz = ap.z - l->lz;
+            bool inside = dx * dx + dz * dz < l->radius * l->radius;
+            if (inside && !g->loc_inside[i]) { story_on_location(&g->ss, &g->story, &g->sh, l->id); log_loot(g, (Color){150, 210, 255, 255}, "Discovered: %s", l->name, 0); }
+            g->loc_inside[i] = inside;
+        }
+    }
+    npcw_update(&g->npcs, &g->story, g->hour, hidden ? 0.0f : dt);
+    /* talking */
+    if (!g->dui.open) for (int i = 0; i < g->npcs.count; ++i) g->npcs.n[i].talking = false;
+    g->near_npc = (!paused && acb && !acb->dead) ? npcw_nearest(&g->npcs, apos, 2.8f) : -1;
+    g->input.talk_visible = g->near_npc >= 0;
+    if (g->input.talk) {
+        g->input.talk = false;
+        if (g->near_npc >= 0 && !g->dui.open) {
+            NpcInst *ni = &g->npcs.n[g->near_npc];
+            DlgKind kind; int q;
+            int tree = story_pick_dialogue(&g->ss, &g->story, &g->sh, ni->def, &kind, &q);
+            if (tree >= 0 && dui_open(&g->dui, &g->ss, &g->story, &g->sh, tree, q, g->near_npc, false)) {
+                ni->talking = true;
+                npcw_face(&g->npcs, g->near_npc, apos);
+                story_on_talk(&g->ss, &g->story, &g->sh, g->story.npc[ni->def].id);
+            }
+        }
+    }
+    if (g->dui.open && g->dui.npc >= 0 && g->dui.npc < g->npcs.count) g->npcs.n[g->dui.npc].talking = true;
+}
+
 static void frame(void) {
     Game *g = &G;
     float dt = GetFrameTime();
@@ -318,27 +446,27 @@ static void frame(void) {
     if (platform_take_context_restored()) LOGI("WebGL context restored (GPU resource rebuild lands with the lifecycle milestone)");
 
     bool playing = g->state == STATE_PLAYING;
-    input_update(&g->input, dt, playing && !hidden && !g->menu.open);
-    if (playing && g->input.menu) { menu_toggle(&g->menu); if (g->menu.open && IsCursorHidden()) EnableCursor(); g->input.menu = false; }
+    input_update(&g->input, dt, playing && !hidden && !g->menu.open && !g->dui.open);
+    if (playing && g->input.menu && !g->dui.open) { menu_toggle(&g->menu); if (g->menu.open && IsCursorHidden()) EnableCursor(); g->input.menu = false; }
     else g->input.menu = false;
     inv_update(&g->inv, g->menu.open ? 0.0f : dt);
     /* desktop: the first click in game grabs the mouse (pointer lock); Esc releases it */
-    if (playing && !g->menu.open && !g->input.touch_ui && !IsCursorHidden() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) DisableCursor();
+    if (g->dui.open && IsCursorHidden()) EnableCursor();
+    if (playing && !g->menu.open && !g->dui.open && !g->input.touch_ui && !IsCursorHidden() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) DisableCursor();
     if (IsKeyPressed(KEY_ESCAPE) && IsCursorHidden() && !g->menu.open) EnableCursor();
 
     /* hit-stop freezes the simulation and animation for a few frames, rendering continues */
-    float sim_dt = hidden || g->menu.open ? 0.0f : dt;
+    float sim_dt = hidden || g->menu.open || g->dui.open ? 0.0f : dt;
     if (g->hitstop > 0) { g->hitstop -= dt; sim_dt = 0.0f; }
 
     int steps = 0;
     if (playing) {
-        if (!g->menu.open) do_party_controls(g);
+        if (!g->menu.open && !g->dui.open) do_party_controls(g);
         if (g->input.lock) toggle_lock(g);
         if (g->lock_ent != ENTITY_NULL && !combat_alive(&g->cw, g->lock_ent)) g->lock_ent = ENTITY_NULL;
         steps = gameloop_advance(&g->loop, (double)sim_dt);
         for (int s = 0; s < steps; ++s) sim_step(g, s == 0);
         if (steps > 0) input_consume(&g->input);
-        g->dbg.quest_skip_request = false; /* no quest system yet */
         for (int i = 0; i < ENEMY_MAX; ++i) { /* corpses vanish after their death animation */
             Enemy *en = &g->enemies.e[i];
             if (!en->used) continue;
@@ -360,6 +488,7 @@ static void frame(void) {
     }
     process_events(g);
     hud_update(&g->hud, dt);
+    if (playing && g->story_ok) story_frame(g, dt, hidden);
 
     Combatant *acb = combat_get(&g->cw, active_ent(g));
     if (playing) {
@@ -373,6 +502,7 @@ static void frame(void) {
         float fol = 0; /* furthest follower distance from the leader */
         for (int i = 0; i < g->party.n; ++i) if (i != g->party.active) { Vec3 a = g->party.m[i].pc.ch.pos, b = apc->ch.pos; fol = fmaxf(fol, sqrtf((a.x - b.x) * (a.x - b.x) + (a.z - b.z) * (a.z - b.z))); }
         platform_report_inventory(g->inv.gold, INV_SLOTS - inv_free_slots(&g->inv), g->menu.open, acb ? acb->atk : 0.0f);
+        if (g->story_ok) { int act_q = 0, done_q = 0; for (int i = 0; i < g->story.nquest; ++i) done_q += g->ss.q[i].state == QS_COMPLETE, act_q += g->ss.q[i].state == QS_ACTIVE || g->ss.q[i].state == QS_READY; platform_report_story(story_mq(&g->ss, &g->story), story_act(&g->ss, &g->story), g->npcs.count, g->dui.open, act_q, g->ss.tracked, done_q); }
         platform_report_party(g->party.active, (int)g->party.cmd, dead, fol, hp[0], hp[1], hp[2], hp[3]);
     }
     dbg_update(&g->dbg, dt, steps);
@@ -397,7 +527,7 @@ static void frame(void) {
     Camera3D cam = {.position = {g->cam.eye.x, g->cam.eye.y, g->cam.eye.z}, .target = {g->cam.target.x, g->cam.target.y, g->cam.target.z},
                     .up = {0, 1, 0}, .fovy = 38.0f, .projection = CAMERA_PERSPECTIVE};
 
-    float anim_dt = !hidden && !g->menu.open && g->hitstop <= 0 ? dt : 0.0f;
+    float anim_dt = !hidden && !g->menu.open && !g->dui.open && g->hitstop <= 0 ? dt : 0.0f;
     for (int i = 0; i < g->party.n; ++i) {
         PartyMember *m = &g->party.m[i];
         Combatant *c = combat_get(&g->cw, m->ent);
@@ -421,6 +551,7 @@ static void frame(void) {
         Vec3 mp = ecs_render_pos(&g->world, ecs_index(g->party.m[i].ent), alpha);
         heroes_submit(i, (Vector3){mp.x, mp.y, mp.z}, ecs_render_yaw(&g->world, ecs_index(g->party.m[i].ent), alpha), (float)g->time);
     }
+    if (g->story_ok) { Vec3 fp = active_member(g)->pc.ch.pos; npcw_submit(&g->npcs, &g->story, (Vector3){fp.x, fp.y, fp.z}, 30.0f, 10); }
     for (int i = 0; i < ENEMY_MAX; ++i) {
         const Enemy *en = &g->enemies.e[i];
         if (!en->used) continue;
@@ -460,6 +591,12 @@ static void frame(void) {
             DrawText(IsCursorHidden() ? "WASD | Shift | Space | J attack | 1-4 skills | E guard | Q roll | Tab lock | R/5-8 switch | B command | I menu | Z/X/C/V potions | Esc mouse"
                                       : "Click to capture the mouse | WASD | J attack | 1-4 skills | E guard | Q roll | Tab lock | R/5-8 switch | B command | I menu | Z/X/C/V potions",
                      10, sh - 24, 16, (Color){255, 255, 255, 170});
+        if (g->story_ok) {
+            StoryHudCtx sc = {.cam = cam, .cam_yaw = g->cam.yaw, .w = &g->world, .cw = &g->cw, .enemies = &g->enemies, .party = &g->party, .db = &g->story, .ss = &g->ss,
+                              .npcs = &g->npcs, .focus = {active_member(g)->pc.ch.pos.x, active_member(g)->pc.ch.pos.y, active_member(g)->pc.ch.pos.z},
+                              .hour = g->hour, .region_name = g->region, .near_npc = g->near_npc, .touch_ui = g->input.touch_ui};
+            story_hud_draw(&sc);
+        }
         input_draw_touch(&g->input);
         for (int i = 0; i < 6; ++i) {
             if (g->loot_log[i].t <= 0) continue;
@@ -468,8 +605,9 @@ static void frame(void) {
             Color cc = g->loot_log[i].col; cc.a = a;
             DrawText(g->loot_log[i].text, sw - 20 - MeasureText(g->loot_log[i].text, 18), sh / 2 + i * 22, 18, cc);
         }
+        if (g->story_ok && !g->menu.open) dui_update_draw(&g->dui, &g->ss, &g->story, &g->sh, dt);
         if (g->menu.open) {
-            MenuCtx mc = {&g->inv, &g->idb, &g->skills, &g->pdb, &g->party, &g->cw, g->gear_level};
+            MenuCtx mc = {&g->inv, &g->idb, &g->skills, &g->pdb, &g->party, &g->cw, g->gear_level, &g->story, &g->ss, &g->sh, g->region, on_travel, g};
             menu_update_draw(&g->menu, &mc);
             if (g->menu.gear_dirty) { apply_all_gear(g); g->menu.gear_dirty = false; }
         }
@@ -523,6 +661,8 @@ int main(int argc, char **argv) {
     input_init(&G.input);
     G.data_ok = skilldb_load(&G.skills, "data/skills.json") && enemydb_load(&G.edb, &G.skills, "data/enemies.json") &&
                 partydb_load(&G.pdb, &G.skills, "data/party.json") && itemdb_load(&G.idb, "data", &G.edb);
+    G.story_ok = storydb_load(&G.story, "data", &G.edb, &G.idb);
+    if (!G.story_ok) LOGE("story data failed to load");
     G.gear_level = 25; /* sandbox: all gear usable until the XP system lands */
     G.loot_rng = 20261009u;
     if (!G.data_ok) LOGE("content data failed to load");
@@ -537,6 +677,7 @@ int main(int argc, char **argv) {
     if (hero_only) { test_scene_set_showcase(true); test_scene_set_rack(rack); G.cam.dist = rack ? 7.5f : 4.4f; G.cam.cur_dist = G.cam.dist; G.cam.pitch = rack ? 0.25f : 0.04f; G.cam.yaw = rack ? 0.0f : 0.35f; }
     proc_init();
     heroes_init();
+    if (G.story_ok) { npcw_init(&G.npcs); refresh_npcs(&G); }
     actors_init();
     renderer_init(GetScreenWidth(), GetScreenHeight(), tier, look);
     platform_report_state("title");

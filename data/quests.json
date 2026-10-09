@@ -1,0 +1,5163 @@
+{
+ "quests": [
+  {
+   "id": "MQ01",
+   "type": "main",
+   "act": 1,
+   "number": 1,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "ashbrook",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ01.title",
+   "summary": "q.MQ01.sum",
+   "prereq": [],
+   "objectives": [
+    {
+     "kind": "flag",
+     "target": "tilly_chores",
+     "count": 1,
+     "text": "q.MQ01.o0",
+     "marker": "ashbrook"
+    },
+    {
+     "kind": "flag",
+     "target": "ceremony_done",
+     "count": 1,
+     "text": "q.MQ01.o1",
+     "marker": "ashbrook_shrine"
+    }
+   ],
+   "rewards": {
+    "xp": 100,
+    "gold": 0,
+    "skills": [
+     {
+      "member": "kael",
+      "skill": "heroic_slash"
+     }
+    ]
+   },
+   "on_complete": [
+    "flag.set:s_rank_revealed"
+   ],
+   "on_start": []
+  },
+  {
+   "id": "MQ02",
+   "type": "main",
+   "act": 1,
+   "number": 2,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "ashbrook",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ02.title",
+   "summary": "q.MQ02.sum",
+   "prereq": [
+    "quest.MQ01 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "demon_imp",
+     "count": 6,
+     "text": "q.MQ02.o0",
+     "marker": "ashbrook_outskirts"
+    },
+    {
+     "kind": "explore",
+     "target": "ashbrook_outskirts",
+     "count": 1,
+     "text": "q.MQ02.o1",
+     "marker": "ashbrook_outskirts"
+    }
+   ],
+   "rewards": {
+    "xp": 140,
+    "gold": 0
+   },
+   "on_complete": [
+    "cutscene:village_burns",
+    "flag.set:learned_dodge"
+   ],
+   "on_start": [
+    "cutscene:skarn_arrives"
+   ]
+  },
+  {
+   "id": "MQ03",
+   "type": "main",
+   "act": 1,
+   "number": 3,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "ashbrook",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ03.title",
+   "summary": "q.MQ03.sum",
+   "prereq": [
+    "quest.MQ02 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "ashbrook_shrine",
+     "count": 1,
+     "text": "q.MQ03.o0",
+     "marker": "ashbrook_shrine"
+    },
+    {
+     "kind": "flag",
+     "target": "orwyn_sacrifice",
+     "count": 1,
+     "text": "q.MQ03.o1",
+     "marker": "ashbrook"
+    }
+   ],
+   "rewards": {
+    "xp": 200,
+    "gold": 0,
+    "items": [
+     {
+      "item": "w_hero_t1",
+      "qty": 1
+     }
+    ],
+    "skills": [
+     {
+      "member": "kael",
+      "skill": "resolve"
+     }
+    ]
+   },
+   "on_complete": [
+    "flag.set:ashbrook_burned",
+    "flag.set:fast_travel_hint"
+   ],
+   "on_start": []
+  },
+  {
+   "id": "MQ04",
+   "type": "main",
+   "act": 1,
+   "number": 4,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ04.title",
+   "summary": "q.MQ04.sum",
+   "prereq": [
+    "quest.MQ03 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "bandit_thug",
+     "count": 5,
+     "text": "q.MQ04.o0",
+     "marker": "whisperwood_edge"
+    },
+    {
+     "kind": "escort",
+     "target": "mira@aurelheim_gates",
+     "count": 1,
+     "text": "q.MQ04.o1",
+     "marker": "aurelheim_gates"
+    },
+    {
+     "kind": "explore",
+     "target": "aurelheim_gates",
+     "count": 1,
+     "text": "q.MQ04.o2",
+     "marker": "aurelheim_gates"
+    }
+   ],
+   "rewards": {
+    "xp": 240,
+    "gold": 60
+   },
+   "on_complete": [
+    "cutscene:darius_mocks",
+    "flag.set:fast_travel",
+    "flag.set:aurelheim_open"
+   ],
+   "on_start": []
+  },
+  {
+   "id": "MQ05",
+   "type": "main",
+   "act": 2,
+   "number": 5,
+   "giver": "hanna",
+   "turn_in": "hanna",
+   "region": "aurelheim",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ05.title",
+   "summary": "q.MQ05.sum",
+   "prereq": [
+    "quest.MQ04 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "talk",
+     "target": "pip",
+     "count": 1,
+     "text": "q.MQ05.o0",
+     "marker": "guild_hall"
+    },
+    {
+     "kind": "talk",
+     "target": "garrick",
+     "count": 1,
+     "text": "q.MQ05.o1",
+     "marker": "aurelheim_plaza"
+    },
+    {
+     "kind": "talk",
+     "target": "selwyn",
+     "count": 1,
+     "text": "q.MQ05.o2",
+     "marker": "aurelheim_market"
+    }
+   ],
+   "rewards": {
+    "xp": 300,
+    "gold": 150,
+    "items": [
+     {
+      "item": "guild_card",
+      "qty": 1
+     },
+     {
+      "item": "acc_guild_ring",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "aurelheim",
+     "n": 5
+    }
+   },
+   "on_complete": [
+    "flag.set:bounty_board_open",
+    "flag.set:f_rank"
+   ],
+   "on_start": [],
+   "offer_tree": "MQ05.offer",
+   "progress_tree": "MQ05.progress",
+   "complete_tree": "MQ05.done"
+  },
+  {
+   "id": "MQ06",
+   "type": "main",
+   "act": 2,
+   "number": 6,
+   "giver": "hanna",
+   "turn_in": "auto",
+   "region": "aurelheim",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ06.title",
+   "summary": "q.MQ06.sum",
+   "prereq": [
+    "quest.MQ05 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "boss",
+     "target": "darius_duel",
+     "count": 1,
+     "text": "q.MQ06.o0",
+     "marker": "aurelheim_arena"
+    }
+   ],
+   "rewards": {
+    "xp": 380,
+    "gold": 200,
+    "skills": [
+     {
+      "member": "kael",
+      "skill": "flame_parry"
+     }
+    ],
+    "rep": {
+     "region": "aurelheim",
+     "n": 5
+    }
+   },
+   "on_complete": [
+    "flag.set:c_rank",
+    "flag.set:darius_rival"
+   ],
+   "on_start": [
+    "cutscene:duel_intro"
+   ],
+   "offer_tree": "MQ06.offer",
+   "progress_tree": "MQ06.progress"
+  },
+  {
+   "id": "MQ07",
+   "type": "main",
+   "act": 2,
+   "number": 7,
+   "giver": "hanna",
+   "turn_in": "hanna",
+   "region": "vale",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ07.title",
+   "summary": "q.MQ07.sum",
+   "prereq": [
+    "quest.MQ06 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "goblin_warrens",
+     "count": 1,
+     "text": "q.MQ07.o0",
+     "marker": "goblin_warrens"
+    },
+    {
+     "kind": "kill",
+     "target": "goblin_grunt",
+     "count": 8,
+     "text": "q.MQ07.o1",
+     "marker": "goblin_warrens"
+    },
+    {
+     "kind": "kill",
+     "target": "demon_marked_goblin",
+     "count": 1,
+     "text": "q.MQ07.o2",
+     "marker": "goblin_warrens"
+    },
+    {
+     "kind": "boss",
+     "target": "grukk",
+     "count": 1,
+     "text": "q.MQ07.o3",
+     "marker": "goblin_warrens"
+    }
+   ],
+   "rewards": {
+    "xp": 500,
+    "gold": 300,
+    "items": [
+     {
+      "item": "hp_medium",
+      "qty": 3
+     }
+    ],
+    "rep": {
+     "region": "aurelheim",
+     "n": 6
+    }
+   },
+   "on_complete": [
+    "flag.set:b_rank",
+    "flag.set:seal_clue_1"
+   ],
+   "on_start": [],
+   "offer_tree": "MQ07.offer",
+   "progress_tree": "MQ07.progress",
+   "complete_tree": "MQ07.done"
+  },
+  {
+   "id": "MQ08",
+   "type": "main",
+   "act": 2,
+   "number": 8,
+   "giver": "hanna",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ08.title",
+   "summary": "q.MQ08.sum",
+   "prereq": [
+    "quest.MQ07 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "talk",
+     "target": "penn",
+     "count": 1,
+     "text": "q.MQ08.o0",
+     "marker": "aurelheim_archive"
+    },
+    {
+     "kind": "explore",
+     "target": "ashbrook_outskirts",
+     "count": 1,
+     "text": "q.MQ08.o1",
+     "marker": "ashbrook_outskirts"
+    },
+    {
+     "kind": "boss",
+     "target": "skarn_1",
+     "count": 1,
+     "text": "q.MQ08.o2",
+     "marker": "ashbrook_outskirts"
+    }
+   ],
+   "rewards": {
+    "xp": 700,
+    "gold": 350,
+    "skills": [
+     {
+      "member": "kael",
+      "skill": "sunder"
+     }
+    ]
+   },
+   "on_complete": [
+    "flag.set:a_rank",
+    "flag.set:skarn_escaped"
+   ],
+   "on_start": [],
+   "offer_tree": "MQ08.offer",
+   "progress_tree": "MQ08.progress"
+  },
+  {
+   "id": "MQ09",
+   "type": "main",
+   "act": 2,
+   "number": 9,
+   "giver": "auto",
+   "turn_in": "hanna",
+   "region": "aurelheim",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ09.title",
+   "summary": "q.MQ09.sum",
+   "prereq": [
+    "quest.MQ08 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "cult_zealot",
+     "count": 10,
+     "text": "q.MQ09.o0",
+     "marker": "aurelheim_plaza"
+    },
+    {
+     "kind": "flag",
+     "target": "festival_survived",
+     "count": 1,
+     "text": "q.MQ09.o1",
+     "marker": "aurelheim_plaza"
+    }
+   ],
+   "rewards": {
+    "xp": 900,
+    "gold": 500,
+    "items": [
+     {
+      "item": "hp_large",
+      "qty": 4
+     }
+    ],
+    "rep": {
+     "region": "aurelheim",
+     "n": 10
+    }
+   },
+   "on_complete": [
+    "awaken:1",
+    "flag.set:s_rank",
+    "flag.set:party_required",
+    "flag.set:skill_tree_open"
+   ],
+   "on_start": [
+    "cutscene:festival_disaster"
+   ],
+   "complete_tree": "MQ09.done",
+   "progress_tree": "MQ09.progress"
+  },
+  {
+   "id": "MQ10",
+   "type": "main",
+   "act": 3,
+   "number": 10,
+   "giver": "hanna",
+   "turn_in": "fenn",
+   "region": "vale",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ10.title",
+   "summary": "q.MQ10.sum",
+   "prereq": [
+    "quest.MQ09 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "whisperwood_edge",
+     "count": 1,
+     "text": "q.MQ10.o0",
+     "marker": "whisperwood_edge"
+    },
+    {
+     "kind": "kill",
+     "target": "wolf",
+     "count": 4,
+     "text": "q.MQ10.o1",
+     "marker": "whisperwood"
+    },
+    {
+     "kind": "talk",
+     "target": "fenn",
+     "count": 1,
+     "text": "q.MQ10.o2",
+     "marker": "fenns_hut"
+    }
+   ],
+   "rewards": {
+    "xp": 1000,
+    "gold": 300,
+    "items": [
+     {
+      "item": "meadow_herb",
+      "qty": 6
+     }
+    ]
+   },
+   "on_complete": [
+    "flag.set:forest_map"
+   ],
+   "on_start": [],
+   "offer_tree": "MQ10.offer",
+   "progress_tree": "MQ10.progress",
+   "complete_tree": "MQ10.done"
+  },
+  {
+   "id": "MQ11",
+   "type": "main",
+   "act": 3,
+   "number": 11,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ11.title",
+   "summary": "q.MQ11.sum",
+   "prereq": [
+    "quest.MQ10 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "fort_greywall",
+     "count": 1,
+     "text": "q.MQ11.o0",
+     "marker": "fort_greywall"
+    },
+    {
+     "kind": "kill",
+     "target": "greywall_ghost",
+     "count": 8,
+     "text": "q.MQ11.o1",
+     "marker": "fort_greywall"
+    },
+    {
+     "kind": "flag",
+     "target": "bram_joined",
+     "count": 1,
+     "text": "q.MQ11.o2",
+     "marker": "fort_greywall"
+    }
+   ],
+   "rewards": {
+    "xp": 1100,
+    "gold": 250,
+    "bond": [
+     {
+      "name": "bram",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:bram_shield",
+    "flag.set:bram_joined"
+   ],
+   "on_start": []
+  },
+  {
+   "id": "MQ12",
+   "type": "main",
+   "act": 3,
+   "number": 12,
+   "giver": "voss",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ12.title",
+   "summary": "q.MQ12.sum",
+   "prereq": [
+    "quest.MQ11 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "forbidden_library",
+     "count": 1,
+     "text": "q.MQ12.o0",
+     "marker": "forbidden_library"
+    },
+    {
+     "kind": "boss",
+     "target": "library_guardian",
+     "count": 1,
+     "text": "q.MQ12.o1",
+     "marker": "forbidden_library"
+    },
+    {
+     "kind": "flag",
+     "target": "lyra_joined",
+     "count": 1,
+     "text": "q.MQ12.o2",
+     "marker": "forbidden_library"
+    }
+   ],
+   "rewards": {
+    "xp": 1300,
+    "gold": 300,
+    "bond": [
+     {
+      "name": "lyra",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:lyra_storm",
+    "flag.set:lyra_joined"
+   ],
+   "on_start": [],
+   "offer_tree": "MQ12.offer",
+   "progress_tree": "MQ12.progress"
+  },
+  {
+   "id": "MQ13",
+   "type": "main",
+   "act": 3,
+   "number": 13,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ13.title",
+   "summary": "q.MQ13.sum",
+   "prereq": [
+    "quest.MQ12 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "sanctum_of_dawn",
+     "count": 1,
+     "text": "q.MQ13.o0",
+     "marker": "sanctum_of_dawn"
+    },
+    {
+     "kind": "kill",
+     "target": "corrupted_beast",
+     "count": 6,
+     "text": "q.MQ13.o1",
+     "marker": "sanctum_of_dawn"
+    },
+    {
+     "kind": "flag",
+     "target": "mirelle_joined",
+     "count": 1,
+     "text": "q.MQ13.o2",
+     "marker": "sanctum_of_dawn"
+    }
+   ],
+   "rewards": {
+    "xp": 1500,
+    "gold": 350,
+    "bond": [
+     {
+      "name": "mirelle",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:mirelle_fading",
+    "flag.set:mirelle_joined"
+   ],
+   "on_start": []
+  },
+  {
+   "id": "MQ14",
+   "type": "main",
+   "act": 3,
+   "number": 14,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ14.title",
+   "summary": "q.MQ14.sum",
+   "prereq": [
+    "quest.MQ13 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "convergence_shrine",
+     "count": 1,
+     "text": "q.MQ14.o0",
+     "marker": "convergence_shrine"
+    },
+    {
+     "kind": "boss",
+     "target": "shadow_self",
+     "count": 1,
+     "text": "q.MQ14.o1",
+     "marker": "convergence_shrine"
+    }
+   ],
+   "rewards": {
+    "xp": 1700,
+    "gold": 400,
+    "bond": [
+     {
+      "name": "bram",
+      "n": 1
+     },
+     {
+      "name": "lyra",
+      "n": 1
+     },
+     {
+      "name": "mirelle",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:resonance_born",
+    "flag.set:resonance_unlocked"
+   ],
+   "on_start": []
+  },
+  {
+   "id": "MQ15",
+   "type": "main",
+   "act": 3,
+   "number": 15,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ15.title",
+   "summary": "q.MQ15.sum",
+   "prereq": [
+    "quest.MQ14 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "rootheart_hollow",
+     "count": 1,
+     "text": "q.MQ15.o0",
+     "marker": "rootheart_hollow"
+    },
+    {
+     "kind": "kill",
+     "target": "thorn_minion",
+     "count": 6,
+     "text": "q.MQ15.o1",
+     "marker": "rootheart_hollow"
+    },
+    {
+     "kind": "boss",
+     "target": "vessara",
+     "count": 1,
+     "text": "q.MQ15.o2",
+     "marker": "rootheart_hollow"
+    }
+   ],
+   "rewards": {
+    "xp": 2400,
+    "gold": 600,
+    "items": [
+     {
+      "item": "seal_life",
+      "qty": 1
+     },
+     {
+      "item": "hp_large",
+      "qty": 4
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:vessara_farewell",
+    "awaken:2",
+    "flag.set:seal_life_found"
+   ],
+   "on_start": []
+  },
+  {
+   "id": "MQ16",
+   "type": "main",
+   "act": 4,
+   "number": 16,
+   "giver": "auto",
+   "turn_in": "kharim",
+   "region": "sunscar",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ16.title",
+   "summary": "q.MQ16.sum",
+   "prereq": [
+    "quest.MQ15 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "qasr_amun",
+     "count": 1,
+     "text": "q.MQ16.o0",
+     "marker": "qasr_amun"
+    },
+    {
+     "kind": "kill",
+     "target": "sand_serpent",
+     "count": 4,
+     "text": "q.MQ16.o1",
+     "marker": "serpent_dunes"
+    },
+    {
+     "kind": "talk",
+     "target": "edda",
+     "count": 1,
+     "text": "q.MQ16.o2",
+     "marker": "qasr_amun"
+    },
+    {
+     "kind": "talk",
+     "target": "kharim",
+     "count": 1,
+     "text": "q.MQ16.o3",
+     "marker": "qasr_amun"
+    }
+   ],
+   "rewards": {
+    "xp": 2600,
+    "gold": 500,
+    "items": [
+     {
+      "item": "food_desert_flatbread",
+      "qty": 4
+     }
+    ],
+    "rep": {
+     "region": "qasr_amun",
+     "n": 10
+    }
+   },
+   "on_complete": [
+    "flag.set:mount_unlocked",
+    "flag.set:desert_gear"
+   ],
+   "on_start": [],
+   "complete_tree": "MQ16.done",
+   "progress_tree": "MQ16.progress"
+  },
+  {
+   "id": "MQ17",
+   "type": "main",
+   "act": 4,
+   "number": 17,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "sunscar",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ17.title",
+   "summary": "q.MQ17.sum",
+   "prereq": [
+    "quest.MQ16 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "hourglass_vault",
+     "count": 1,
+     "text": "q.MQ17.o0",
+     "marker": "hourglass_vault"
+    },
+    {
+     "kind": "boss",
+     "target": "khemet_ur",
+     "count": 1,
+     "text": "q.MQ17.o1",
+     "marker": "hourglass_vault"
+    }
+   ],
+   "rewards": {
+    "xp": 3600,
+    "gold": 800,
+    "items": [
+     {
+      "item": "seal_time",
+      "qty": 1
+     },
+     {
+      "item": "hp_grand",
+      "qty": 3
+     }
+    ],
+    "bond": [
+     {
+      "name": "mirelle",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "flag.set:seal_time_found"
+   ],
+   "on_start": []
+  },
+  {
+   "id": "MQ18",
+   "type": "main",
+   "act": 4,
+   "number": 18,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "frostspire",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ18.title",
+   "summary": "q.MQ18.sum",
+   "prereq": [
+    "quest.MQ17 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "hrimvald",
+     "count": 1,
+     "text": "q.MQ18.o0",
+     "marker": "hrimvald"
+    },
+    {
+     "kind": "talk",
+     "target": "torvik",
+     "count": 1,
+     "text": "q.MQ18.o1",
+     "marker": "hrimvald"
+    },
+    {
+     "kind": "explore",
+     "target": "whiteout_pass",
+     "count": 1,
+     "text": "q.MQ18.o2",
+     "marker": "whiteout_pass"
+    },
+    {
+     "kind": "flag",
+     "target": "avalanche_survived",
+     "count": 1,
+     "text": "q.MQ18.o3",
+     "marker": "whiteout_pass"
+    }
+   ],
+   "rewards": {
+    "xp": 3800,
+    "gold": 700,
+    "items": [
+     {
+      "item": "food_frost_broth",
+      "qty": 4
+     }
+    ],
+    "bond": [
+     {
+      "name": "lyra",
+      "n": 1
+     },
+     {
+      "name": "bram",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "flag.set:cold_gear",
+    "flag.set:mana_anchor_learned",
+    "learn:lyra:mana_anchor"
+   ],
+   "on_start": []
+  },
+  {
+   "id": "MQ19",
+   "type": "main",
+   "act": 4,
+   "number": 19,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "frostspire",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ19.title",
+   "summary": "q.MQ19.sum",
+   "prereq": [
+    "quest.MQ18 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "choir_cathedral",
+     "count": 1,
+     "text": "q.MQ19.o0",
+     "marker": "choir_cathedral"
+    },
+    {
+     "kind": "kill",
+     "target": "choir_husk",
+     "count": 6,
+     "text": "q.MQ19.o1",
+     "marker": "choir_cathedral"
+    },
+    {
+     "kind": "boss",
+     "target": "isrevna",
+     "count": 1,
+     "text": "q.MQ19.o2",
+     "marker": "choir_cathedral"
+    }
+   ],
+   "rewards": {
+    "xp": 5000,
+    "gold": 1000,
+    "items": [
+     {
+      "item": "seal_spirit",
+      "qty": 1
+     },
+     {
+      "item": "mp_grand",
+      "qty": 3
+     }
+    ],
+    "bond": [
+     {
+      "name": "lyra",
+      "n": 1
+     },
+     {
+      "name": "mirelle",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "awaken:3",
+    "flag.set:seal_spirit_found"
+   ],
+   "on_start": []
+  },
+  {
+   "id": "MQ20",
+   "type": "main",
+   "act": 4,
+   "number": 20,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "aurelheim",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ20.title",
+   "summary": "q.MQ20.sum",
+   "prereq": [
+    "quest.MQ19 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "aurelheim_cathedral",
+     "count": 1,
+     "text": "q.MQ20.o0",
+     "marker": "aurelheim_cathedral"
+    },
+    {
+     "kind": "boss",
+     "target": "caldrin",
+     "count": 1,
+     "text": "q.MQ20.o1",
+     "marker": "aurelheim_cathedral"
+    },
+    {
+     "kind": "flag",
+     "target": "mirelle_freed",
+     "count": 1,
+     "text": "q.MQ20.o2",
+     "marker": "aurelheim_cathedral"
+    }
+   ],
+   "rewards": {
+    "xp": 6500,
+    "gold": 1500,
+    "bond": [
+     {
+      "name": "mirelle",
+      "n": 2
+     },
+     {
+      "name": "darius",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "flag.set:tithe_broken",
+    "flag.set:darius_guest",
+    "flag.set:mirelle_freed",
+    "flag.set:caldrin_arrested"
+   ],
+   "on_start": [
+    "cutscene:betrayal"
+   ]
+  },
+  {
+   "id": "MQ21",
+   "type": "main",
+   "act": 4,
+   "number": 21,
+   "giver": "auto",
+   "turn_in": "brandt",
+   "region": "cinderhold",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ21.title",
+   "summary": "q.MQ21.sum",
+   "prereq": [
+    "quest.MQ20 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "emberforge",
+     "count": 1,
+     "text": "q.MQ21.o0",
+     "marker": "emberforge"
+    },
+    {
+     "kind": "talk",
+     "target": "brandt",
+     "count": 1,
+     "text": "q.MQ21.o1",
+     "marker": "emberforge"
+    },
+    {
+     "kind": "kill",
+     "target": "magma_golem",
+     "count": 3,
+     "text": "q.MQ21.o2",
+     "marker": "ashen_mines"
+    },
+    {
+     "kind": "collect",
+     "target": "ember_steel",
+     "count": 4,
+     "text": "q.MQ21.o3",
+     "marker": "ashen_mines"
+    }
+   ],
+   "rewards": {
+    "xp": 8000,
+    "gold": 1500,
+    "items": [
+     {
+      "item": "w_tank_oaths",
+      "qty": 1
+     },
+     {
+      "item": "w_mage_starcaller",
+      "qty": 1
+     },
+     {
+      "item": "w_heal_dawnsong",
+      "qty": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "flag.set:legendary_gear",
+    "flag.set:blacksmith_mastery"
+   ],
+   "on_start": [],
+   "complete_tree": "MQ21.done",
+   "progress_tree": "MQ21.progress"
+  },
+  {
+   "id": "MQ22",
+   "type": "main",
+   "act": 4,
+   "number": 22,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "cinderhold",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ22.title",
+   "summary": "q.MQ22.sum",
+   "prereq": [
+    "quest.MQ21 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "molten_keep",
+     "count": 1,
+     "text": "q.MQ22.o0",
+     "marker": "molten_keep"
+    },
+    {
+     "kind": "kill",
+     "target": "ember_imp",
+     "count": 6,
+     "text": "q.MQ22.o1",
+     "marker": "molten_keep"
+    },
+    {
+     "kind": "boss",
+     "target": "pyrrhax",
+     "count": 1,
+     "text": "q.MQ22.o2",
+     "marker": "molten_keep"
+    }
+   ],
+   "rewards": {
+    "xp": 12000,
+    "gold": 2500,
+    "items": [
+     {
+      "item": "seal_flame",
+      "qty": 1
+     },
+     {
+      "item": "w_hero_zenith",
+      "qty": 1
+     },
+     {
+      "item": "hp_elixir",
+      "qty": 2
+     }
+    ],
+    "bond": [
+     {
+      "name": "bram",
+      "n": 2
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:bram_stand",
+    "awaken:4",
+    "flag.set:seal_flame_found",
+    "flag.set:dawnbrand_zenith"
+   ],
+   "on_start": []
+  },
+  {
+   "id": "MQ23",
+   "type": "main",
+   "act": 5,
+   "number": 23,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ23.title",
+   "summary": "q.MQ23.sum",
+   "prereq": [
+    "quest.MQ22 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "seal_life",
+     "count": 1,
+     "text": "q.MQ23.o0",
+     "marker": "aurelheim_archive"
+    },
+    {
+     "kind": "collect",
+     "target": "seal_time",
+     "count": 1,
+     "text": "q.MQ23.o1",
+     "marker": "aurelheim_archive"
+    },
+    {
+     "kind": "collect",
+     "target": "seal_spirit",
+     "count": 1,
+     "text": "q.MQ23.o2",
+     "marker": "aurelheim_archive"
+    },
+    {
+     "kind": "collect",
+     "target": "seal_flame",
+     "count": 1,
+     "text": "q.MQ23.o3",
+     "marker": "aurelheim_archive"
+    },
+    {
+     "kind": "explore",
+     "target": "convergence_shrine",
+     "count": 1,
+     "text": "q.MQ23.o4",
+     "marker": "convergence_shrine"
+    }
+   ],
+   "rewards": {
+    "xp": 16000,
+    "gold": 3000,
+    "items": [
+     {
+      "item": "sealing_crown",
+      "qty": 1
+     }
+    ],
+    "bond": [
+     {
+      "name": "bram",
+      "n": 1
+     },
+     {
+      "name": "lyra",
+      "n": 1
+     },
+     {
+      "name": "mirelle",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:crown_truth",
+    "awaken:5",
+    "flag.set:truth_known",
+    "flag.set:resonance_ultimate"
+   ],
+   "on_start": []
+  },
+  {
+   "id": "MQ24",
+   "type": "main",
+   "act": 5,
+   "number": 24,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "hollow",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ24.title",
+   "summary": "q.MQ24.sum",
+   "prereq": [
+    "quest.MQ23 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "front_camp",
+     "count": 1,
+     "text": "q.MQ24.o0",
+     "marker": "front_camp"
+    },
+    {
+     "kind": "kill",
+     "target": "demon_legionary",
+     "count": 12,
+     "text": "q.MQ24.o1",
+     "marker": "hollow_gate"
+    },
+    {
+     "kind": "boss",
+     "target": "skarn_final",
+     "count": 1,
+     "text": "q.MQ24.o2",
+     "marker": "hollow_gate"
+    }
+   ],
+   "rewards": {
+    "xp": 20000,
+    "gold": 4000,
+    "items": [
+     {
+      "item": "hp_elixir",
+      "qty": 3
+     },
+     {
+      "item": "mp_elixir",
+      "qty": 3
+     }
+    ]
+   },
+   "on_complete": [
+    "flag.set:gate_broken",
+    "flag.set:last_chance_to_prepare"
+   ],
+   "on_start": [
+    "cutscene:army_gathers"
+   ]
+  },
+  {
+   "id": "MQ25",
+   "type": "main",
+   "act": 5,
+   "number": 25,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "hollow",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.MQ25.title",
+   "summary": "q.MQ25.sum",
+   "prereq": [
+    "quest.MQ24 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "voidspire_throne",
+     "count": 1,
+     "text": "q.MQ25.o0",
+     "marker": "voidspire_throne"
+    },
+    {
+     "kind": "boss",
+     "target": "vorathis",
+     "count": 1,
+     "text": "q.MQ25.o1",
+     "marker": "voidspire_throne"
+    }
+   ],
+   "rewards": {
+    "xp": 60000,
+    "gold": 10000,
+    "items": [
+     {
+      "item": "hp_elixir",
+      "qty": 5
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:aurel_farewell",
+    "cutscene:ending_montage",
+    "flag.set:game_cleared",
+    "flag.set:newgameplus_unlocked"
+   ],
+   "on_start": []
+  },
+  {
+   "id": "CQ-Bram1",
+   "type": "companion",
+   "act": 3,
+   "number": 0,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.CQ-Bram1.title",
+   "summary": "q.CQ-Bram1.sum",
+   "prereq": [
+    "bond.bram >= 1",
+    "quest.MQ11 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "greywall_memorial",
+     "count": 1,
+     "text": "q.CQ-Bram1.o0",
+     "marker": "greywall_memorial"
+    },
+    {
+     "kind": "kill",
+     "target": "greywall_ghost",
+     "count": 4,
+     "text": "q.CQ-Bram1.o1",
+     "marker": "greywall_memorial"
+    }
+   ],
+   "rewards": {
+    "xp": 1800,
+    "gold": 200,
+    "items": [
+     {
+      "item": "greywall_names",
+      "qty": 1
+     },
+     {
+      "item": "acc_greywall_tag",
+      "qty": 1
+     }
+    ],
+    "bond": [
+     {
+      "name": "bram",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:cq-bram1_outro"
+   ],
+   "on_start": [
+    "cutscene:cq-bram1_intro"
+   ]
+  },
+  {
+   "id": "CQ-Bram2",
+   "type": "companion",
+   "act": 4,
+   "number": 0,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.CQ-Bram2.title",
+   "summary": "q.CQ-Bram2.sum",
+   "prereq": [
+    "bond.bram >= 2",
+    "quest.CQ-Bram1 == complete",
+    "quest.MQ14 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "talk",
+     "target": "ilse",
+     "count": 1,
+     "text": "q.CQ-Bram2.o0",
+     "marker": "aurelheim_market"
+    }
+   ],
+   "rewards": {
+    "xp": 2200,
+    "gold": 250,
+    "bond": [
+     {
+      "name": "bram",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:cq-bram2_outro"
+   ],
+   "on_start": [
+    "cutscene:cq-bram2_intro"
+   ]
+  },
+  {
+   "id": "CQ-Bram3",
+   "type": "companion",
+   "act": 4,
+   "number": 0,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.CQ-Bram3.title",
+   "summary": "q.CQ-Bram3.sum",
+   "prereq": [
+    "bond.bram >= 3",
+    "quest.CQ-Bram2 == complete",
+    "quest.MQ17 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "caravan_road",
+     "count": 1,
+     "text": "q.CQ-Bram3.o0",
+     "marker": "caravan_road"
+    },
+    {
+     "kind": "kill",
+     "target": "caravan_raider",
+     "count": 6,
+     "text": "q.CQ-Bram3.o1",
+     "marker": "caravan_road"
+    },
+    {
+     "kind": "talk",
+     "target": "dunmore",
+     "count": 1,
+     "text": "q.CQ-Bram3.o2",
+     "marker": "aurelheim"
+    }
+   ],
+   "rewards": {
+    "xp": 3200,
+    "gold": 400,
+    "items": [
+     {
+      "item": "a_tank_head_t3",
+      "qty": 1
+     }
+    ],
+    "bond": [
+     {
+      "name": "bram",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:cq-bram3_outro"
+   ],
+   "on_start": [
+    "cutscene:cq-bram3_intro"
+   ]
+  },
+  {
+   "id": "CQ-Bram4",
+   "type": "companion",
+   "act": 4,
+   "number": 0,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.CQ-Bram4.title",
+   "summary": "q.CQ-Bram4.sum",
+   "prereq": [
+    "bond.bram >= 4",
+    "quest.CQ-Bram3 == complete",
+    "quest.MQ21 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "emberforge",
+     "count": 1,
+     "text": "q.CQ-Bram4.o0",
+     "marker": "emberforge"
+    },
+    {
+     "kind": "kill",
+     "target": "ember_imp",
+     "count": 10,
+     "text": "q.CQ-Bram4.o1",
+     "marker": "emberforge"
+    },
+    {
+     "kind": "kill",
+     "target": "magma_golem",
+     "count": 1,
+     "text": "q.CQ-Bram4.o2",
+     "marker": "emberforge"
+    }
+   ],
+   "rewards": {
+    "xp": 7000,
+    "gold": 800,
+    "skills": [
+     {
+      "member": "bram",
+      "skill": "unbroken_vow"
+     }
+    ],
+    "bond": [
+     {
+      "name": "bram",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:cq-bram4_outro"
+   ],
+   "on_start": [
+    "cutscene:cq-bram4_intro"
+   ]
+  },
+  {
+   "id": "CQ-Lyra1",
+   "type": "companion",
+   "act": 3,
+   "number": 0,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.CQ-Lyra1.title",
+   "summary": "q.CQ-Lyra1.sum",
+   "prereq": [
+    "bond.lyra >= 1",
+    "quest.MQ12 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "spire_academy",
+     "count": 1,
+     "text": "q.CQ-Lyra1.o0",
+     "marker": "spire_academy"
+    },
+    {
+     "kind": "collect",
+     "target": "lyra_notes",
+     "count": 5,
+     "text": "q.CQ-Lyra1.o1",
+     "marker": "spire_academy"
+    }
+   ],
+   "rewards": {
+    "xp": 2000,
+    "gold": 200,
+    "items": [
+     {
+      "item": "tome_fireball",
+      "qty": 1
+     }
+    ],
+    "bond": [
+     {
+      "name": "lyra",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:cq-lyra1_outro"
+   ],
+   "on_start": [
+    "cutscene:cq-lyra1_intro"
+   ]
+  },
+  {
+   "id": "CQ-Lyra2",
+   "type": "companion",
+   "act": 4,
+   "number": 0,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.CQ-Lyra2.title",
+   "summary": "q.CQ-Lyra2.sum",
+   "prereq": [
+    "bond.lyra >= 2",
+    "quest.CQ-Lyra1 == complete",
+    "quest.MQ15 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "spire_academy",
+     "count": 1,
+     "text": "q.CQ-Lyra2.o0",
+     "marker": "spire_academy"
+    },
+    {
+     "kind": "talk",
+     "target": "voss",
+     "count": 1,
+     "text": "q.CQ-Lyra2.o1",
+     "marker": "spire_academy"
+    }
+   ],
+   "rewards": {
+    "xp": 2800,
+    "gold": 300,
+    "bond": [
+     {
+      "name": "lyra",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:cq-lyra2_outro"
+   ],
+   "on_start": [
+    "cutscene:cq-lyra2_intro"
+   ]
+  },
+  {
+   "id": "CQ-Lyra3",
+   "type": "companion",
+   "act": 4,
+   "number": 0,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.CQ-Lyra3.title",
+   "summary": "q.CQ-Lyra3.sum",
+   "prereq": [
+    "bond.lyra >= 3",
+    "quest.CQ-Lyra2 == complete",
+    "quest.MQ18 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "singing_ice",
+     "count": 1,
+     "text": "q.CQ-Lyra3.o0",
+     "marker": "singing_ice"
+    },
+    {
+     "kind": "kill",
+     "target": "ice_wraith",
+     "count": 5,
+     "text": "q.CQ-Lyra3.o1",
+     "marker": "singing_ice"
+    }
+   ],
+   "rewards": {
+    "xp": 4500,
+    "gold": 500,
+    "bond": [
+     {
+      "name": "lyra",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:cq-lyra3_outro"
+   ],
+   "on_start": [
+    "cutscene:cq-lyra3_intro"
+   ]
+  },
+  {
+   "id": "CQ-Lyra4",
+   "type": "companion",
+   "act": 4,
+   "number": 0,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.CQ-Lyra4.title",
+   "summary": "q.CQ-Lyra4.sum",
+   "prereq": [
+    "bond.lyra >= 4",
+    "quest.CQ-Lyra3 == complete",
+    "quest.MQ22 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "convergence_shrine",
+     "count": 1,
+     "text": "q.CQ-Lyra4.o0",
+     "marker": "convergence_shrine"
+    },
+    {
+     "kind": "collect",
+     "target": "spirit_shard",
+     "count": 2,
+     "text": "q.CQ-Lyra4.o1",
+     "marker": "singing_ice"
+    }
+   ],
+   "rewards": {
+    "xp": 9000,
+    "gold": 1000,
+    "skills": [
+     {
+      "member": "lyra",
+      "skill": "starfall"
+     }
+    ],
+    "bond": [
+     {
+      "name": "lyra",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:cq-lyra4_outro"
+   ],
+   "on_start": [
+    "cutscene:cq-lyra4_intro"
+   ]
+  },
+  {
+   "id": "CQ-Mirelle1",
+   "type": "companion",
+   "act": 3,
+   "number": 0,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.CQ-Mirelle1.title",
+   "summary": "q.CQ-Mirelle1.sum",
+   "prereq": [
+    "bond.mirelle >= 1",
+    "quest.MQ13 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "talk",
+     "target": "penn",
+     "count": 1,
+     "text": "q.CQ-Mirelle1.o0",
+     "marker": "aurelheim_archive"
+    },
+    {
+     "kind": "explore",
+     "target": "aurelheim_archive",
+     "count": 1,
+     "text": "q.CQ-Mirelle1.o1",
+     "marker": "aurelheim_archive"
+    }
+   ],
+   "rewards": {
+    "xp": 2200,
+    "gold": 200,
+    "bond": [
+     {
+      "name": "mirelle",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:cq-mirelle1_outro"
+   ],
+   "on_start": [
+    "cutscene:cq-mirelle1_intro"
+   ]
+  },
+  {
+   "id": "CQ-Mirelle2",
+   "type": "companion",
+   "act": 4,
+   "number": 0,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.CQ-Mirelle2.title",
+   "summary": "q.CQ-Mirelle2.sum",
+   "prereq": [
+    "bond.mirelle >= 2",
+    "quest.CQ-Mirelle1 == complete",
+    "quest.MQ16 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "refugee_camp",
+     "count": 1,
+     "text": "q.CQ-Mirelle2.o0",
+     "marker": "refugee_camp"
+    },
+    {
+     "kind": "talk",
+     "target": "wren",
+     "count": 1,
+     "text": "q.CQ-Mirelle2.o1",
+     "marker": "refugee_camp"
+    }
+   ],
+   "rewards": {
+    "xp": 3000,
+    "gold": 300,
+    "bond": [
+     {
+      "name": "mirelle",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:cq-mirelle2_outro"
+   ],
+   "on_start": [
+    "cutscene:cq-mirelle2_intro"
+   ]
+  },
+  {
+   "id": "CQ-Mirelle3",
+   "type": "companion",
+   "act": 4,
+   "number": 0,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.CQ-Mirelle3.title",
+   "summary": "q.CQ-Mirelle3.sum",
+   "prereq": [
+    "bond.mirelle >= 3",
+    "quest.CQ-Mirelle2 == complete",
+    "quest.MQ19 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "talk",
+     "target": "petra",
+     "count": 1,
+     "text": "q.CQ-Mirelle3.o0",
+     "marker": "aurelheim_market"
+    },
+    {
+     "kind": "talk",
+     "target": "bao",
+     "count": 1,
+     "text": "q.CQ-Mirelle3.o1",
+     "marker": "aurelheim_market"
+    },
+    {
+     "kind": "talk",
+     "target": "lio",
+     "count": 1,
+     "text": "q.CQ-Mirelle3.o2",
+     "marker": "aurelheim_plaza"
+    }
+   ],
+   "rewards": {
+    "xp": 5000,
+    "gold": 100,
+    "items": [
+     {
+      "item": "food_festival_cake",
+      "qty": 2
+     }
+    ],
+    "bond": [
+     {
+      "name": "mirelle",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:cq-mirelle3_outro"
+   ],
+   "on_start": [
+    "cutscene:cq-mirelle3_intro"
+   ]
+  },
+  {
+   "id": "CQ-Mirelle4",
+   "type": "companion",
+   "act": 4,
+   "number": 0,
+   "giver": "auto",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": true,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.CQ-Mirelle4.title",
+   "summary": "q.CQ-Mirelle4.sum",
+   "prereq": [
+    "bond.mirelle >= 4",
+    "quest.CQ-Mirelle3 == complete",
+    "quest.MQ20 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "sanctum_of_dawn",
+     "count": 1,
+     "text": "q.CQ-Mirelle4.o0",
+     "marker": "sanctum_of_dawn"
+    },
+    {
+     "kind": "flag",
+     "target": "pure_light_learned",
+     "count": 1,
+     "text": "q.CQ-Mirelle4.o1",
+     "marker": "sanctum_of_dawn"
+    }
+   ],
+   "rewards": {
+    "xp": 10000,
+    "gold": 1000,
+    "skills": [
+     {
+      "member": "mirelle",
+      "skill": "radiant_renewal"
+     }
+    ],
+    "bond": [
+     {
+      "name": "mirelle",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "cutscene:cq-mirelle4_outro"
+   ],
+   "on_start": [
+    "cutscene:cq-mirelle4_intro"
+   ]
+  },
+  {
+   "id": "CQ-Darius1",
+   "type": "companion",
+   "act": 2,
+   "number": 0,
+   "giver": "darius",
+   "turn_in": "darius",
+   "region": "aurelheim",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.CQ-Darius1.title",
+   "summary": "q.CQ-Darius1.sum",
+   "prereq": [
+    "quest.MQ06 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "shadow_soldier",
+     "count": 8,
+     "text": "q.CQ-Darius1.o0",
+     "marker": "aurelheim_arena"
+    },
+    {
+     "kind": "talk",
+     "target": "darius",
+     "count": 1,
+     "text": "q.CQ-Darius1.o1",
+     "marker": "aurelheim_arena"
+    }
+   ],
+   "rewards": {
+    "xp": 900,
+    "gold": 150,
+    "bond": [
+     {
+      "name": "darius",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "CQ-Darius1.offer",
+   "progress_tree": "CQ-Darius1.progress",
+   "complete_tree": "CQ-Darius1.done"
+  },
+  {
+   "id": "CQ-Darius2",
+   "type": "companion",
+   "act": 3,
+   "number": 0,
+   "giver": "darius",
+   "turn_in": "darius",
+   "region": "aurelheim",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.CQ-Darius2.title",
+   "summary": "q.CQ-Darius2.sum",
+   "prereq": [
+    "quest.MQ12 == complete",
+    "quest.CQ-Darius1 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "talk",
+     "target": "verrin",
+     "count": 1,
+     "text": "q.CQ-Darius2.o0",
+     "marker": "aurelheim"
+    },
+    {
+     "kind": "explore",
+     "target": "aurelheim_archive",
+     "count": 1,
+     "text": "q.CQ-Darius2.o1",
+     "marker": "aurelheim_archive"
+    }
+   ],
+   "rewards": {
+    "xp": 1900,
+    "gold": 250,
+    "bond": [
+     {
+      "name": "darius",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "CQ-Darius2.offer",
+   "progress_tree": "CQ-Darius2.progress",
+   "complete_tree": "CQ-Darius2.done"
+  },
+  {
+   "id": "CQ-Darius3",
+   "type": "companion",
+   "act": 4,
+   "number": 0,
+   "giver": "darius",
+   "turn_in": "darius",
+   "region": "aurelheim",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 1,
+   "title": "q.CQ-Darius3.title",
+   "summary": "q.CQ-Darius3.sum",
+   "prereq": [
+    "quest.MQ20 == complete",
+    "quest.CQ-Darius2 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "aurelheim_cathedral",
+     "count": 1,
+     "text": "q.CQ-Darius3.o0",
+     "marker": "aurelheim_cathedral"
+    },
+    {
+     "kind": "kill",
+     "target": "cult_zealot",
+     "count": 8,
+     "text": "q.CQ-Darius3.o1",
+     "marker": "aurelheim_cathedral"
+    }
+   ],
+   "rewards": {
+    "xp": 7000,
+    "gold": 800,
+    "bond": [
+     {
+      "name": "darius",
+      "n": 1
+     }
+    ]
+   },
+   "on_complete": [
+    "flag.set:darius_siege_summon"
+   ],
+   "on_start": [],
+   "offer_tree": "CQ-Darius3.offer",
+   "progress_tree": "CQ-Darius3.progress",
+   "complete_tree": "CQ-Darius3.done"
+  },
+  {
+   "id": "SQ-Lamb",
+   "type": "side",
+   "act": 1,
+   "number": 0,
+   "giver": "eldric",
+   "turn_in": "eldric",
+   "region": "ashbrook",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 3,
+   "title": "q.SQ-Lamb.title",
+   "summary": "q.SQ-Lamb.sum",
+   "prereq": [
+    "quest.MQ01 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "lamb_meadow",
+     "count": 1,
+     "text": "q.SQ-Lamb.o0",
+     "marker": "lamb_meadow"
+    },
+    {
+     "kind": "kill",
+     "target": "wolf",
+     "count": 2,
+     "text": "q.SQ-Lamb.o1",
+     "marker": "lamb_meadow"
+    }
+   ],
+   "rewards": {
+    "xp": 200,
+    "gold": 40,
+    "items": [
+     {
+      "item": "food_bread",
+      "qty": 3
+     }
+    ],
+    "rep": {
+     "region": "ashbrook",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Lamb.offer",
+   "progress_tree": "SQ-Lamb.progress",
+   "complete_tree": "SQ-Lamb.done"
+  },
+  {
+   "id": "SQ-Ledger",
+   "type": "side",
+   "act": 2,
+   "number": 0,
+   "giver": "pip",
+   "turn_in": "pip",
+   "region": "aurelheim",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 6,
+   "title": "q.SQ-Ledger.title",
+   "summary": "q.SQ-Ledger.sum",
+   "prereq": [
+    "quest.MQ05 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "bandit_thug",
+     "count": 4,
+     "text": "q.SQ-Ledger.o0",
+     "marker": "whisperwood_edge"
+    },
+    {
+     "kind": "collect",
+     "target": "pip_ledger",
+     "count": 1,
+     "text": "q.SQ-Ledger.o1",
+     "marker": "whisperwood_edge"
+    }
+   ],
+   "rewards": {
+    "xp": 350,
+    "gold": 120,
+    "items": [
+     {
+      "item": "hp_medium",
+      "qty": 3
+     }
+    ],
+    "rep": {
+     "region": "aurelheim",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Ledger.offer",
+   "progress_tree": "SQ-Ledger.progress",
+   "complete_tree": "SQ-Ledger.done"
+  },
+  {
+   "id": "SQ-Rivals",
+   "type": "side",
+   "act": 2,
+   "number": 0,
+   "giver": "kestrel",
+   "turn_in": "kestrel",
+   "region": "aurelheim",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 6,
+   "title": "q.SQ-Rivals.title",
+   "summary": "q.SQ-Rivals.sum",
+   "prereq": [
+    "quest.MQ05 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "shadow_soldier",
+     "count": 6,
+     "text": "q.SQ-Rivals.o0",
+     "marker": "aurelheim_arena"
+    }
+   ],
+   "rewards": {
+    "xp": 450,
+    "gold": 200,
+    "items": [
+     {
+      "item": "acc_swift_anklet",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "aurelheim",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Rivals.offer",
+   "progress_tree": "SQ-Rivals.progress",
+   "complete_tree": "SQ-Rivals.done"
+  },
+  {
+   "id": "SQ-RareOre",
+   "type": "side",
+   "act": 2,
+   "number": 0,
+   "giver": "garrick",
+   "turn_in": "garrick",
+   "region": "aurelheim",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 6,
+   "title": "q.SQ-RareOre.title",
+   "summary": "q.SQ-RareOre.sum",
+   "prereq": [
+    "quest.MQ05 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "iron_ore",
+     "count": 10,
+     "text": "q.SQ-RareOre.o0",
+     "marker": "aurelheim_market"
+    }
+   ],
+   "rewards": {
+    "xp": 300,
+    "gold": 100,
+    "items": [
+     {
+      "item": "acc_oath_knot",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "aurelheim",
+     "n": 2
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-RareOre.offer",
+   "progress_tree": "SQ-RareOre.progress",
+   "complete_tree": "SQ-RareOre.done"
+  },
+  {
+   "id": "SQ-MiraWish",
+   "type": "side",
+   "act": 2,
+   "number": 0,
+   "giver": "mira",
+   "turn_in": "mira",
+   "region": "aurelheim",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 6,
+   "title": "q.SQ-MiraWish.title",
+   "summary": "q.SQ-MiraWish.sum",
+   "prereq": [
+    "quest.MQ05 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "meadow_herb",
+     "count": 3,
+     "text": "q.SQ-MiraWish.o0",
+     "marker": "aurelheim_market"
+    },
+    {
+     "kind": "talk",
+     "target": "petra",
+     "count": 1,
+     "text": "q.SQ-MiraWish.o1",
+     "marker": "aurelheim_market"
+    }
+   ],
+   "rewards": {
+    "xp": 250,
+    "gold": 0,
+    "items": [
+     {
+      "item": "hp_small",
+      "qty": 3
+     }
+    ],
+    "rep": {
+     "region": "aurelheim",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-MiraWish.offer",
+   "progress_tree": "SQ-MiraWish.progress",
+   "complete_tree": "SQ-MiraWish.done"
+  },
+  {
+   "id": "SQ-Bread",
+   "type": "side",
+   "act": 1,
+   "number": 0,
+   "giver": "bess",
+   "turn_in": "bess",
+   "region": "ashbrook",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 3,
+   "title": "q.SQ-Bread.title",
+   "summary": "q.SQ-Bread.sum",
+   "prereq": [
+    "quest.MQ03 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "wild_flour",
+     "count": 6,
+     "text": "q.SQ-Bread.o0",
+     "marker": "ashbrook"
+    }
+   ],
+   "rewards": {
+    "xp": 250,
+    "gold": 60,
+    "items": [
+     {
+      "item": "food_bread",
+      "qty": 6
+     },
+     {
+      "item": "food_stew",
+      "qty": 2
+     }
+    ],
+    "rep": {
+     "region": "ashbrook",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Bread.offer",
+   "progress_tree": "SQ-Bread.progress",
+   "complete_tree": "SQ-Bread.done"
+  },
+  {
+   "id": "SQ-Soup",
+   "type": "side",
+   "act": 2,
+   "number": 0,
+   "giver": "marta",
+   "turn_in": "marta",
+   "region": "aurelheim",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 6,
+   "title": "q.SQ-Soup.title",
+   "summary": "q.SQ-Soup.sum",
+   "prereq": [
+    "quest.MQ05 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "river_fish",
+     "count": 4,
+     "text": "q.SQ-Soup.o0",
+     "marker": "gilded_lantern"
+    },
+    {
+     "kind": "collect",
+     "target": "meadow_herb",
+     "count": 2,
+     "text": "q.SQ-Soup.o1",
+     "marker": "gilded_lantern"
+    }
+   ],
+   "rewards": {
+    "xp": 280,
+    "gold": 80,
+    "items": [
+     {
+      "item": "food_stew",
+      "qty": 4
+     }
+    ],
+    "rep": {
+     "region": "aurelheim",
+     "n": 2
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Soup.offer",
+   "progress_tree": "SQ-Soup.progress",
+   "complete_tree": "SQ-Soup.done"
+  },
+  {
+   "id": "SQ-Foal",
+   "type": "side",
+   "act": 2,
+   "number": 0,
+   "giver": "wick",
+   "turn_in": "wick",
+   "region": "aurelheim",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 6,
+   "title": "q.SQ-Foal.title",
+   "summary": "q.SQ-Foal.sum",
+   "prereq": [
+    "quest.MQ05 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "bandit_thug",
+     "count": 3,
+     "text": "q.SQ-Foal.o0",
+     "marker": "aurelheim_gates"
+    },
+    {
+     "kind": "explore",
+     "target": "lamb_meadow",
+     "count": 1,
+     "text": "q.SQ-Foal.o1",
+     "marker": "lamb_meadow"
+    }
+   ],
+   "rewards": {
+    "xp": 320,
+    "gold": 100,
+    "items": [
+     {
+      "item": "acc_swift_anklet",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "aurelheim",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Foal.offer",
+   "progress_tree": "SQ-Foal.progress",
+   "complete_tree": "SQ-Foal.done"
+  },
+  {
+   "id": "SQ-TobinSword",
+   "type": "side",
+   "act": 2,
+   "number": 0,
+   "giver": "tobin",
+   "turn_in": "tobin",
+   "region": "aurelheim",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 6,
+   "title": "q.SQ-TobinSword.title",
+   "summary": "q.SQ-TobinSword.sum",
+   "prereq": [
+    "quest.MQ05 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "iron_ore",
+     "count": 6,
+     "text": "q.SQ-TobinSword.o0",
+     "marker": "aurelheim_market"
+    },
+    {
+     "kind": "collect",
+     "target": "coal",
+     "count": 4,
+     "text": "q.SQ-TobinSword.o1",
+     "marker": "aurelheim_market"
+    }
+   ],
+   "rewards": {
+    "xp": 300,
+    "gold": 70,
+    "items": [
+     {
+      "item": "w_hero_dagger_t2",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "aurelheim",
+     "n": 2
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-TobinSword.offer",
+   "progress_tree": "SQ-TobinSword.progress",
+   "complete_tree": "SQ-TobinSword.done"
+  },
+  {
+   "id": "SQ-VollDrill",
+   "type": "side",
+   "act": 2,
+   "number": 0,
+   "giver": "voll",
+   "turn_in": "voll",
+   "region": "aurelheim",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 6,
+   "title": "q.SQ-VollDrill.title",
+   "summary": "q.SQ-VollDrill.sum",
+   "prereq": [
+    "quest.MQ05 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "shadow_soldier",
+     "count": 6,
+     "text": "q.SQ-VollDrill.o0",
+     "marker": "aurelheim_arena"
+    }
+   ],
+   "rewards": {
+    "xp": 500,
+    "gold": 100,
+    "skills": [
+     {
+      "member": "kael",
+      "skill": "rising_slash"
+     }
+    ],
+    "rep": {
+     "region": "aurelheim",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-VollDrill.offer",
+   "progress_tree": "SQ-VollDrill.progress",
+   "complete_tree": "SQ-VollDrill.done"
+  },
+  {
+   "id": "SQ-Remedy",
+   "type": "side",
+   "act": 3,
+   "number": 0,
+   "giver": "fenn",
+   "turn_in": "fenn",
+   "region": "whisperwood",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 9,
+   "title": "q.SQ-Remedy.title",
+   "summary": "q.SQ-Remedy.sum",
+   "prereq": [
+    "quest.MQ10 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "moonpetal",
+     "count": 4,
+     "text": "q.SQ-Remedy.o0",
+     "marker": "moonpetal_glade"
+    },
+    {
+     "kind": "collect",
+     "target": "meadow_herb",
+     "count": 2,
+     "text": "q.SQ-Remedy.o1",
+     "marker": "whisperwood"
+    }
+   ],
+   "rewards": {
+    "xp": 500,
+    "gold": 100,
+    "items": [
+     {
+      "item": "holy_water",
+      "qty": 3
+     }
+    ],
+    "rep": {
+     "region": "whisperwood",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Remedy.offer",
+   "progress_tree": "SQ-Remedy.progress",
+   "complete_tree": "SQ-Remedy.done"
+  },
+  {
+   "id": "SQ-Bark",
+   "type": "side",
+   "act": 3,
+   "number": 0,
+   "giver": "moss",
+   "turn_in": "moss",
+   "region": "whisperwood",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 9,
+   "title": "q.SQ-Bark.title",
+   "summary": "q.SQ-Bark.sum",
+   "prereq": [
+    "quest.MQ10 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "whisperwood",
+     "count": 1,
+     "text": "q.SQ-Bark.o0",
+     "marker": "whisperwood"
+    },
+    {
+     "kind": "kill",
+     "target": "rootling",
+     "count": 4,
+     "text": "q.SQ-Bark.o1",
+     "marker": "whisperwood"
+    }
+   ],
+   "rewards": {
+    "xp": 550,
+    "gold": 100,
+    "items": [
+     {
+      "item": "acc_moonpetal_locket",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "whisperwood",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Bark.offer",
+   "progress_tree": "SQ-Bark.progress",
+   "complete_tree": "SQ-Bark.done"
+  },
+  {
+   "id": "SQ-MoonHarvest",
+   "type": "side",
+   "act": 3,
+   "number": 0,
+   "giver": "ilse",
+   "turn_in": "ilse",
+   "region": "aurelheim",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 9,
+   "title": "q.SQ-MoonHarvest.title",
+   "summary": "q.SQ-MoonHarvest.sum",
+   "prereq": [
+    "quest.MQ10 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "moonpetal",
+     "count": 8,
+     "text": "q.SQ-MoonHarvest.o0",
+     "marker": "moonpetal_glade"
+    }
+   ],
+   "rewards": {
+    "xp": 420,
+    "gold": 120,
+    "items": [
+     {
+      "item": "elixir_vigor",
+      "qty": 2
+     }
+    ],
+    "rep": {
+     "region": "whisperwood",
+     "n": 2
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-MoonHarvest.offer",
+   "progress_tree": "SQ-MoonHarvest.progress",
+   "complete_tree": "SQ-MoonHarvest.done"
+  },
+  {
+   "id": "SQ-Wolf",
+   "type": "side",
+   "act": 3,
+   "number": 0,
+   "giver": "ravi",
+   "turn_in": "ravi",
+   "region": "whisperwood",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 9,
+   "title": "q.SQ-Wolf.title",
+   "summary": "q.SQ-Wolf.sum",
+   "prereq": [
+    "quest.MQ10 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "corrupted_beast",
+     "count": 2,
+     "text": "q.SQ-Wolf.o0",
+     "marker": "whisperwood_edge"
+    },
+    {
+     "kind": "explore",
+     "target": "moonpetal_glade",
+     "count": 1,
+     "text": "q.SQ-Wolf.o1",
+     "marker": "moonpetal_glade"
+    }
+   ],
+   "rewards": {
+    "xp": 600,
+    "gold": 150,
+    "items": [
+     {
+      "item": "wolf_pelt",
+      "qty": 4
+     }
+    ],
+    "rep": {
+     "region": "whisperwood",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Wolf.offer",
+   "progress_tree": "SQ-Wolf.progress",
+   "complete_tree": "SQ-Wolf.done"
+  },
+  {
+   "id": "SQ-Monk",
+   "type": "side",
+   "act": 3,
+   "number": 0,
+   "giver": "seren",
+   "turn_in": "seren",
+   "region": "whisperwood",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 9,
+   "title": "q.SQ-Monk.title",
+   "summary": "q.SQ-Monk.sum",
+   "prereq": [
+    "quest.MQ10 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "monks_clearing",
+     "count": 1,
+     "text": "q.SQ-Monk.o0",
+     "marker": "monks_clearing"
+    },
+    {
+     "kind": "kill",
+     "target": "rootling",
+     "count": 6,
+     "text": "q.SQ-Monk.o1",
+     "marker": "monks_clearing"
+    }
+   ],
+   "rewards": {
+    "xp": 700,
+    "gold": 100,
+    "skills": [
+     {
+      "member": "kael",
+      "skill": "focus_strike"
+     }
+    ],
+    "rep": {
+     "region": "whisperwood",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Monk.offer",
+   "progress_tree": "SQ-Monk.progress",
+   "complete_tree": "SQ-Monk.done"
+  },
+  {
+   "id": "SQ-LostPages",
+   "type": "side",
+   "act": 3,
+   "number": 0,
+   "giver": "penn",
+   "turn_in": "penn",
+   "region": "aurelheim",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 9,
+   "title": "q.SQ-LostPages.title",
+   "summary": "q.SQ-LostPages.sum",
+   "prereq": [
+    "quest.MQ10 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "lost_tome_page",
+     "count": 5,
+     "text": "q.SQ-LostPages.o0",
+     "marker": "whisperwood"
+    }
+   ],
+   "rewards": {
+    "xp": 800,
+    "gold": 200,
+    "items": [
+     {
+      "item": "tome_meteor",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "aurelheim",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-LostPages.offer",
+   "progress_tree": "SQ-LostPages.progress",
+   "complete_tree": "SQ-LostPages.done"
+  },
+  {
+   "id": "SQ-RootScout",
+   "type": "side",
+   "act": 3,
+   "number": 0,
+   "giver": "moss",
+   "turn_in": "moss",
+   "region": "whisperwood",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 9,
+   "title": "q.SQ-RootScout.title",
+   "summary": "q.SQ-RootScout.sum",
+   "prereq": [
+    "quest.MQ10 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "thorn_minion",
+     "count": 6,
+     "text": "q.SQ-RootScout.o0",
+     "marker": "rootheart_hollow"
+    }
+   ],
+   "rewards": {
+    "xp": 600,
+    "gold": 150,
+    "items": [
+     {
+      "item": "dryad_bark",
+      "qty": 4
+     }
+    ],
+    "rep": {
+     "region": "whisperwood",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-RootScout.offer",
+   "progress_tree": "SQ-RootScout.progress",
+   "complete_tree": "SQ-RootScout.done"
+  },
+  {
+   "id": "SQ-Glade",
+   "type": "lore",
+   "act": 3,
+   "number": 0,
+   "giver": "fenn",
+   "turn_in": "fenn",
+   "region": "whisperwood",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 9,
+   "title": "q.SQ-Glade.title",
+   "summary": "q.SQ-Glade.sum",
+   "prereq": [
+    "quest.MQ10 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "moonpetal_glade",
+     "count": 1,
+     "text": "q.SQ-Glade.o0",
+     "marker": "moonpetal_glade"
+    }
+   ],
+   "rewards": {
+    "xp": 300,
+    "gold": 0,
+    "items": [
+     {
+      "item": "acc_thorn_crown",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "whisperwood",
+     "n": 5
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Glade.offer",
+   "progress_tree": "SQ-Glade.progress",
+   "complete_tree": "SQ-Glade.done"
+  },
+  {
+   "id": "SQ-FennTea",
+   "type": "side",
+   "act": 3,
+   "number": 0,
+   "giver": "fenn",
+   "turn_in": "fenn",
+   "region": "whisperwood",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 9,
+   "title": "q.SQ-FennTea.title",
+   "summary": "q.SQ-FennTea.sum",
+   "prereq": [
+    "quest.MQ10 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "moonpetal",
+     "count": 2,
+     "text": "q.SQ-FennTea.o0",
+     "marker": "moonpetal_glade"
+    },
+    {
+     "kind": "collect",
+     "target": "food_bread",
+     "count": 2,
+     "text": "q.SQ-FennTea.o1",
+     "marker": "whisperwood"
+    }
+   ],
+   "rewards": {
+    "xp": 250,
+    "gold": 50,
+    "items": [
+     {
+      "item": "elixir_focus",
+      "qty": 2
+     }
+    ],
+    "rep": {
+     "region": "whisperwood",
+     "n": 2
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-FennTea.offer",
+   "progress_tree": "SQ-FennTea.progress",
+   "complete_tree": "SQ-FennTea.done"
+  },
+  {
+   "id": "SQ-RaviHunt",
+   "type": "side",
+   "act": 3,
+   "number": 0,
+   "giver": "ravi",
+   "turn_in": "ravi",
+   "region": "whisperwood",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 9,
+   "title": "q.SQ-RaviHunt.title",
+   "summary": "q.SQ-RaviHunt.sum",
+   "prereq": [
+    "quest.MQ10 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "wolf",
+     "count": 6,
+     "text": "q.SQ-RaviHunt.o0",
+     "marker": "whisperwood"
+    }
+   ],
+   "rewards": {
+    "xp": 450,
+    "gold": 130,
+    "items": [
+     {
+      "item": "wolf_pelt",
+      "qty": 4
+     }
+    ],
+    "rep": {
+     "region": "whisperwood",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-RaviHunt.offer",
+   "progress_tree": "SQ-RaviHunt.progress",
+   "complete_tree": "SQ-RaviHunt.done"
+  },
+  {
+   "id": "SQ-Thieves",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "edda",
+   "turn_in": "edda",
+   "region": "qasr_amun",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Thieves.title",
+   "summary": "q.SQ-Thieves.sum",
+   "prereq": [
+    "quest.MQ16 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "caravan_raider",
+     "count": 6,
+     "text": "q.SQ-Thieves.o0",
+     "marker": "caravan_road"
+    }
+   ],
+   "rewards": {
+    "xp": 1200,
+    "gold": 300,
+    "items": [
+     {
+      "item": "hp_large",
+      "qty": 3
+     }
+    ],
+    "rep": {
+     "region": "qasr_amun",
+     "n": 5
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Thieves.offer",
+   "progress_tree": "SQ-Thieves.progress",
+   "complete_tree": "SQ-Thieves.done"
+  },
+  {
+   "id": "SQ-Serpent",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "idris",
+   "turn_in": "idris",
+   "region": "qasr_amun",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Serpent.title",
+   "summary": "q.SQ-Serpent.sum",
+   "prereq": [
+    "quest.MQ16 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "sand_serpent",
+     "count": 4,
+     "text": "q.SQ-Serpent.o0",
+     "marker": "serpent_dunes"
+    }
+   ],
+   "rewards": {
+    "xp": 1100,
+    "gold": 250,
+    "items": [
+     {
+      "item": "scorpion_chitin",
+      "qty": 3
+     }
+    ],
+    "rep": {
+     "region": "qasr_amun",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Serpent.offer",
+   "progress_tree": "SQ-Serpent.progress",
+   "complete_tree": "SQ-Serpent.done"
+  },
+  {
+   "id": "SQ-Mural",
+   "type": "lore",
+   "act": 4,
+   "number": 0,
+   "giver": "anwen",
+   "turn_in": "anwen",
+   "region": "khemet_ruins",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Mural.title",
+   "summary": "q.SQ-Mural.sum",
+   "prereq": [
+    "quest.MQ16 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "lost_mural",
+     "count": 1,
+     "text": "q.SQ-Mural.o0",
+     "marker": "lost_mural"
+    }
+   ],
+   "rewards": {
+    "xp": 900,
+    "gold": 200,
+    "items": [
+     {
+      "item": "acc_sandglass_charm",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "qasr_amun",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Mural.offer",
+   "progress_tree": "SQ-Mural.progress",
+   "complete_tree": "SQ-Mural.done"
+  },
+  {
+   "id": "SQ-Spice",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "zaira",
+   "turn_in": "zaira",
+   "region": "qasr_amun",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Spice.title",
+   "summary": "q.SQ-Spice.sum",
+   "prereq": [
+    "quest.MQ16 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "desert_bloom",
+     "count": 4,
+     "text": "q.SQ-Spice.o0",
+     "marker": "caravan_road"
+    },
+    {
+     "kind": "explore",
+     "target": "lost_mural",
+     "count": 1,
+     "text": "q.SQ-Spice.o1",
+     "marker": "lost_mural"
+    }
+   ],
+   "rewards": {
+    "xp": 1000,
+    "gold": 250,
+    "items": [
+     {
+      "item": "spice_blend",
+      "qty": 3
+     },
+     {
+      "item": "food_desert_flatbread",
+      "qty": 3
+     }
+    ],
+    "rep": {
+     "region": "qasr_amun",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Spice.offer",
+   "progress_tree": "SQ-Spice.progress",
+   "complete_tree": "SQ-Spice.done"
+  },
+  {
+   "id": "SQ-Well",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "kharim",
+   "turn_in": "kharim",
+   "region": "qasr_amun",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Well.title",
+   "summary": "q.SQ-Well.sum",
+   "prereq": [
+    "quest.MQ16 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "scorpion",
+     "count": 5,
+     "text": "q.SQ-Well.o0",
+     "marker": "caravan_road"
+    }
+   ],
+   "rewards": {
+    "xp": 900,
+    "gold": 200,
+    "items": [
+     {
+      "item": "antidote",
+      "qty": 4
+     }
+    ],
+    "rep": {
+     "region": "qasr_amun",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Well.offer",
+   "progress_tree": "SQ-Well.progress",
+   "complete_tree": "SQ-Well.done"
+  },
+  {
+   "id": "SQ-Weave",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "fatima",
+   "turn_in": "fatima",
+   "region": "qasr_amun",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Weave.title",
+   "summary": "q.SQ-Weave.sum",
+   "prereq": [
+    "quest.MQ16 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "scorpion_chitin",
+     "count": 4,
+     "text": "q.SQ-Weave.o0",
+     "marker": "caravan_road"
+    }
+   ],
+   "rewards": {
+    "xp": 850,
+    "gold": 200,
+    "items": [
+     {
+      "item": "a_hero_body_t3",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "qasr_amun",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Weave.offer",
+   "progress_tree": "SQ-Weave.progress",
+   "complete_tree": "SQ-Weave.done"
+  },
+  {
+   "id": "SQ-MountStray",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "jalil",
+   "turn_in": "jalil",
+   "region": "qasr_amun",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-MountStray.title",
+   "summary": "q.SQ-MountStray.sum",
+   "prereq": [
+    "quest.MQ16 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "serpent_dunes",
+     "count": 1,
+     "text": "q.SQ-MountStray.o0",
+     "marker": "serpent_dunes"
+    },
+    {
+     "kind": "kill",
+     "target": "sand_serpent",
+     "count": 2,
+     "text": "q.SQ-MountStray.o1",
+     "marker": "serpent_dunes"
+    }
+   ],
+   "rewards": {
+    "xp": 800,
+    "gold": 180,
+    "items": [
+     {
+      "item": "acc_swift_anklet",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "qasr_amun",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-MountStray.offer",
+   "progress_tree": "SQ-MountStray.progress",
+   "complete_tree": "SQ-MountStray.done"
+  },
+  {
+   "id": "SQ-Dig",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "nashu",
+   "turn_in": "nashu",
+   "region": "khemet_ruins",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Dig.title",
+   "summary": "q.SQ-Dig.sum",
+   "prereq": [
+    "quest.MQ16 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "time_sand",
+     "count": 2,
+     "text": "q.SQ-Dig.o0",
+     "marker": "khemet_ruins"
+    }
+   ],
+   "rewards": {
+    "xp": 950,
+    "gold": 200,
+    "items": [
+     {
+      "item": "acc_sage_pendant",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "qasr_amun",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Dig.offer",
+   "progress_tree": "SQ-Dig.progress",
+   "complete_tree": "SQ-Dig.done"
+  },
+  {
+   "id": "SQ-Flatbread",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "sahar",
+   "turn_in": "sahar",
+   "region": "qasr_amun",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Flatbread.title",
+   "summary": "q.SQ-Flatbread.sum",
+   "prereq": [
+    "quest.MQ16 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "wild_flour",
+     "count": 4,
+     "text": "q.SQ-Flatbread.o0",
+     "marker": "qasr_amun"
+    },
+    {
+     "kind": "collect",
+     "target": "spice_blend",
+     "count": 1,
+     "text": "q.SQ-Flatbread.o1",
+     "marker": "qasr_amun"
+    }
+   ],
+   "rewards": {
+    "xp": 700,
+    "gold": 150,
+    "items": [
+     {
+      "item": "food_desert_flatbread",
+      "qty": 4
+     }
+    ],
+    "rep": {
+     "region": "qasr_amun",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Flatbread.offer",
+   "progress_tree": "SQ-Flatbread.progress",
+   "complete_tree": "SQ-Flatbread.done"
+  },
+  {
+   "id": "SQ-ScoutWarning",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "idris",
+   "turn_in": "idris",
+   "region": "qasr_amun",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-ScoutWarning.title",
+   "summary": "q.SQ-ScoutWarning.sum",
+   "prereq": [
+    "quest.MQ16 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "tomb_wraith",
+     "count": 4,
+     "text": "q.SQ-ScoutWarning.o0",
+     "marker": "scorpion_catacombs"
+    }
+   ],
+   "rewards": {
+    "xp": 1100,
+    "gold": 250,
+    "items": [
+     {
+      "item": "time_sand",
+      "qty": 2
+     }
+    ],
+    "rep": {
+     "region": "qasr_amun",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-ScoutWarning.offer",
+   "progress_tree": "SQ-ScoutWarning.progress",
+   "complete_tree": "SQ-ScoutWarning.done"
+  },
+  {
+   "id": "SQ-Climbers",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "torvik",
+   "turn_in": "torvik",
+   "region": "hrimvald",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Climbers.title",
+   "summary": "q.SQ-Climbers.sum",
+   "prereq": [
+    "quest.MQ18 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "hp_medium",
+     "count": 4,
+     "text": "q.SQ-Climbers.o0",
+     "marker": "hrimvald"
+    },
+    {
+     "kind": "explore",
+     "target": "climbers_camp",
+     "count": 1,
+     "text": "q.SQ-Climbers.o1",
+     "marker": "climbers_camp"
+    }
+   ],
+   "rewards": {
+    "xp": 1500,
+    "gold": 300,
+    "items": [
+     {
+      "item": "food_frost_broth",
+      "qty": 3
+     }
+    ],
+    "rep": {
+     "region": "hrimvald",
+     "n": 5
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Climbers.offer",
+   "progress_tree": "SQ-Climbers.progress",
+   "complete_tree": "SQ-Climbers.done"
+  },
+  {
+   "id": "SQ-SongsSnow",
+   "type": "lore",
+   "act": 4,
+   "number": 0,
+   "giver": "elowen",
+   "turn_in": "elowen",
+   "region": "hrimvald",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-SongsSnow.title",
+   "summary": "q.SQ-SongsSnow.sum",
+   "prereq": [
+    "quest.MQ18 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "singing_ice",
+     "count": 1,
+     "text": "q.SQ-SongsSnow.o0",
+     "marker": "singing_ice"
+    }
+   ],
+   "rewards": {
+    "xp": 1200,
+    "gold": 200,
+    "items": [
+     {
+      "item": "acc_frost_circlet_pin",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "hrimvald",
+     "n": 5
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-SongsSnow.offer",
+   "progress_tree": "SQ-SongsSnow.progress",
+   "complete_tree": "SQ-SongsSnow.done"
+  },
+  {
+   "id": "SQ-Lighthouse",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "sigrid",
+   "turn_in": "sigrid",
+   "region": "hrimvald",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Lighthouse.title",
+   "summary": "q.SQ-Lighthouse.sum",
+   "prereq": [
+    "quest.MQ18 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "frozen_lighthouse",
+     "count": 1,
+     "text": "q.SQ-Lighthouse.o0",
+     "marker": "frozen_lighthouse"
+    },
+    {
+     "kind": "kill",
+     "target": "ice_wraith",
+     "count": 4,
+     "text": "q.SQ-Lighthouse.o1",
+     "marker": "frozen_lighthouse"
+    }
+   ],
+   "rewards": {
+    "xp": 1600,
+    "gold": 300,
+    "items": [
+     {
+      "item": "frostcap",
+      "qty": 4
+     }
+    ],
+    "rep": {
+     "region": "hrimvald",
+     "n": 5
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Lighthouse.offer",
+   "progress_tree": "SQ-Lighthouse.progress",
+   "complete_tree": "SQ-Lighthouse.done"
+  },
+  {
+   "id": "SQ-SkaldLast",
+   "type": "lore",
+   "act": 4,
+   "number": 0,
+   "giver": "torvik",
+   "turn_in": "torvik",
+   "region": "hrimvald",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-SkaldLast.title",
+   "summary": "q.SQ-SkaldLast.sum",
+   "prereq": [
+    "quest.MQ18 == complete",
+    "quest.SQ-Lighthouse == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "frozen_lighthouse",
+     "count": 1,
+     "text": "q.SQ-SkaldLast.o0",
+     "marker": "frozen_lighthouse"
+    }
+   ],
+   "rewards": {
+    "xp": 1500,
+    "gold": 0,
+    "items": [
+     {
+      "item": "acc_rime_ring",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "hrimvald",
+     "n": 8
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-SkaldLast.offer",
+   "progress_tree": "SQ-SkaldLast.progress",
+   "complete_tree": "SQ-SkaldLast.done"
+  },
+  {
+   "id": "SQ-Bell",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "halvar",
+   "turn_in": "halvar",
+   "region": "hrimvald",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Bell.title",
+   "summary": "q.SQ-Bell.sum",
+   "prereq": [
+    "quest.MQ18 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "frost_silver",
+     "count": 3,
+     "text": "q.SQ-Bell.o0",
+     "marker": "hrimvald"
+    }
+   ],
+   "rewards": {
+    "xp": 1300,
+    "gold": 300,
+    "rep": {
+     "region": "hrimvald",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Bell.offer",
+   "progress_tree": "SQ-Bell.progress",
+   "complete_tree": "SQ-Bell.done"
+  },
+  {
+   "id": "SQ-FrostWolves",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "marek",
+   "turn_in": "marek",
+   "region": "hrimvald",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-FrostWolves.title",
+   "summary": "q.SQ-FrostWolves.sum",
+   "prereq": [
+    "quest.MQ18 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "frost_wolf",
+     "count": 6,
+     "text": "q.SQ-FrostWolves.o0",
+     "marker": "whiteout_pass"
+    }
+   ],
+   "rewards": {
+    "xp": 1500,
+    "gold": 350,
+    "items": [
+     {
+      "item": "yeti_fur",
+      "qty": 3
+     }
+    ],
+    "rep": {
+     "region": "hrimvald",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-FrostWolves.offer",
+   "progress_tree": "SQ-FrostWolves.progress",
+   "complete_tree": "SQ-FrostWolves.done"
+  },
+  {
+   "id": "SQ-Broth",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "gudrun",
+   "turn_in": "gudrun",
+   "region": "hrimvald",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Broth.title",
+   "summary": "q.SQ-Broth.sum",
+   "prereq": [
+    "quest.MQ18 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "frostcap",
+     "count": 4,
+     "text": "q.SQ-Broth.o0",
+     "marker": "hrimvald"
+    },
+    {
+     "kind": "collect",
+     "target": "river_fish",
+     "count": 2,
+     "text": "q.SQ-Broth.o1",
+     "marker": "hrimvald"
+    }
+   ],
+   "rewards": {
+    "xp": 1000,
+    "gold": 200,
+    "items": [
+     {
+      "item": "food_frost_broth",
+      "qty": 4
+     }
+    ],
+    "rep": {
+     "region": "hrimvald",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Broth.offer",
+   "progress_tree": "SQ-Broth.progress",
+   "complete_tree": "SQ-Broth.done"
+  },
+  {
+   "id": "SQ-Patrol",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "marek",
+   "turn_in": "marek",
+   "region": "hrimvald",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Patrol.title",
+   "summary": "q.SQ-Patrol.sum",
+   "prereq": [
+    "quest.MQ18 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "whiteout_pass",
+     "count": 1,
+     "text": "q.SQ-Patrol.o0",
+     "marker": "whiteout_pass"
+    },
+    {
+     "kind": "kill",
+     "target": "ice_wraith",
+     "count": 3,
+     "text": "q.SQ-Patrol.o1",
+     "marker": "whiteout_pass"
+    }
+   ],
+   "rewards": {
+    "xp": 1500,
+    "gold": 300,
+    "items": [
+     {
+      "item": "acc_warding_charm",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "hrimvald",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Patrol.offer",
+   "progress_tree": "SQ-Patrol.progress",
+   "complete_tree": "SQ-Patrol.done"
+  },
+  {
+   "id": "SQ-Fur",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "sigrid",
+   "turn_in": "sigrid",
+   "region": "hrimvald",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Fur.title",
+   "summary": "q.SQ-Fur.sum",
+   "prereq": [
+    "quest.MQ18 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "yeti_fur",
+     "count": 3,
+     "text": "q.SQ-Fur.o0",
+     "marker": "hrimvald"
+    }
+   ],
+   "rewards": {
+    "xp": 1200,
+    "gold": 250,
+    "items": [
+     {
+      "item": "a_hero_body_t4",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "hrimvald",
+     "n": 3
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Fur.offer",
+   "progress_tree": "SQ-Fur.progress",
+   "complete_tree": "SQ-Fur.done"
+  },
+  {
+   "id": "SQ-ChoirHusks",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "elowen",
+   "turn_in": "elowen",
+   "region": "hrimvald",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-ChoirHusks.title",
+   "summary": "q.SQ-ChoirHusks.sum",
+   "prereq": [
+    "quest.MQ18 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "choir_husk",
+     "count": 5,
+     "text": "q.SQ-ChoirHusks.o0",
+     "marker": "choir_cathedral"
+    }
+   ],
+   "rewards": {
+    "xp": 1500,
+    "gold": 300,
+    "items": [
+     {
+      "item": "spirit_shard",
+      "qty": 2
+     }
+    ],
+    "rep": {
+     "region": "hrimvald",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-ChoirHusks.offer",
+   "progress_tree": "SQ-ChoirHusks.progress",
+   "complete_tree": "SQ-ChoirHusks.done"
+  },
+  {
+   "id": "SQ-Strike",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "ysolde",
+   "turn_in": "ysolde",
+   "region": "emberforge",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Strike.title",
+   "summary": "q.SQ-Strike.sum",
+   "prereq": [
+    "quest.MQ21 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "talk",
+     "target": "magnus",
+     "count": 1,
+     "text": "q.SQ-Strike.o0",
+     "marker": "emberforge"
+    },
+    {
+     "kind": "collect",
+     "target": "coal",
+     "count": 10,
+     "text": "q.SQ-Strike.o1",
+     "marker": "ashen_mines"
+    }
+   ],
+   "rewards": {
+    "xp": 2500,
+    "gold": 400,
+    "items": [
+     {
+      "item": "acc_ash_scarf",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "emberforge",
+     "n": 6
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Strike.offer",
+   "progress_tree": "SQ-Strike.progress",
+   "complete_tree": "SQ-Strike.done"
+  },
+  {
+   "id": "SQ-Anvil",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "brandt",
+   "turn_in": "brandt",
+   "region": "emberforge",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Anvil.title",
+   "summary": "q.SQ-Anvil.sum",
+   "prereq": [
+    "quest.MQ21 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "singing_forge",
+     "count": 1,
+     "text": "q.SQ-Anvil.o0",
+     "marker": "singing_forge"
+    },
+    {
+     "kind": "collect",
+     "target": "ember_steel",
+     "count": 2,
+     "text": "q.SQ-Anvil.o1",
+     "marker": "singing_forge"
+    }
+   ],
+   "rewards": {
+    "xp": 2800,
+    "gold": 400,
+    "items": [
+     {
+      "item": "polished_gem",
+      "qty": 2
+     }
+    ],
+    "rep": {
+     "region": "emberforge",
+     "n": 6
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Anvil.offer",
+   "progress_tree": "SQ-Anvil.progress",
+   "complete_tree": "SQ-Anvil.done"
+  },
+  {
+   "id": "SQ-Apprentice",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "cinda",
+   "turn_in": "cinda",
+   "region": "emberforge",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Apprentice.title",
+   "summary": "q.SQ-Apprentice.sum",
+   "prereq": [
+    "quest.MQ21 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "ember_steel",
+     "count": 1,
+     "text": "q.SQ-Apprentice.o0",
+     "marker": "emberforge"
+    },
+    {
+     "kind": "collect",
+     "target": "iron_ore",
+     "count": 4,
+     "text": "q.SQ-Apprentice.o1",
+     "marker": "emberforge"
+    }
+   ],
+   "rewards": {
+    "xp": 2000,
+    "gold": 300,
+    "items": [
+     {
+      "item": "acc_forge_signet",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "emberforge",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Apprentice.offer",
+   "progress_tree": "SQ-Apprentice.progress",
+   "complete_tree": "SQ-Apprentice.done"
+  },
+  {
+   "id": "SQ-LavaFish",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "vesna",
+   "turn_in": "vesna",
+   "region": "emberforge",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-LavaFish.title",
+   "summary": "q.SQ-LavaFish.sum",
+   "prereq": [
+    "quest.MQ21 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "lava_fish_raw",
+     "count": 3,
+     "text": "q.SQ-LavaFish.o0",
+     "marker": "lava_channels"
+    }
+   ],
+   "rewards": {
+    "xp": 2200,
+    "gold": 300,
+    "items": [
+     {
+      "item": "food_lava_fish",
+      "qty": 4
+     }
+    ],
+    "rep": {
+     "region": "emberforge",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-LavaFish.offer",
+   "progress_tree": "SQ-LavaFish.progress",
+   "complete_tree": "SQ-LavaFish.done"
+  },
+  {
+   "id": "SQ-ForgeSong",
+   "type": "lore",
+   "act": 4,
+   "number": 0,
+   "giver": "doro",
+   "turn_in": "doro",
+   "region": "emberforge",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-ForgeSong.title",
+   "summary": "q.SQ-ForgeSong.sum",
+   "prereq": [
+    "quest.MQ21 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "explore",
+     "target": "ashen_mines",
+     "count": 1,
+     "text": "q.SQ-ForgeSong.o0",
+     "marker": "ashen_mines"
+    }
+   ],
+   "rewards": {
+    "xp": 2000,
+    "gold": 0,
+    "items": [
+     {
+      "item": "acc_cinder_amulet",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "emberforge",
+     "n": 5
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-ForgeSong.offer",
+   "progress_tree": "SQ-ForgeSong.progress",
+   "complete_tree": "SQ-ForgeSong.done"
+  },
+  {
+   "id": "SQ-Golems",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "magnus",
+   "turn_in": "magnus",
+   "region": "emberforge",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Golems.title",
+   "summary": "q.SQ-Golems.sum",
+   "prereq": [
+    "quest.MQ21 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "magma_golem",
+     "count": 2,
+     "text": "q.SQ-Golems.o0",
+     "marker": "ashen_mines"
+    }
+   ],
+   "rewards": {
+    "xp": 2500,
+    "gold": 500,
+    "items": [
+     {
+      "item": "magma_scale",
+      "qty": 3
+     }
+    ],
+    "rep": {
+     "region": "emberforge",
+     "n": 5
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Golems.offer",
+   "progress_tree": "SQ-Golems.progress",
+   "complete_tree": "SQ-Golems.done"
+  },
+  {
+   "id": "SQ-Imps",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "ysolde",
+   "turn_in": "ysolde",
+   "region": "emberforge",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Imps.title",
+   "summary": "q.SQ-Imps.sum",
+   "prereq": [
+    "quest.MQ21 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "ember_imp",
+     "count": 6,
+     "text": "q.SQ-Imps.o0",
+     "marker": "ashen_mines"
+    }
+   ],
+   "rewards": {
+    "xp": 2500,
+    "gold": 450,
+    "items": [
+     {
+      "item": "hp_grand",
+      "qty": 2
+     }
+    ],
+    "rep": {
+     "region": "emberforge",
+     "n": 5
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Imps.offer",
+   "progress_tree": "SQ-Imps.progress",
+   "complete_tree": "SQ-Imps.done"
+  },
+  {
+   "id": "SQ-Scales",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "brandt",
+   "turn_in": "brandt",
+   "region": "emberforge",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Scales.title",
+   "summary": "q.SQ-Scales.sum",
+   "prereq": [
+    "quest.MQ21 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "magma_scale",
+     "count": 3,
+     "text": "q.SQ-Scales.o0",
+     "marker": "ashen_mines"
+    }
+   ],
+   "rewards": {
+    "xp": 2300,
+    "gold": 400,
+    "items": [
+     {
+      "item": "a_tank_body_t5",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "emberforge",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Scales.offer",
+   "progress_tree": "SQ-Scales.progress",
+   "complete_tree": "SQ-Scales.done"
+  },
+  {
+   "id": "SQ-CoalRun",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "magnus",
+   "turn_in": "magnus",
+   "region": "emberforge",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-CoalRun.title",
+   "summary": "q.SQ-CoalRun.sum",
+   "prereq": [
+    "quest.MQ21 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "coal",
+     "count": 15,
+     "text": "q.SQ-CoalRun.o0",
+     "marker": "ashen_mines"
+    }
+   ],
+   "rewards": {
+    "xp": 2000,
+    "gold": 350,
+    "items": [
+     {
+      "item": "hp_large",
+      "qty": 4
+     }
+    ],
+    "rep": {
+     "region": "emberforge",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-CoalRun.offer",
+   "progress_tree": "SQ-CoalRun.progress",
+   "complete_tree": "SQ-CoalRun.done"
+  },
+  {
+   "id": "SQ-Petition",
+   "type": "side",
+   "act": 4,
+   "number": 0,
+   "giver": "doro",
+   "turn_in": "doro",
+   "region": "emberforge",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 12,
+   "title": "q.SQ-Petition.title",
+   "summary": "q.SQ-Petition.sum",
+   "prereq": [
+    "quest.MQ21 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "talk",
+     "target": "ysolde",
+     "count": 1,
+     "text": "q.SQ-Petition.o0",
+     "marker": "emberforge"
+    }
+   ],
+   "rewards": {
+    "xp": 1500,
+    "gold": 200,
+    "items": [
+     {
+      "item": "acc_ash_scarf",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "emberforge",
+     "n": 4
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Petition.offer",
+   "progress_tree": "SQ-Petition.progress",
+   "complete_tree": "SQ-Petition.done"
+  },
+  {
+   "id": "SQ-Defector",
+   "type": "side",
+   "act": 5,
+   "number": 0,
+   "giver": "nox",
+   "turn_in": "nox",
+   "region": "front_camp",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 15,
+   "title": "q.SQ-Defector.title",
+   "summary": "q.SQ-Defector.sum",
+   "prereq": [
+    "quest.MQ24 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "shadow_residue",
+     "count": 5,
+     "text": "q.SQ-Defector.o0",
+     "marker": "nox_hideout"
+    },
+    {
+     "kind": "explore",
+     "target": "nox_hideout",
+     "count": 1,
+     "text": "q.SQ-Defector.o1",
+     "marker": "nox_hideout"
+    }
+   ],
+   "rewards": {
+    "xp": 6000,
+    "gold": 800,
+    "items": [
+     {
+      "item": "acc_voidstone",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "front_camp",
+     "n": 5
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Defector.offer",
+   "progress_tree": "SQ-Defector.progress",
+   "complete_tree": "SQ-Defector.done"
+  },
+  {
+   "id": "SQ-LastLetters",
+   "type": "side",
+   "act": 5,
+   "number": 0,
+   "giver": "reyna",
+   "turn_in": "reyna",
+   "region": "front_camp",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 15,
+   "title": "q.SQ-LastLetters.title",
+   "summary": "q.SQ-LastLetters.sum",
+   "prereq": [
+    "quest.MQ24 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "talk",
+     "target": "vale_d",
+     "count": 1,
+     "text": "q.SQ-LastLetters.o0",
+     "marker": "front_camp"
+    },
+    {
+     "kind": "talk",
+     "target": "reyna",
+     "count": 1,
+     "text": "q.SQ-LastLetters.o1",
+     "marker": "front_camp"
+    }
+   ],
+   "rewards": {
+    "xp": 5000,
+    "gold": 500,
+    "items": [
+     {
+      "item": "hp_elixir",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "front_camp",
+     "n": 5
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-LastLetters.offer",
+   "progress_tree": "SQ-LastLetters.progress",
+   "complete_tree": "SQ-LastLetters.done"
+  },
+  {
+   "id": "SQ-Promise",
+   "type": "side",
+   "act": 5,
+   "number": 0,
+   "giver": "vale_d",
+   "turn_in": "vale_d",
+   "region": "front_camp",
+   "auto_start": false,
+   "repeatable": false,
+   "level": 15,
+   "title": "q.SQ-Promise.title",
+   "summary": "q.SQ-Promise.sum",
+   "prereq": [
+    "quest.MQ24 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "demon_legionary",
+     "count": 4,
+     "text": "q.SQ-Promise.o0",
+     "marker": "hollow_gate"
+    }
+   ],
+   "rewards": {
+    "xp": 5500,
+    "gold": 600,
+    "items": [
+     {
+      "item": "acc_hollow_band",
+      "qty": 1
+     }
+    ],
+    "rep": {
+     "region": "front_camp",
+     "n": 5
+    }
+   },
+   "on_complete": [],
+   "on_start": [],
+   "offer_tree": "SQ-Promise.offer",
+   "progress_tree": "SQ-Promise.progress",
+   "complete_tree": "SQ-Promise.done"
+  },
+  {
+   "id": "BQ-Goblins",
+   "type": "bounty",
+   "act": 2,
+   "number": 0,
+   "giver": "none",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": false,
+   "repeatable": true,
+   "level": 6,
+   "title": "q.BQ-Goblins.title",
+   "summary": "q.BQ-Goblins.sum",
+   "prereq": [
+    "flag.bounty_board_open"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "goblin_grunt",
+     "count": 6,
+     "text": "q.BQ-Goblins.o0",
+     "marker": "goblin_warrens"
+    }
+   ],
+   "rewards": {
+    "xp": 300,
+    "gold": 120,
+    "rep": {
+     "region": "aurelheim",
+     "n": 1
+    }
+   },
+   "on_complete": [],
+   "on_start": []
+  },
+  {
+   "id": "BQ-Wolves",
+   "type": "bounty",
+   "act": 2,
+   "number": 0,
+   "giver": "none",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": false,
+   "repeatable": true,
+   "level": 6,
+   "title": "q.BQ-Wolves.title",
+   "summary": "q.BQ-Wolves.sum",
+   "prereq": [
+    "flag.bounty_board_open",
+    "flag.c_rank"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "wolf",
+     "count": 5,
+     "text": "q.BQ-Wolves.o0",
+     "marker": "whisperwood"
+    }
+   ],
+   "rewards": {
+    "xp": 400,
+    "gold": 150,
+    "rep": {
+     "region": "aurelheim",
+     "n": 1
+    }
+   },
+   "on_complete": [],
+   "on_start": []
+  },
+  {
+   "id": "BQ-Shadows",
+   "type": "bounty",
+   "act": 2,
+   "number": 0,
+   "giver": "none",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": false,
+   "repeatable": true,
+   "level": 6,
+   "title": "q.BQ-Shadows.title",
+   "summary": "q.BQ-Shadows.sum",
+   "prereq": [
+    "flag.bounty_board_open"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "shadow_soldier",
+     "count": 6,
+     "text": "q.BQ-Shadows.o0",
+     "marker": "aurelheim_arena"
+    }
+   ],
+   "rewards": {
+    "xp": 500,
+    "gold": 180,
+    "rep": {
+     "region": "aurelheim",
+     "n": 1
+    }
+   },
+   "on_complete": [],
+   "on_start": []
+  },
+  {
+   "id": "BQ-Herbs",
+   "type": "bounty",
+   "act": 2,
+   "number": 0,
+   "giver": "none",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": false,
+   "repeatable": true,
+   "level": 6,
+   "title": "q.BQ-Herbs.title",
+   "summary": "q.BQ-Herbs.sum",
+   "prereq": [
+    "flag.bounty_board_open"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "meadow_herb",
+     "count": 6,
+     "text": "q.BQ-Herbs.o0",
+     "marker": "aurelheim_market"
+    }
+   ],
+   "rewards": {
+    "xp": 200,
+    "gold": 90,
+    "rep": {
+     "region": "aurelheim",
+     "n": 1
+    }
+   },
+   "on_complete": [],
+   "on_start": []
+  },
+  {
+   "id": "BQ-Ore",
+   "type": "bounty",
+   "act": 2,
+   "number": 0,
+   "giver": "none",
+   "turn_in": "auto",
+   "region": "vale",
+   "auto_start": false,
+   "repeatable": true,
+   "level": 6,
+   "title": "q.BQ-Ore.title",
+   "summary": "q.BQ-Ore.sum",
+   "prereq": [
+    "flag.bounty_board_open"
+   ],
+   "objectives": [
+    {
+     "kind": "collect",
+     "target": "iron_ore",
+     "count": 8,
+     "text": "q.BQ-Ore.o0",
+     "marker": "aurelheim_market"
+    }
+   ],
+   "rewards": {
+    "xp": 250,
+    "gold": 110,
+    "rep": {
+     "region": "aurelheim",
+     "n": 1
+    }
+   },
+   "on_complete": [],
+   "on_start": []
+  },
+  {
+   "id": "BQ-Scorpions",
+   "type": "bounty",
+   "act": 4,
+   "number": 0,
+   "giver": "none",
+   "turn_in": "auto",
+   "region": "sunscar",
+   "auto_start": false,
+   "repeatable": true,
+   "level": 12,
+   "title": "q.BQ-Scorpions.title",
+   "summary": "q.BQ-Scorpions.sum",
+   "prereq": [
+    "flag.bounty_board_open",
+    "quest.MQ16 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "scorpion",
+     "count": 5,
+     "text": "q.BQ-Scorpions.o0",
+     "marker": "caravan_road"
+    }
+   ],
+   "rewards": {
+    "xp": 900,
+    "gold": 260,
+    "rep": {
+     "region": "qasr_amun",
+     "n": 1
+    }
+   },
+   "on_complete": [],
+   "on_start": []
+  },
+  {
+   "id": "BQ-FrostWolves",
+   "type": "bounty",
+   "act": 4,
+   "number": 0,
+   "giver": "none",
+   "turn_in": "auto",
+   "region": "frostspire",
+   "auto_start": false,
+   "repeatable": true,
+   "level": 12,
+   "title": "q.BQ-FrostWolves.title",
+   "summary": "q.BQ-FrostWolves.sum",
+   "prereq": [
+    "flag.bounty_board_open",
+    "quest.MQ18 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "frost_wolf",
+     "count": 5,
+     "text": "q.BQ-FrostWolves.o0",
+     "marker": "whiteout_pass"
+    }
+   ],
+   "rewards": {
+    "xp": 1300,
+    "gold": 340,
+    "rep": {
+     "region": "hrimvald",
+     "n": 1
+    }
+   },
+   "on_complete": [],
+   "on_start": []
+  },
+  {
+   "id": "BQ-Imps",
+   "type": "bounty",
+   "act": 4,
+   "number": 0,
+   "giver": "none",
+   "turn_in": "auto",
+   "region": "cinderhold",
+   "auto_start": false,
+   "repeatable": true,
+   "level": 12,
+   "title": "q.BQ-Imps.title",
+   "summary": "q.BQ-Imps.sum",
+   "prereq": [
+    "flag.bounty_board_open",
+    "quest.MQ21 == complete"
+   ],
+   "objectives": [
+    {
+     "kind": "kill",
+     "target": "ember_imp",
+     "count": 5,
+     "text": "q.BQ-Imps.o0",
+     "marker": "ashen_mines"
+    }
+   ],
+   "rewards": {
+    "xp": 2200,
+    "gold": 480,
+    "rep": {
+     "region": "emberforge",
+     "n": 1
+    }
+   },
+   "on_complete": [],
+   "on_start": []
+  }
+ ]
+}

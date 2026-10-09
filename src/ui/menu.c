@@ -4,8 +4,9 @@
 #include <string.h>
 #include <raylib.h>
 
-enum { TAB_ITEMS, TAB_GEAR, TAB_CRAFT, TAB_SMITH, TAB_SHOP, TAB_COUNT };
-static const char *TAB_NAMES[TAB_COUNT] = {"Items", "Gear", "Craft", "Smith", "Shop"};
+enum { TAB_ITEMS, TAB_GEAR, TAB_CRAFT, TAB_SMITH, TAB_SHOP, TAB_JOURNAL, TAB_MAP, TAB_COUNT };
+static const char *TAB_NAMES[TAB_COUNT] = {"Items", "Gear", "Craft", "Smith", "Shop", "Journal", "Map"};
+static const char *JFILTERS[3] = {"Active", "Available", "Done"};
 static const char *SLOT_NAMES[EQ_COUNT] = {"Weapon", "Head", "Body", "Boots", "Accessory 1", "Accessory 2"};
 static const char *STATION_NAMES[] = {"All", "Forge", "Alchemy", "Cooking"};
 
@@ -65,6 +66,8 @@ static void stack_label(const MenuCtx *c, const ItemStack *s, char *out, size_t 
     if (s->qty > 1 && n < cap) snprintf(out + n, cap - n, "  x%d", s->qty);
 }
 
+void menu_open_shop(Menu *m, int shop_index) { m->open = true; m->tab = TAB_SHOP; m->shop = shop_index < 0 ? 0 : shop_index; m->sell_mode = 0; m->sel = 0; m->scroll = 0; m->msg[0] = 0; }
+
 /* ---- detail panel for one stack ---- */
 static float draw_item_details(const MenuCtx *c, const ItemStack *s, float x, float y, float w) {
     if (!s || s->item < 0) { text("Nothing selected.", x, y, 15 * S, GRAY); return y + 24 * S; }
@@ -122,6 +125,40 @@ static void member_buttons(Menu *m, MenuCtx *c, float x, float y, float w) {
     }
 }
 
+
+/* word-wrapped text; returns the y after the last line */
+static float wrap_text(const char *t, float x, float y, float w, float fs, Color col) {
+    char line[160];
+    const char *p = t; int f = (int)fs;
+    while (*p) {
+        int n = 0, last_space = -1;
+        while (p[n] && n < 158) { line[n] = p[n]; line[n + 1] = 0; if (p[n] == ' ') last_space = n; if ((float)MeasureText(line, f) > w) { if (last_space > 0) n = last_space; break; } n++; }
+        if (!p[n] || n >= 158) n = (int)strlen(p) < 158 ? (int)strlen(p) : n;
+        memcpy(line, p, (size_t)n); line[n] = 0;
+        text(line, x, y, fs, col); y += fs * 1.3f;
+        p += n; while (*p == ' ') p++;
+    }
+    return y;
+}
+
+static const char *npc_name(const StoryDB *db, const char *id) { int n = storydb_find_npc(db, id); return n >= 0 ? db->npc[n].name : id; }
+static Color quest_color(const QuestDef *q) {
+    switch (q->type) { case QT_MAIN: return (Color){255, 214, 90, 255}; case QT_COMPANION: return (Color){120, 230, 255, 255}; case QT_BOUNTY: return (Color){255, 160, 90, 255};
+                       case QT_LORE: return (Color){200, 160, 255, 255}; default: return WHITE; }
+}
+static const char *quest_tag(const QuestDef *q) { static const char *t[] = {"MAIN", "SIDE", "BOND", "BOUNTY", "HIDDEN", "COLLECT", "LORE"}; return t[q->type]; }
+static int quest_progress_pct(const StoryState *ss, const QuestDef *q, int qi) {
+    int have = 0, need = 0;
+    for (int k = 0; k < q->nobj; ++k) { need += q->obj[k].count; have += ss->q[qi].prog[k]; }
+    return need ? have * 100 / need : 0;
+}
+static bool journal_match(const MenuCtx *c, const Menu *m, int qi) {
+    QState st = (QState)c->ss->q[qi].state;
+    if (m->jfilter == 0) return st == QS_ACTIVE || st == QS_READY;
+    if (m->jfilter == 1) return st == QS_AVAILABLE;
+    return st == QS_COMPLETE || (c->story->quest[qi].repeatable && c->ss->q[qi].times_done > 0);
+}
+
 static void build_rows(Menu *m, MenuCtx *c) {
     nrows = 0;
     char buf[96];
@@ -164,6 +201,19 @@ static void build_rows(Menu *m, MenuCtx *c) {
             stack_label(c, st, rows[nrows].label, sizeof rows[nrows].label); rows[nrows].col = rarity_color(c->db->items[st->item].rarity); rows[nrows++].id = i;
         }
         break;
+    case TAB_JOURNAL: {
+        static const QuestType order[] = {QT_MAIN, QT_COMPANION, QT_SIDE, QT_LORE, QT_HIDDEN, QT_COLLECTION, QT_BOUNTY};
+        for (unsigned o = 0; o < sizeof order / sizeof order[0]; ++o)
+            for (int qi = 0; qi < c->story->nquest && nrows < MAX_ROWS; ++qi) {
+                const QuestDef *q = &c->story->quest[qi];
+                if (q->type != order[o] || !journal_match(c, m, qi)) continue;
+                int pct = quest_progress_pct(c->ss, q, qi);
+                if (m->jfilter == 0) snprintf(rows[nrows].label, sizeof rows[nrows].label, "%s%s  (%d%%)", c->ss->tracked == qi ? "> " : "", q->title, pct);
+                else snprintf(rows[nrows].label, sizeof rows[nrows].label, "[%s] %s", quest_tag(q), q->title);
+                rows[nrows].col = quest_color(q); rows[nrows++].id = qi;
+            }
+    } break;
+    case TAB_MAP: break;
     case TAB_SHOP: {
         const ShopDef *sh = &c->db->shops[m->shop];
         if (!m->sell_mode) {
@@ -195,6 +245,64 @@ static int equip_acc_slot(const Inventory *inv, int member) { return inv->equip[
 static const char *eq_error(EqResult r) {
     switch (r) { case EQ_ERR_ROLE: return "That belongs to a different role."; case EQ_ERR_LEVEL: return "Level too low."; case EQ_ERR_NOSPACE: return "No room in the bag.";
                  case EQ_ERR_TYPE: return "That can't be equipped."; default: return "Nothing there."; }
+}
+
+
+static void draw_map(Menu *m, MenuCtx *c, float px, float py, float pw, float ph) {
+    static const struct { const char *id, *name; float x, y; Color col; } REG[5] = {
+        {"vale", "Ashbrook Vale and the Whisperwood", 0.27f, 0.50f, {60, 120, 70, 255}}, {"sunscar", "Sunscar Sands", 0.48f, 0.82f, {190, 150, 70, 255}},
+        {"frostspire", "Frostspire Peaks", 0.56f, 0.17f, {110, 150, 200, 255}}, {"cinderhold", "Cinderhold", 0.79f, 0.52f, {190, 80, 50, 255}},
+        {"hollow", "The Hollow Reach", 0.89f, 0.22f, {110, 60, 150, 255}}};
+    Rectangle area = {px + 14 * S, py + 56 * S, pw - 28 * S, ph - 120 * S};
+    DrawRectangleRec(area, (Color){28, 30, 52, 255});
+    DrawRectangleLinesEx(area, 1.0f, (Color){255, 214, 90, 200});
+    for (int i = 0; i < 5; ++i) {
+        float cx = area.x + REG[i].x * area.width, cy = area.y + REG[i].y * area.height, r = (i == 0 ? 0.20f : 0.13f) * area.height * 1.5f;
+        Color col = REG[i].col; col.a = 90;
+        DrawCircle((int)cx, (int)cy, r, col);
+        Color ring = REG[i].col; ring.a = 200;
+        DrawCircleLines((int)cx, (int)cy, r, ring);
+        text(REG[i].name, cx - (float)MeasureText(REG[i].name, (int)(13 * S)) / 2, cy - r - 16 * S, 13 * S, (Color){220, 225, 245, 255});
+    }
+    Vector2 mouse = GetMousePosition();
+    bool clicked_now = IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+    const char *hover = NULL; int hover_i = -1;
+    /* tracked quest targets */
+    char tracked_markers[Q_MAX_OBJ][32]; int nmark = 0;
+    if (c->ss->tracked >= 0) {
+        const QuestDef *q = &c->story->quest[c->ss->tracked];
+        for (int k = 0; k < q->nobj; ++k) if (q->obj[k].marker[0] && c->ss->q[c->ss->tracked].prog[k] < q->obj[k].count && nmark < Q_MAX_OBJ) snprintf(tracked_markers[nmark++], 32, "%s", q->obj[k].marker);
+    }
+    for (int i = 0; i < c->story->nloc; ++i) {
+        const Location *l = &c->story->loc[i];
+        float x = area.x + l->map_x * area.width, y = area.y + l->map_y * area.height;
+        Color col = !strcmp(l->kind, "town") ? (Color){255, 220, 110, 255} : !strcmp(l->kind, "dungeon") ? (Color){255, 100, 100, 255} : !strcmp(l->kind, "shrine") ? WHITE : (Color){120, 220, 255, 255};
+        float r = (!strcmp(l->kind, "town") ? 6.0f : 4.0f) * S;
+        bool here = !strcmp(l->id, c->town);
+        DrawCircle((int)x, (int)y, r, col);
+        if (here) DrawCircleLines((int)x, (int)y, r + 5 * S, WHITE);
+        for (int k = 0; k < nmark; ++k) if (!strcmp(tracked_markers[k], l->id)) {
+            DrawCircleLines((int)x, (int)y, r + 8 * S + sinf((float)GetTime() * 4) * 2 * S, (Color){255, 214, 90, 255});
+            text("!", x - 3 * S, y - r - 22 * S, 18 * S, (Color){255, 214, 90, 255});
+        }
+        float dx = mouse.x - x, dy = mouse.y - y;
+        if (dx * dx + dy * dy < (r + 6 * S) * (r + 6 * S)) { hover = l->name; hover_i = i; }
+    }
+    if (hover) {
+        const Location *l = &c->story->loc[hover_i];
+        char b[96]; snprintf(b, sizeof b, "%s  (%s)", hover, l->kind);
+        float tw = (float)MeasureText(b, (int)(15 * S)) + 16 * S;
+        float tx = fminf(mouse.x + 14 * S, area.x + area.width - tw), ty = mouse.y + 14 * S;
+        DrawRectangle((int)tx, (int)ty, (int)tw, (int)(26 * S), (Color){6, 8, 24, 240});
+        DrawRectangleLines((int)tx, (int)ty, (int)tw, (int)(26 * S), (Color){255, 214, 90, 220});
+        text(b, tx + 8 * S, ty + 5 * S, 15 * S, WHITE);
+        if (clicked_now && !strcmp(l->kind, "town") && c->on_travel) {
+            c->on_travel(c->user, l->id);
+            snprintf(m->msg, sizeof m->msg, "Dev travel: the NPCs of %s now stand in the sandbox plaza.", l->name); m->msg_t = 5.0f;
+        }
+    }
+    text("Gold ring: tracked quest target.  White ring: where the sandbox NPCs are from.  Click a town to dev-travel (real regions arrive in Milestone 9).", area.x, area.y + area.height + 8 * S, 12 * S, (Color){190, 200, 230, 255});
+    text("Yellow: town    Red: dungeon    Blue: point of interest    White: shrine", area.x, area.y + area.height + 26 * S, 12 * S, (Color){190, 200, 230, 255});
 }
 
 void menu_update_draw(Menu *m, MenuCtx *c) {
@@ -231,7 +339,11 @@ void menu_update_draw(Menu *m, MenuCtx *c) {
     if (button((Rectangle){px + pw - 110 * S - (float)MeasureText(gold, (int)(20 * S)), py + 12 * S, 90 * S, 32 * S}, "Close", true, false)) { m->open = false; return; }
 
     build_rows(m, c);
-    if (m->tab == TAB_SHOP) { /* shop selector / buy-sell toggle on top of the list */ }
+    if (m->tab == TAB_MAP) {
+        draw_map(m, c, px, py, pw, ph);
+        if (m->msg_t > 0) text(m->msg, px + 16 * S, py + ph - 24 * S, 14 * S, (Color){255, 240, 170, 255});
+        return;
+    }
 
     /* list column */
     float lx = px + 14 * S, ly = py + 96 * S, lw = 420 * S, lh = ph - 146 * S, rowh = 28 * S;
@@ -243,7 +355,9 @@ void menu_update_draw(Menu *m, MenuCtx *c) {
         text(c->db->shops[m->shop].name, lx + 38 * S, py + 62 * S, 15 * S, WHITE);
         if (button((Rectangle){lx + lw - 150 * S, py + 56 * S, 30 * S, 28 * S}, ">", true, false)) { m->shop = (m->shop + 1) % c->db->nshops; m->sel = 0; }
         if (button((Rectangle){lx + lw - 112 * S, py + 56 * S, 112 * S, 28 * S}, m->sell_mode ? "Selling" : "Buying", true, m->sell_mode)) { m->sell_mode = !m->sell_mode; m->sel = 0; m->scroll = 0; }
-    } else if (m->tab != TAB_ITEMS || true) {
+    } else if (m->tab == TAB_JOURNAL) {
+        for (int i = 0; i < 3; ++i) if (button((Rectangle){lx + (float)i * 112 * S, py + 56 * S, 108 * S, 28 * S}, JFILTERS[i], true, i == m->jfilter)) { m->jfilter = i; m->sel = 0; m->scroll = 0; }
+    } else {
         member_buttons(m, c, lx, py + 56 * S, lw);
     }
     DrawRectangle((int)lx, (int)ly, (int)lw, (int)lh, (Color){6, 8, 22, 230});
@@ -372,6 +486,35 @@ void menu_update_draw(Menu *m, MenuCtx *c) {
             }
         }
     } break;
+    case TAB_JOURNAL: {
+        if (selid < 0) { text(m->jfilter == 1 ? "Nothing on the board right now." : "Nothing here yet.", dx, dy, 15 * S, GRAY); break; }
+        const QuestDef *q = &c->story->quest[selid];
+        const QuestRt *rt = &c->ss->q[selid];
+        text(q->title, dx, dy, 20 * S, quest_color(q)); float y = dy + 28 * S;
+        char b[200];
+        snprintf(b, sizeof b, "%s quest   |   %s   |   Act %d", quest_tag(q), q->region[0] ? q->region : "-", q->act);
+        text(b, dx, y, 13 * S, (Color){190, 200, 230, 255}); y += 20 * S;
+        y = wrap_text(q->summary, dx, y + 2 * S, dw, 14 * S, (Color){210, 212, 225, 255}) + 6 * S;
+        for (int k = 0; k < q->nobj; ++k) {
+            bool dn = rt->prog[k] >= q->obj[k].count || rt->state == QS_COMPLETE;
+            if (q->obj[k].count > 1) snprintf(b, sizeof b, "[%c] %s  (%d/%d)", dn ? 'x' : ' ', q->obj[k].text, rt->prog[k] < q->obj[k].count ? rt->prog[k] : q->obj[k].count, q->obj[k].count);
+            else snprintf(b, sizeof b, "[%c] %s", dn ? 'x' : ' ', q->obj[k].text);
+            y = wrap_text(b, dx + 6 * S, y, dw - 6 * S, 14 * S, dn ? (Color){130, 220, 150, 255} : WHITE);
+        }
+        y += 6 * S;
+        if (q->giver[0] && strcmp(q->giver, "auto") && strcmp(q->giver, "none")) { snprintf(b, sizeof b, "From: %s", npc_name(c->story, q->giver)); text(b, dx, y, 13 * S, (Color){190, 200, 230, 255}); y += 18 * S; }
+        if (q->turn_in[0] && strcmp(q->turn_in, "auto") && strcmp(q->turn_in, "none")) { snprintf(b, sizeof b, "Report to: %s", npc_name(c->story, q->turn_in)); text(b, dx, y, 13 * S, (Color){190, 200, 230, 255}); y += 18 * S; }
+        snprintf(b, sizeof b, "Reward: %d XP, %d g", q->xp, q->gold);
+        for (int k = 0; k < q->nitems && strlen(b) < 150; ++k) { int it = itemdb_find(c->db, q->items[k].item); snprintf(b + strlen(b), sizeof b - strlen(b), ", %s%s", it >= 0 ? c->db->items[it].name : q->items[k].item, q->items[k].qty > 1 ? " x" : ""); }
+        for (int k = 0; k < q->nskills; ++k) snprintf(b + strlen(b), sizeof b - strlen(b), ", skill: %s", q->skills[k].skill);
+        y = wrap_text(b, dx, y, dw, 13 * S, (Color){255, 220, 120, 255});
+        if ((rt->state == QS_ACTIVE || rt->state == QS_READY) && (button((Rectangle){dx, by, bw, bh}, c->ss->tracked == selid ? "Tracked" : "Track", c->ss->tracked != selid, false) || (enter && c->ss->tracked != selid))) { c->ss->tracked = selid; say(m, "%s", "Tracking this quest."); }
+        if (rt->state == QS_AVAILABLE && (!strcmp(q->giver, "none") || !q->giver[0]) && button((Rectangle){dx, by, bw, bh}, "Accept", true, false)) {
+            if (story_start_quest(c->ss, c->story, c->sh, selid)) say(m, "Accepted: %s", q->title);
+        }
+        if (rt->state == QS_AVAILABLE && strcmp(q->giver, "none") && q->giver[0]) text("Talk to the giver to accept this quest.", dx, by + 8 * S, 13 * S, (Color){255, 220, 120, 255});
+    } break;
+    case TAB_MAP: break;
     case TAB_SHOP: {
         const ShopDef *shp = &c->db->shops[m->shop];
         text(shp->keeper, dx, dy - 4 * S, 14 * S, (Color){255, 220, 120, 255});
