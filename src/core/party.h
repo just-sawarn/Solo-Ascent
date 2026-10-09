@@ -55,6 +55,8 @@ void party_step(Party *p, PartyCtx *c, const PartyInput *in, bool first_step, fl
 bool party_switch(Party *p, PartyCtx *c, int idx);
 int  party_next_alive(const Party *p, const PartyCtx *c, int from);
 bool party_wiped(const Party *p, const PartyCtx *c);
+/* Moves everyone to `pos` (fanned out) without healing: zone travel. */
+void party_teleport(Party *p, PartyCtx *c, Vec3 pos, float yaw);
 void party_respawn_all(Party *p, PartyCtx *c, Vec3 pos);
 Combatant *party_cb(const Party *p, const PartyCtx *c, int idx);
 

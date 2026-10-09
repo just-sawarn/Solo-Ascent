@@ -10,8 +10,8 @@
 #include <stdint.h>
 #include "core/vec.h"
 
-#define PH_MAX_BOXES 256
-#define PH_MAX_CYLS 128
+#define PH_MAX_BOXES 768
+#define PH_MAX_CYLS 256
 #define PH_GRID 64              /* cells per side, centred on the origin */
 #define PH_CELL 4.0f            /* metres per cell: world covers +-128 m, beyond that clamps to the border cell */
 #define PH_CELL_CAP 24
@@ -24,6 +24,10 @@ typedef struct {
     PhCyl cyls[PH_MAX_CYLS];
     int nboxes, ncyls;
     float ground_y;
+    /* optional terrain: when set, the ground height is height(user,x,z) instead of the flat ground_y */
+    float (*height)(const void *user, float x, float z);
+    const void *height_user;
+    float bound;                                        /* >0: characters are kept inside +-bound on x/z */
     uint16_t cell_item[PH_GRID * PH_GRID][PH_CELL_CAP]; /* item ids: box i, or PH_MAX_BOXES + cyl i */
     uint8_t  cell_n[PH_GRID * PH_GRID];
     uint16_t overflow[64];                              /* items whose cells were full: always tested */
@@ -33,6 +37,7 @@ typedef struct {
 } PhysWorld;
 
 void phys_init(PhysWorld *w, float ground_y);
+float phys_ground(const PhysWorld *w, float x, float z);   /* terrain or flat ground height */
 bool phys_add_box(PhysWorld *w, Vec3 min, Vec3 max);
 bool phys_add_cyl(PhysWorld *w, float x, float z, float r, float y0, float y1);
 

@@ -63,6 +63,15 @@ void platform_report_story(int mq, int act, int npcs, int dialogue_open, int act
         s["story"] = o;
     }, mq, act, npcs, dialogue_open, active_quests, tracked, completed);
 }
+void platform_report_world(const char *zone, int gen, int region, int weather, float intensity, float hour, int props, int particles, int enemies) {
+    EM_ASM({
+        var s = (window["__sa"] = window["__sa"] || {});
+        var o = {};
+        o["zone"] = UTF8ToString($0); o["gen"] = $1; o["region"] = $2; o["weather"] = $3; o["intensity"] = $4; o["hour"] = $5;
+        o["props"] = $6; o["particles"] = $7; o["enemies"] = $8;
+        s["world"] = o;
+    }, zone, gen, region, weather, intensity, hour, props, particles, enemies);
+}
 void platform_pack_request(const char *name) {
     EM_ASM({ var n = UTF8ToString($0); if (window["SoloAscentPacks"]) window["SoloAscentPacks"]["request"](n); }, name);
 }
@@ -70,6 +79,7 @@ PackState platform_pack_state(const char *name) {
     return (PackState)EM_ASM_INT({ var n = UTF8ToString($0); return window["SoloAscentPacks"] ? window["SoloAscentPacks"]["state"](n) : 0; }, name);
 }
 #else
+void platform_report_world(const char *z, int a, int b, int c, float d, float e, int f, int g, int h) { (void)z; (void)a; (void)b; (void)c; (void)d; (void)e; (void)f; (void)g; (void)h; }
 void platform_pack_request(const char *name) { (void)name; }
 PackState platform_pack_state(const char *name) { (void)name; return PACK_READY; }
 void platform_report_story(int a, int b, int c, int d, int e, int f, int h) { (void)a; (void)b; (void)c; (void)d; (void)e; (void)f; (void)h; }

@@ -20,6 +20,9 @@
 #include "render/actors.h"
 #include "render/heroes.h"
 #include "render/procmodels.h"
+#include "render/vfx.h"
+#include "render/worldview.h"
+#include "core/worldgen.h"
 #include "render/renderer.h"
 #include "ui/debug_overlay.h"
 #include "ui/dialogue.h"
@@ -75,6 +78,13 @@ typedef struct {
     bool ev_roll[PARTY_MAX], ev_cast[PARTY_MAX];
     int cast_skill[PARTY_MAX];
     int packtest;      /* 0 off, 1 waiting for the selftest pack, 2 done */
+    /* world: generated zones, weather, day/night */
+    WorldDB wdb; bool world_ok;
+    Zone zone; int zone_idx; bool legacy_zone;
+    Weather wx; Env env;
+    float exit_cd, fade; bool boss_up[4];
+    char start_zone[24]; float start_hour; int start_wx;   /* test/dev: ?zone=ID&hour=H&weather=KIND */
+    char zone_title[48]; float zone_banner;
 } Game;
 
 static Game G; /* static: World and PhysWorld are large, no per-frame allocation anywhere */
@@ -167,7 +177,113 @@ static void story_bind(Game *g) {
 }
 
 static void refresh_npcs(Game *g) { npcw_refresh(&g->npcs, &g->story, &g->ss, &g->sh, g->region, g->hour); }
-static void on_travel(void *u, const char *town) { Game *g = u; snprintf(g->region, sizeof g->region, "%s", town); npcw_init(&g->npcs); refresh_npcs(g); }
+
+
+/* ---------------- world: zones, bosses, travel ---------------- */
+static void new_zone_banner(Game *g, const char *name) { snprintf(g->zone_title, sizeof g->zone_title, "%s", name); g->zone_banner = 3.2f; }
+
+static float zone_ground(void *u, float x, float z) { const Game *g = u; return g->zone_idx >= 0 && !g->legacy_zone ? zone_height(&g->zone, x, z) : 0.0f; }
+
+static const char *zone_display_name(const Game *g, const char *id) {
+    int li = g->story_ok ? storydb_find_loc(&g->story, id) : -1;
+    return li >= 0 ? g->story.loc[li].name : id;
+}
+
+static void spawn_enemy_def(Game *g, int def, float x, float z) {
+    if (def < 0) return;
+    float y = g->zone_idx >= 0 && !g->legacy_zone ? zone_height(&g->zone, x, z) : 0.0f;
+    enemy_spawn(&g->enemies, &g->cw, &g->world, &g->edb, def, vec3(x, y, z));
+}
+
+static void clear_enemies(Game *g) {
+    for (int i = 0; i < ENEMY_MAX; ++i) if (g->enemies.e[i].used) enemy_remove(&g->enemies, &g->cw, &g->world, g->enemies.e[i].ent);
+}
+
+static void spawn_zone_boss(Game *g, int bi) {
+    const ZoneDef *zd = &g->wdb.zone[g->zone_idx];
+    const ZoneBoss *b = &zd->bosses[bi];
+    float x = g->zone.boss_pos.x, z = g->zone.boss_pos.z;
+    if (b->at[0] && g->story_ok) { int li = storydb_find_loc(&g->story, b->at); if (li >= 0) { x = g->story.loc[li].lx; z = g->story.loc[li].lz + 6.0f; } }
+    spawn_enemy_def(g, b->def, x, z);
+    g->boss_up[bi] = true;
+}
+
+/* Builds the zone's collision, visuals and population, and moves the party in. from < 0 = default arrival. */
+static void zone_enter(Game *g, int zi, int from) {
+    const ZoneDef *zd = &g->wdb.zone[zi];
+    g->zone_idx = zi;
+    zone_generate(&g->zone, &g->wdb, zi);
+    g->legacy_zone = !strcmp(zd->id, "aurelheim");   /* Aurelheim keeps its hand-built sandbox visuals and collision */
+    snprintf(g->region, sizeof g->region, "%s", zd->id);
+    if (g->legacy_zone) { test_scene_build_physics(&g->phys); g->phys.bound = 76.0f; } else zone_build_physics(&g->zone, &g->phys);
+    worldview_load(&g->zone, &g->wdb.region[zd->region]);
+    vfx_reset();
+    clear_enemies(g);
+    memset(g->boss_up, 0, sizeof g->boss_up);
+    if (g->legacy_zone) {
+        if (g->arena) spawn_enemy(g, "shadow_brute", 0.0f, -4.5f);
+        else for (unsigned i = 0; i < sizeof SPAWNS / sizeof SPAWNS[0]; ++i) spawn_enemy(g, SPAWNS[i].id, SPAWNS[i].x, SPAWNS[i].z);
+    } else {
+        Rng rng; rng_seed(&rng, g->zone.seed ^ 0xE4E4u);
+        for (int i = 0; i < g->zone.nfoes; ++i) spawn_enemy_def(g, zone_pick_enemy(&g->wdb, zd->region, &rng), g->zone.foes[i].x, g->zone.foes[i].z);
+    }
+    Vec3 at = from >= 0 ? zone_entry(&g->zone, from) : (g->legacy_zone ? vec3(0, 0, 0.5f) : g->zone.spawn);
+    party_teleport(&g->party, &g->ctx, at, 3.14159265f);
+    g->cam_focus = at;
+    g->lock_ent = ENTITY_NULL; g->cam.locked = false;
+    g->exit_cd = 2.5f; g->fade = 1.0f;
+    if (g->story_ok) {
+        npcw_init(&g->npcs); npcw_set_ground(&g->npcs, zone_ground, g);
+        refresh_npcs(g);
+        memset(g->loc_inside, 0, sizeof g->loc_inside);
+        story_on_location(&g->ss, &g->story, &g->sh, zd->id);
+        new_zone_banner(g, zone_display_name(g, zd->id));
+    }
+}
+
+static void world_frame(Game *g, float dt, bool paused) {
+    if (g->zone_idx < 0) return;
+    const ZoneDef *zd = &g->wdb.zone[g->zone_idx];
+    Vec3 ap = active_member(g)->pc.ch.pos;
+    g->exit_cd -= dt; if (g->fade > 0) g->fade -= dt * 2.5f;
+    if (g->zone_banner > 0) g->zone_banner -= dt;
+    /* portals */
+    if (!paused && g->exit_cd <= 0) {
+        for (int i = 0; i < g->zone.nexits; ++i) {
+            const ZoneExit *e = &g->zone.exits[i];
+            if (hypotf(ap.x - e->x, ap.z - e->z) < 2.6f) { zone_enter(g, e->dest, g->zone_idx); return; }
+        }
+    }
+    /* quest bosses appear where their quest says, while the quest is open */
+    if (!paused && g->story_ok) {
+        for (int b = 0; b < zd->nbosses; ++b) {
+            if (g->boss_up[b]) continue;
+            int q = storydb_find_quest(&g->story, zd->bosses[b].quest);
+            if (q >= 0 && g->ss.q[q].state == QS_ACTIVE) {
+                spawn_zone_boss(g, b); toast_text(g, "A powerful presence stirs...");
+            }
+        }
+    }
+    /* weather + environment */
+    const RegionDef *rd = &g->wdb.region[zd->region];
+    float none[WX_COUNT] = {0};
+    if (!paused) weather_update(&g->wx, dt, zd->gen == ZG_DUNGEON ? none : rd->weather);
+    if (zd->gen == ZG_DUNGEON) {
+        Env e = {0};
+        e.light_dir[0] = 0.25f; e.light_dir[1] = 0.9f; e.light_dir[2] = 0.35f;
+        e.light_col = (Rgb){0.62f, 0.50f, 0.42f}; e.amb_top = (Rgb){0.20f, 0.17f, 0.24f}; e.amb_bot = (Rgb){0.09f, 0.08f, 0.11f};
+        e.sky_top = e.sky_bot = e.fog_col = (Rgb){rd->dng_floor[0] / 1200.0f, rd->dng_floor[1] / 1200.0f, rd->dng_floor[2] / 1200.0f};
+        e.sky_glow = (Rgb){0, 0, 0}; e.fog_den = 0.022f; e.stars = 0; e.disc_x = -2; e.disc_y = -2; e.sat = 1; e.exposure = 1.05f; e.is_day = true;
+        g->env = e;
+    } else env_compute(&g->env, g->hour, &g->wx, &rd->tint);
+}
+
+static void on_travel(void *u, const char *town) {
+    Game *g = u;
+    int zi = g->world_ok ? worlddb_zone(&g->wdb, town) : -1;
+    if (zi < 0 && g->world_ok) zi = worlddb_zone(&g->wdb, "aurelheim");   /* a sub-place of Aurelheim */
+    if (zi >= 0) zone_enter(g, zi, -1);
+}
 
 static void new_game(Game *g) {
     ecs_init(&g->world);
@@ -183,8 +299,6 @@ static void new_game(Game *g) {
     static const float OX[4] = {0.0f, -2.4f, 2.4f, 0.0f}, OZ[4] = {0.5f, 2.2f, 2.6f, 4.2f};
     for (int i = 0; i < g->pdb.n && i < PARTY_MAX; ++i) party_add(&g->party, &g->ctx, &g->pdb.m[i], vec3(OX[i], 0, OZ[i]), 3.14159265f);
     g->party.active = 0;
-    if (g->arena) spawn_enemy(g, "shadow_brute", 0.0f, -4.5f);
-    else for (unsigned i = 0; i < sizeof SPAWNS / sizeof SPAWNS[0]; ++i) spawn_enemy(g, SPAWNS[i].id, SPAWNS[i].x, SPAWNS[i].z);
     g->lock_ent = ENTITY_NULL;
     g->cam.locked = false;
     g->kills = 0; g->respawn_t = 0; g->hitstop = 0;
@@ -198,15 +312,19 @@ static void new_game(Game *g) {
         story_bind(g);
         story_init(&g->ss, &g->story, "Kael");
         g->ss.level = 5;
-        snprintf(g->region, sizeof g->region, "aurelheim");
         g->hour = 9.0f; g->story_timer = 0;
         memset(g->loc_inside, 0, sizeof g->loc_inside);
         dui_init(&g->dui);
-        npcw_init(&g->npcs);
         story_update(&g->ss, &g->story, &g->sh);
-        refresh_npcs(g);
         g->near_npc = -1;
     }
+    weather_init(&g->wx, 20261009u);
+    g->zone_idx = -1;
+    if (g->world_ok) zone_enter(g, worlddb_zone(&g->wdb, "aurelheim"), -1);
+    else { snprintf(g->region, sizeof g->region, "aurelheim"); test_scene_build_physics(&g->phys); }
+    if (g->world_ok && g->start_zone[0]) { int zi = worlddb_zone(&g->wdb, g->start_zone); if (zi >= 0) zone_enter(g, zi, -1); }
+    if (g->start_hour >= 0) g->hour = g->start_hour;
+    if (g->start_wx >= 0) weather_set(&g->wx, (WeatherKind)g->start_wx, 1.0f);
 }
 
 static Vector3 lock_pos(const Game *g) {
@@ -261,14 +379,19 @@ static void process_events(Game *g) {
         bool on_active = e->dst == act;
         switch (e->type) {
         case CE_HIT:
+            vfx_burst(e->crit ? VFX_HIT : VFX_SPARK, (Vector3){e->pos.x, e->pos.y + 1.0f, e->pos.z}, (Vector3){0, 0, 0});
             if (by_active) { g->hitstop = fmaxf(g->hitstop, e->crit ? 0.085f : 0.05f); camrig_shake(&g->cam, e->crit ? 0.05f : 0.02f); g->last_damage = e->amount; }
             else if (!on_party) camrig_shake(&g->cam, 0.008f);
             if (on_active) { g->hitstop = fmaxf(g->hitstop, 0.045f); camrig_shake(&g->cam, 0.06f); }
             break;
-        case CE_PARRY: g->hitstop = fmaxf(g->hitstop, 0.14f); camrig_shake(&g->cam, 0.09f); break;
+        case CE_HEAL:
+            if (ecs_alive(&g->world, e->dst)) { Vec3 hp = g->world.pos[ecs_index(e->dst)]; vfx_burst(VFX_HEAL, (Vector3){hp.x, hp.y + 0.6f, hp.z}, (Vector3){0, 1, 0}); }
+            break;
+        case CE_PARRY: vfx_burst(VFX_SLASH, (Vector3){e->pos.x, e->pos.y + 1.1f, e->pos.z}, (Vector3){0, 0, 0}); g->hitstop = fmaxf(g->hitstop, 0.14f); camrig_shake(&g->cam, 0.09f); break;
         case CE_BLOCK: camrig_shake(&g->cam, 0.03f); break;
         case CE_DEATH:
             if (!on_party) {
+                if (ecs_alive(&g->world, e->dst)) { Vec3 dp = g->world.pos[ecs_index(e->dst)]; vfx_burst(VFX_HIT, (Vector3){dp.x, dp.y + 1.0f, dp.z}, (Vector3){0, 1, 0}); vfx_burst(VFX_EMBER, (Vector3){dp.x, dp.y + 0.6f, dp.z}, (Vector3){0, 1, 0}); }
                 g->kills++; g->hitstop = fmaxf(g->hitstop, 0.10f); camrig_shake(&g->cam, 0.08f);
                 Enemy *en = enemy_of(&g->enemies, e->dst);
                 if (en && g->story_ok) {
@@ -288,6 +411,7 @@ static void process_events(Game *g) {
             else camrig_shake(&g->cam, 0.15f);
             break;
         case CE_CAST:
+            if (e->amount > 0.5f) vfx_burst(VFX_DUST, (Vector3){e->pos.x, e->pos.y + 0.1f, e->pos.z}, (Vector3){0, 1, 0});
             if (e->amount > 0.5f && by_active) camrig_shake(&g->cam, 0.05f); /* ground impact */
             break;
         default: break;
@@ -382,8 +506,6 @@ static void skip_tracked_quest(Game *g) {
     refresh_npcs(g);
 }
 
-static const char *DEV_REGIONS[] = {"aurelheim", "ashbrook", "whisperwood", "spire_academy", "fort_greywall", "forbidden_library", "sanctum_of_dawn", "qasr_amun", "khemet_ruins", "hrimvald", "emberforge", "front_camp"};
-
 static void story_frame(Game *g, float dt, bool hidden) {
     bool paused = hidden || g->menu.open || g->dui.open;
     Combatant *acb = combat_get(&g->cw, active_ent(g));
@@ -393,10 +515,19 @@ static void story_frame(Game *g, float dt, bool hidden) {
     if (g->hour >= 24.0f) g->hour -= 24.0f;
     if (g->dbg.quest_skip_request) { skip_tracked_quest(g); g->dbg.quest_skip_request = false; }
     if (IsKeyPressed(KEY_N)) { float next[3] = {6.0f, 12.0f, 19.0f}; int s = sched_slot(g->hour); g->hour = next[(s + 1) % 3]; toast_text(g, s == 2 ? "Morning." : s == 0 ? "Afternoon." : "Evening."); }
-    if (IsKeyPressed(KEY_F6)) {
-        int cur = 0; for (unsigned i = 0; i < sizeof DEV_REGIONS / sizeof DEV_REGIONS[0]; ++i) if (!strcmp(DEV_REGIONS[i], g->region)) cur = (int)i;
-        on_travel(g, DEV_REGIONS[(cur + 1) % (int)(sizeof DEV_REGIONS / sizeof DEV_REGIONS[0])]);
+    if (IsKeyPressed(KEY_F6) && g->world_ok) {   /* dev: next zone */
+        int next = (g->zone_idx + 1) % g->wdb.nzone;
+        zone_enter(g, next, -1);
         char b[64]; snprintf(b, sizeof b, "Dev travel: %s", g->region); toast_text(g, b);
+    }
+    if (g->dbg.visible && g->world_ok) {
+        if (IsKeyPressed(KEY_Y)) { WeatherKind k = (WeatherKind)((g->wx.kind + 1) % WX_COUNT); weather_set(&g->wx, k, 1.0f); toast_text(g, weather_name(k)); }
+        if (IsKeyPressed(KEY_T)) g->hour = fmodf(g->hour + 3.0f, 24.0f);
+        if (IsKeyPressed(KEY_P) && g->zone.nexits > 0) {   /* dev: step into the first portal */
+            const ZoneExit *e = &g->zone.exits[0]; float l = hypotf(e->x, e->z);
+            Vec3 at = vec3(e->x * (l - 2.0f) / l, 0, e->z * (l - 2.0f) / l); at.y = zone_height(&g->zone, at.x, at.z);
+            party_teleport(&g->party, &g->ctx, at, 0.0f); g->exit_cd = 0.0f;
+        }
     }
     g->story_timer += dt;
     if (g->story_timer > 0.4f) {
@@ -496,6 +627,7 @@ static void frame(void) {
     process_events(g);
     hud_update(&g->hud, dt);
     if (playing && g->story_ok) story_frame(g, dt, hidden);
+    if (g->world_ok) world_frame(g, dt, hidden || !playing || g->menu.open || g->dui.open);
 
     Combatant *acb = combat_get(&g->cw, active_ent(g));
     if (playing) {
@@ -510,6 +642,7 @@ static void frame(void) {
         for (int i = 0; i < g->party.n; ++i) if (i != g->party.active) { Vec3 a = g->party.m[i].pc.ch.pos, b = apc->ch.pos; fol = fmaxf(fol, sqrtf((a.x - b.x) * (a.x - b.x) + (a.z - b.z) * (a.z - b.z))); }
         platform_report_inventory(g->inv.gold, INV_SLOTS - inv_free_slots(&g->inv), g->menu.open, acb ? acb->atk : 0.0f);
         if (g->story_ok) { int act_q = 0, done_q = 0; for (int i = 0; i < g->story.nquest; ++i) done_q += g->ss.q[i].state == QS_COMPLETE, act_q += g->ss.q[i].state == QS_ACTIVE || g->ss.q[i].state == QS_READY; platform_report_story(story_mq(&g->ss, &g->story), story_act(&g->ss, &g->story), g->npcs.count, g->dui.open, act_q, g->ss.tracked, done_q); }
+        if (g->world_ok && g->zone_idx >= 0) platform_report_world(g->region, (int)g->zone.gen, g->zone.region, (int)g->wx.kind, g->wx.intensity, g->hour, worldview_last_props(), vfx_last_count(), alive);
         platform_report_party(g->party.active, (int)g->party.cmd, dead, fol, hp[0], hp[1], hp[2], hp[3]);
     }
     dbg_update(&g->dbg, dt, steps);
@@ -552,8 +685,13 @@ static void frame(void) {
         heroes_update(i, playing ? anim_dt : 0.0f, &mm);
     }
 
+    renderer_set_env(g->world_ok && g->zone_idx >= 0 ? &g->env : NULL);
     renderer_begin_frame(cam, (float)g->time);
-    test_scene_submit((float)g->time);
+    if (!g->world_ok || g->zone_idx < 0 || g->legacy_zone || test_scene_showcase()) test_scene_submit((float)g->time);
+    if (g->world_ok && g->zone_idx >= 0 && !test_scene_showcase()) {
+        Vec3 fp = active_member(g)->pc.ch.pos;
+        worldview_submit(&g->zone, &g->wdb.region[g->zone.region], (Vector3){fp.x, fp.y, fp.z}, (float)g->time, renderer_tier(), g->legacy_zone);
+    }
     for (int i = 0; i < g->party.n; ++i) {
         Vec3 mp = ecs_render_pos(&g->world, ecs_index(g->party.m[i].ent), alpha);
         heroes_submit(i, (Vector3){mp.x, mp.y, mp.z}, ecs_render_yaw(&g->world, ecs_index(g->party.m[i].ent), alpha), (float)g->time);
@@ -576,6 +714,8 @@ static void frame(void) {
         Combatant *lc = combat_get(&g->cw, g->lock_ent);
         proc_submit_marker((Vector3){t.x, t.y + (lc ? lc->height : 1.8f) + 0.9f, t.z}, (float)g->time);
     }
+    if (g->world_ok && g->zone_idx >= 0)
+        vfx_frame(cam, (float)g->time, anim_dt, renderer_tier(), g->wx.kind, g->wx.intensity, g->zone.region, g->hour, g->zone.gen == ZG_DUNGEON);
     g->dbg.draw_calls = renderer_queue_count();
 
     BeginDrawing();
@@ -598,10 +738,15 @@ static void frame(void) {
             DrawText(IsCursorHidden() ? "WASD | Shift | Space | J attack | 1-4 skills | E guard | Q roll | Tab lock | R/5-8 switch | B command | I menu | Z/X/C/V potions | Esc mouse"
                                       : "Click to capture the mouse | WASD | J attack | 1-4 skills | E guard | Q roll | Tab lock | R/5-8 switch | B command | I menu | Z/X/C/V potions",
                      10, sh - 24, 16, (Color){255, 255, 255, 170});
+        char region_label[96];
+        if (g->world_ok && g->zone_idx >= 0) {
+            bool wet = g->zone.gen != ZG_DUNGEON && g->wx.kind != WX_CLEAR && g->wx.intensity > 0.15f;
+            snprintf(region_label, sizeof region_label, "%s%s%s", zone_display_name(g, g->region), wet ? " - " : "", wet ? weather_name(g->wx.kind) : "");
+        } else snprintf(region_label, sizeof region_label, "%s", g->region);
         if (g->story_ok) {
             StoryHudCtx sc = {.cam = cam, .cam_yaw = g->cam.yaw, .w = &g->world, .cw = &g->cw, .enemies = &g->enemies, .party = &g->party, .db = &g->story, .ss = &g->ss,
                               .npcs = &g->npcs, .focus = {active_member(g)->pc.ch.pos.x, active_member(g)->pc.ch.pos.y, active_member(g)->pc.ch.pos.z},
-                              .hour = g->hour, .region_name = g->region, .near_npc = g->near_npc, .touch_ui = g->input.touch_ui};
+                              .hour = g->hour, .region_name = region_label, .near_npc = g->near_npc, .touch_ui = g->input.touch_ui};
             story_hud_draw(&sc);
         }
         input_draw_touch(&g->input);
@@ -619,6 +764,13 @@ static void frame(void) {
             if (g->menu.gear_dirty) { apply_all_gear(g); g->menu.gear_dirty = false; }
         }
     }
+    if (g->state == STATE_PLAYING && g->zone_banner > 0) {
+        float a = fminf(1.0f, g->zone_banner) * fminf(1.0f, (3.2f - g->zone_banner) * 2.0f);
+        int fs = sh / 14;
+        DrawText(g->zone_title, (sw - MeasureText(g->zone_title, fs)) / 2 + 2, sh / 6 + 2, fs, (Color){0, 0, 0, (unsigned char)(160 * a)});
+        DrawText(g->zone_title, (sw - MeasureText(g->zone_title, fs)) / 2, sh / 6, fs, (Color){255, 236, 190, (unsigned char)(255 * a)});
+    }
+    if (g->fade > 0) DrawRectangle(0, 0, sw, sh, (Color){0, 0, 0, (unsigned char)(255.0f * fminf(1.0f, g->fade))});
     if (g->toast_t > 0) {
         g->toast_t -= (double)dt;
         DrawText(g->toast, 14, 14, 24, (Color){255, 255, 255, 230});
@@ -646,7 +798,7 @@ int main(int argc, char **argv) {
     int look = 2;
     QualityTier tier = TIER_HIGH;
     bool tier_forced = false, still = false, hero_only = false, rack = false, packtest = false;
-    G.arena = false;
+    G.arena = false; G.start_hour = -1.0f; G.start_wx = -1;
     for (int i = 1; i < argc; ++i) {
         if (!strcmp(argv[i], "--look") && i + 1 < argc) look = atoi(argv[++i]) - 1 < 0 ? 0 : atoi(argv[i]) - 1;
         else if (!strcmp(argv[i], "--tier") && i + 1 < argc) { tier = parse_tier(argv[++i]); tier_forced = true; }
@@ -655,6 +807,9 @@ int main(int argc, char **argv) {
         else if (!strcmp(argv[i], "--rack")) rack = true;
         else if (!strcmp(argv[i], "--arena")) G.arena = true;
         else if (!strcmp(argv[i], "--packtest")) packtest = true;
+        else if (!strcmp(argv[i], "--zone") && i + 1 < argc) snprintf(G.start_zone, sizeof G.start_zone, "%s", argv[++i]);
+        else if (!strcmp(argv[i], "--hour") && i + 1 < argc) G.start_hour = (float)atof(argv[++i]);
+        else if (!strcmp(argv[i], "--weather") && i + 1 < argc) { bool ok; G.start_wx = (int)weather_from_name(argv[++i], &ok); if (!ok) G.start_wx = -1; }
         else if (!strcmp(argv[i], "--mobile") && !tier_forced) tier = TIER_LOW;
     }
 
@@ -670,6 +825,8 @@ int main(int argc, char **argv) {
     G.data_ok = skilldb_load(&G.skills, "data/skills.json") && enemydb_load(&G.edb, &G.skills, "data/enemies.json") &&
                 partydb_load(&G.pdb, &G.skills, "data/party.json") && itemdb_load(&G.idb, "data", &G.edb);
     G.story_ok = storydb_load(&G.story, "data", &G.edb, &G.idb);
+    G.world_ok = worlddb_load(&G.wdb, "data", &G.edb);
+    if (!G.world_ok) LOGE("world data failed to load (sandbox only)");
     if (!G.story_ok) LOGE("story data failed to load");
     G.gear_level = 25; /* sandbox: all gear usable until the XP system lands */
     G.loot_rng = 20261009u;
@@ -684,6 +841,8 @@ int main(int argc, char **argv) {
 
     if (hero_only) { test_scene_set_showcase(true); test_scene_set_rack(rack); G.cam.dist = rack ? 7.5f : 4.4f; G.cam.cur_dist = G.cam.dist; G.cam.pitch = rack ? 0.25f : 0.04f; G.cam.yaw = rack ? 0.0f : 0.35f; }
     proc_init();
+    vfx_init();
+    worldview_init();
     heroes_init();
     if (G.story_ok) { npcw_init(&G.npcs); refresh_npcs(&G); }
     actors_init();
@@ -698,6 +857,8 @@ int main(int argc, char **argv) {
     SetTargetFPS(60);
     while (!WindowShouldClose()) frame();
     renderer_shutdown();
+    worldview_shutdown();
+    vfx_shutdown();
     proc_shutdown();
     CloseWindow();
 #endif

@@ -2,8 +2,9 @@
 #include <ctype.h>
 #include <string.h>
 #include "core/story.h"
+#include "core/worldgen.h"
 
-static SkillDB S; static EnemyDB E; static ItemDB I; static StoryDB DB; static StoryState ST;
+static SkillDB S; static EnemyDB E; static ItemDB I; static StoryDB DB; static StoryState ST; static WorldDB WD;
 
 static int item_count(void *u, const char *i) { (void)u; (void)i; return 9999; }
 static bool take_item(void *u, const char *i, int n) { (void)u; (void)i; (void)n; return true; }
@@ -53,6 +54,27 @@ static void count_tree_ref(int tree) { if (tree >= 0 && tree < 1024) tree_refs[t
 int main(void) {
     CHECK(skilldb_load(&S, SA_DATA_DIR "/skills.json")); CHECK(enemydb_load(&E, &S, SA_DATA_DIR "/enemies.json")); CHECK(itemdb_load(&I, SA_DATA_DIR, &E));
     CHECK(storydb_load(&DB, SA_DATA_DIR, &E, &I));                         /* all references, strings, conditions, actions parse */
+
+    /* ---- the world places every boss objective: each has a zone whose boss entry names that quest and enemy ---- */
+    CHECK(worlddb_load(&WD, SA_DATA_DIR, &E));
+    CHECK(WD.nzone >= 40);
+    int boss_objs = 0, placed = 0;
+    for (int i = 0; i < DB.nquest; ++i)
+        for (int k = 0; k < DB.quest[i].nobj; ++k) {
+            if (DB.quest[i].obj[k].kind != OBJ_BOSS) continue;
+            ++boss_objs;
+            bool found = false;
+            for (int z = 0; z < WD.nzone && !found; ++z)
+                for (int b = 0; b < WD.zone[z].nbosses; ++b)
+                    if (!strcmp(WD.zone[z].bosses[b].quest, DB.quest[i].id) && !strcmp(WD.zone[z].bosses[b].enemy, DB.quest[i].obj[k].target)) { found = true; break; }
+            placed += found;
+            if (!found) printf("boss objective %s/%s has no zone\n", DB.quest[i].id, DB.quest[i].obj[k].target);
+        }
+    CHECK(boss_objs >= 12); CHECK(placed == boss_objs);
+    for (int i = 0; i < DB.nloc; ++i) {        /* every map location is a zone, or a sub-place of Aurelheim */
+        bool zone = worlddb_zone(&WD, DB.loc[i].id) >= 0;
+        CHECK(zone || DB.loc[i].in_sandbox);
+    }
 
     /* ---- size targets from the design ---- */
     CHECK(DB.nnpc >= 60);

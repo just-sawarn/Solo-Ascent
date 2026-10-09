@@ -389,6 +389,7 @@ const Mesh *proc_mesh(ProcMesh m) {
     case PM_CYL: return &M_CYL;
     case PM_CONE: return &M_CONE;
     case PM_CUBE: return &M_CUBE;
+    case PM_PLANE: return &M_PLANE;
     default: return &M_TORUS;
     }
 }

@@ -34,9 +34,14 @@ First time: `cd tools && npm install && npx playwright install chromium`.
 | Debug overlay | F3 (or a three-finger tap); G god mode, K quest skip | | |
 | Menu (items, gear, craft, smith, shop, journal, map) | I (items) / M (map) | | MENU |
 | Talk to a nearby NPC / advance dialogue | F, Enter, click; 1-4 pick a reply; Esc skips cutscenes | dpad down | TALK (appears near an NPC) |
-| Dev: skip quest / next time slot / cycle region | K (overlay on) / N / F6 | | |
+| Dev: skip quest / next time slot / next zone | K (overlay on) / N / F6 | | |
+| Dev (overlay on): weather / +3 h / step into the first portal | Y / T / P | | |
+| Travel between zones | walk into a glowing portal at the zone edge | | |
 | Quick use: HP potion / MP potion / revive / cleanse | Z / X / C / V | | |
 | Look / quality | L cycles the look, `[` `]` change quality tier | | |
+
+## Test URLs
+`index.html?zone=<location id>&hour=<0-24>&weather=<clear|cloudy|rain|storm|snow|sandstorm|ash|fog>` starts directly in a zone (e.g. `zone=goblin_warrens&hour=22`).
 
 ## Hosting
 Plain static files; no COOP/COEP headers or SharedArrayBuffer needed. `dist/` contains `.br`/`.gz` precompressed siblings.

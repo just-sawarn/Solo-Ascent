@@ -36,5 +36,5 @@ void camrig_update(CamRig *c, PhysWorld *w, Vec3 focus, float dx, float dy, floa
         c->eye.z += sinf(c->shake_t * 2.7f + 2.0f) * c->shake;
         c->shake *= expf(-9.0f * dt);
     } else c->shake = 0.0f;
-    if (c->eye.y < w->ground_y + 0.25f) c->eye.y = w->ground_y + 0.25f;
+    { float gy = phys_ground(w, c->eye.x, c->eye.z) + 0.25f; if (c->eye.y < gy) c->eye.y = gy; }
 }

@@ -28,6 +28,7 @@ try {
   const packs = await page.evaluate(() => window.__sa.packs);
   check(packs && packs.characters === 2 && packs.animations === 2 && packs.weapons === 2, 'boot packs mounted before the game started');
   await page.waitForFunction(() => window.__sa.packs.selftest === 2, null, { timeout: 15000 }).catch(() => {});
+  for (let i = 0; i < 30 && !logs.some((l) => l.includes('packtest')); ++i) await page.waitForTimeout(200);   // C polls once per frame
   check(logs.some((l) => l.includes('packtest ok')), 'C-requested pack streamed into the virtual FS');
   await page.waitForFunction(() => navigator.serviceWorker.controller, null, { timeout: 30000 }).catch(() => {});
   const cached = await page.evaluate(async () => {

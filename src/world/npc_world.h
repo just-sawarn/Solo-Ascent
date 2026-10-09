@@ -16,9 +16,11 @@ typedef struct {
     bool moving, talking;
 } NpcInst;
 
-typedef struct { NpcInst n[NPCW_MAX]; int count; } NpcWorld;
+typedef struct { NpcInst n[NPCW_MAX]; int count; float (*ground)(void *, float, float); void *ground_user; } NpcWorld;
 
 void npcw_init(NpcWorld *w);
+/* NPCs stand on the zone's terrain (call after npcw_init). */
+void npcw_set_ground(NpcWorld *w, float (*fn)(void *, float, float), void *user);
 /* Re-evaluates who is present in `region` (and "roaming" NPCs everywhere). New NPCs appear at their scheduled spot. */
 void npcw_refresh(NpcWorld *w, const StoryDB *db, const StoryState *s, const StoryHooks *h, const char *region, float hour);
 void npcw_update(NpcWorld *w, const StoryDB *db, float hour, float dt);

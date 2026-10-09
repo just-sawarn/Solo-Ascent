@@ -25,6 +25,7 @@ static Color C(int r, int g, int b) { return (Color){(unsigned char)r, (unsigned
 static bool g_showcase, g_rack;
 void test_scene_set_rack(bool on) { g_rack = on; }
 void test_scene_set_showcase(bool on) { g_showcase = on; }
+bool test_scene_showcase(void) { return g_showcase; }
 
 void test_scene_submit(float t) {
     proc_submit_ground(120.0f, C(54, 56, 76));

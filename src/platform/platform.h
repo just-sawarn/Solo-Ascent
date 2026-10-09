@@ -20,6 +20,8 @@ void   platform_report_story(int mq, int act, int npcs, int dialogue_open, int a
 typedef enum { PACK_NONE = 0, PACK_LOADING = 1, PACK_READY = 2, PACK_FAILED = 3 } PackState;
 void      platform_pack_request(const char *name);  /* start streaming; idempotent */
 PackState platform_pack_state(const char *name);
+/* test hook: world summary as window.__sa.world */
+void   platform_report_world(const char *zone, int gen, int region, int weather, float intensity, float hour, int props, int particles, int enemies);
 int    platform_is_hidden(void);                  /* tab hidden => sim paused */
 int    platform_context_lost(void);
 int    platform_take_context_restored(void);      /* true once after a restore */

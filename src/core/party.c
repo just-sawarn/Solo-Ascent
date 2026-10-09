@@ -54,6 +54,22 @@ bool party_switch(Party *p, PartyCtx *c, int idx) {
     return true;
 }
 
+void party_teleport(Party *p, PartyCtx *c, Vec3 pos, float yaw) {
+    int slot = 0;
+    for (int i = 0; i < p->n; ++i) {
+        PartyMember *m = &p->m[i];
+        Vec3 at = pos;
+        if (i != p->active) {   /* the controlled member lands exactly on `pos`; the rest fan out behind */
+            float side = ((slot & 1) ? 1.0f : -1.0f) * 1.6f * (1.0f + (float)(slot / 2));
+            at.x += side * cosf(yaw) + 1.2f * sinf(yaw); at.z += -side * sinf(yaw) + 1.2f * cosf(yaw);
+            ++slot;
+        }
+        player_init(&m->pc, at); m->pc.yaw = yaw;
+        uint32_t k = ecs_index(m->ent);
+        c->w->pos[k] = c->w->prev_pos[k] = at;
+    }
+}
+
 void party_respawn_all(Party *p, PartyCtx *c, Vec3 pos) {
     for (int i = 0; i < p->n; ++i) {
         PartyMember *m = &p->m[i];

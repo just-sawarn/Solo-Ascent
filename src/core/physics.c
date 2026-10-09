@@ -2,6 +2,8 @@
 #include <math.h>
 #include <string.h>
 
+float phys_ground(const PhysWorld *w, float x, float z) { return w->height ? w->height(w->height_user, x, z) : w->ground_y; }
+
 static int cell_coord(float v) {
     int c = (int)floorf(v / PH_CELL) + PH_GRID / 2;
     return c < 0 ? 0 : (c >= PH_GRID ? PH_GRID - 1 : c);
@@ -100,7 +102,25 @@ static void ray_item(PhysWorld *w, int item, void *user) {
 
 float phys_raycast(PhysWorld *w, Vec3 o, Vec3 d, float maxd) {
     RayQ q = {o, d, maxd};
-    if (d.y < -1e-6f && o.y > w->ground_y) {
+    if (w->height) { /* march the terrain in ~1 m steps, then refine */
+        float prev_t = 0.0f;
+        for (float t = 0.5f; t <= q.best + 0.5f; t += 0.5f) {
+            float tt = fminf(t, q.best);
+            Vec3 p = vec3_add(o, vec3_scale(d, tt));
+            if (p.y < phys_ground(w, p.x, p.z)) {
+                float lo = prev_t, hi = tt;
+                for (int k = 0; k < 6; ++k) {
+                    float mid = 0.5f * (lo + hi);
+                    Vec3 m = vec3_add(o, vec3_scale(d, mid));
+                    if (m.y < phys_ground(w, m.x, m.z)) hi = mid; else lo = mid;
+                }
+                if (hi < q.best) q.best = hi;
+                break;
+            }
+            prev_t = tt;
+            if (tt >= q.best) break;
+        }
+    } else if (d.y < -1e-6f && o.y > w->ground_y) {
         float t = (w->ground_y - o.y) / d.y;
         if (t < q.best) q.best = t;
     }
@@ -203,13 +223,14 @@ void char_step(PhysWorld *w, CharCtl *c, CharMove in, float dt) {
     c->pos.x += c->vel.x * dt;
     c->pos.z += c->vel.z * dt;
     resolve_horizontal(w, c);
+    if (w->bound > 0) { c->pos.x = clampf(c->pos.x, -w->bound, w->bound); c->pos.z = clampf(c->pos.z, -w->bound, w->bound); }
 
     float prev_y = c->pos.y;
     bool was_grounded = c->grounded;
     c->pos.y += c->vel.y * dt;
     c->grounded = false;
 
-    SupQ q = {.x = c->pos.x, .z = c->pos.z, .r = c->radius * 0.6f, .best = w->ground_y, .ceil = 1e9f,
+    SupQ q = {.x = c->pos.x, .z = c->pos.z, .r = c->radius * 0.6f, .best = phys_ground(w, c->pos.x, c->pos.z), .ceil = 1e9f,
               .feet = prev_y, .head = prev_y + c->height};
     /* ceiling: only relevant while rising */
     if (c->vel.y > 0) {
@@ -219,7 +240,7 @@ void char_step(PhysWorld *w, CharCtl *c, CharMove in, float dt) {
         return;
     }
     q.max_top = prev_y + (was_grounded ? c->step_h : 0.0f) + 1e-3f;
-    q.best = w->ground_y;
+    q.best = phys_ground(w, q.x, q.z);
     query(w, q.x - q.r, q.z - q.r, q.x + q.r, q.z + q.r, support_item, &q);
     float s = q.best;
     if (c->pos.y <= s + 1e-3f) { c->pos.y = s; c->vel.y = 0; c->grounded = true; }

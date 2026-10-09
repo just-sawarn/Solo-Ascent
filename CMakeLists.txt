@@ -22,7 +22,7 @@ target_compile_options(cjson PRIVATE -w)
 
 # ---- Engine-agnostic game logic (no raylib, no browser calls; natively testable) ----
 add_library(sa_core STATIC
-  src/core/ecs.c
+  src/core/ecs.c src/core/noise.c src/core/terrain.c src/core/dungeon.c src/core/daynight.c src/core/worldgen.c
   src/core/physics.c
   src/core/player.c
   src/core/camrig.c
@@ -49,7 +49,7 @@ endif()
 # ---- Native tests ----
 if(SA_NATIVE_TESTS AND NOT EMSCRIPTEN)
   enable_testing()
-  foreach(t ecs gameloop physics player camrig data combat enemy_ai party items inventory story story_content)
+  foreach(t ecs gameloop physics player camrig data combat enemy_ai party items inventory story story_content worldgen daynight)
     add_executable(test_${t} tests/test_${t}.c)
     target_link_libraries(test_${t} PRIVATE sa_core)
     target_compile_options(test_${t} PRIVATE ${SA_WARN} ${SA_SAN_FLAGS})
@@ -85,7 +85,7 @@ if(EMSCRIPTEN OR SA_BUILD_NATIVE_GAME)
     src/render/actors.c
     src/render/renderer.c
     src/render/shaders.c
-    src/render/procmodels.c
+    src/render/procmodels.c src/render/vfx.c src/render/worldview.c
     src/render/character.c
     src/render/anim.c
     src/render/heroes.c

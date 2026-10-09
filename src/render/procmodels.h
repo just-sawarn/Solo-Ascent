@@ -26,7 +26,7 @@ void proc_submit_character(const CharDesc *c, Vector3 pos, float yaw, float t);
 /* CC0 weapon models (assets/models/weapons, see ATTRIBUTIONS.md). `grip_to_tip` maps weapon space
  * (grip at origin, +Y toward the tip, metres) into the world; length_m is the visual blade+handle length. */
 void proc_submit_weapon(WeaponId id, Matrix grip_to_tip, float length_m);
-typedef enum { PM_SPHERE, PM_CYL, PM_CONE, PM_CUBE, PM_TORUS } ProcMesh;
+typedef enum { PM_SPHERE, PM_CYL, PM_CONE, PM_CUBE, PM_TORUS, PM_PLANE } ProcMesh;
 const Mesh *proc_mesh(ProcMesh m);
 /* Matrix mapping a unit cylinder/cone (base at origin, +Y axis, radius 1) onto the segment a->b with radii rx, rz. */
 Matrix proc_limb(Vector3 a, Vector3 b, float rx, float rz);

@@ -12,6 +12,8 @@ void npcw_init(NpcWorld *w) {
     c_idle = anim_find("Idle_Loop"); c_talk = anim_find("Idle_Talking_Loop"); c_walk = anim_find("Walk_Loop");
 }
 
+void npcw_set_ground(NpcWorld *w, float (*fn)(void *, float, float), void *user) { w->ground = fn; w->ground_user = user; }
+
 const char *npcw_slot_name(int slot) { static const char *n[3] = {"morning", "afternoon", "night"}; return n[slot < 0 ? 0 : slot > 2 ? 2 : slot]; }
 
 static int find_inst(const NpcWorld *w, int def) { for (int i = 0; i < w->count; ++i) if (w->n[i].def == def) return i; return -1; }
@@ -35,6 +37,7 @@ void npcw_refresh(NpcWorld *w, const StoryDB *db, const StoryState *s, const Sto
         NpcInst *n = &w->n[w->count++];
         memset(n, 0, sizeof *n);
         n->def = k; n->slot = slot; n->pos = n->goal = slot_pos(d, slot); n->yaw = 3.14159265f;
+        if (w->ground) n->pos.y = n->goal.y = w->ground(w->ground_user, n->pos.x, n->pos.z);
         anim_player_init(&n->anim, c_idle);
     }
 }
@@ -58,6 +61,7 @@ void npcw_update(NpcWorld *w, const StoryDB *db, float hour, float dt) {
         if (n->moving) {
             float step = fminf(dist, 1.7f * dt);
             n->pos.x += dx / dist * step; n->pos.z += dz / dist * step;
+            if (w->ground) n->pos.y = w->ground(w->ground_user, n->pos.x, n->pos.z);
             n->yaw = turn_to(n->yaw, atan2f(dx, dz), 8.0f * dt);
         }
         int clip = n->talking ? c_talk : (n->moving ? c_walk : c_idle);

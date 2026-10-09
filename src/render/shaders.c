@@ -28,10 +28,12 @@ const char *SH_VS_TOON =
 "in vec3 vertexPosition;\n"
 "in vec3 vertexNormal;\n"
 "in vec2 vertexTexCoord;\n"
+"in vec4 vertexColor;\n"
 "uniform mat4 mvp;\n"
 "uniform mat4 matModel;\n"
 "uniform mat4 matNormal;\n"
 "uniform mat4 uLightVP;\n"
+"out vec4 vColor;\n"
 "out vec2 vUv;\n"
 "out vec3 vWorld;\n"
 "out vec3 vNormal;\n"
@@ -56,6 +58,7 @@ const char *SH_VS_TOON =
 "#endif\n"
 "  vec4 w = matModel * vec4(lp, 1.0);\n"
 "  vUv = vertexTexCoord;\n"
+"  vColor = vertexColor;\n"
 "  vBind = vertexPosition;\n"
 "  vWorld = w.xyz;\n"
 "  vNormal = normalize(mat3(matNormal) * ln);\n"
@@ -64,6 +67,7 @@ const char *SH_VS_TOON =
 "}\n";
 
 const char *SH_FS_TOON =
+"in vec4 vColor;\n"
 "in vec3 vBind;\n"
 "in vec2 vUv;\n"
 "in vec3 vWorld;\n"
@@ -116,7 +120,7 @@ const char *SH_FS_TOON =
 "  if (!gl_FrontFacing) N = -N;\n"
 "  vec3 V = normalize(viewPos - vWorld);\n"
 "  vec3 L = normalize(uLightDir);\n"
-"  vec3 base = pow(colDiffuse.rgb * texture(texture0, vUv).rgb, vec3(2.2));\n"
+"  vec3 base = pow(colDiffuse.rgb * texture(texture0, vUv).rgb * vColor.rgb, vec3(2.2));\n"
 "  if ((fl & 1) != 0) {\n"                     /* stylized stone-tile ground */
 "    vec2 g = vWorld.xz / 3.0;\n"
 "    vec2 f = abs(fract(g - 0.5) - 0.5) / fwidth(g);\n"

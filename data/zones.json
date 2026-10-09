@@ -1,0 +1,549 @@
+{
+ "zones": [
+  {
+   "id": "ashbrook",
+   "region": "vale",
+   "gen": "hub",
+   "map": [
+    0.18,
+    0.62
+   ],
+   "bosses": [],
+   "level": 1
+  },
+  {
+   "id": "ashbrook_shrine",
+   "region": "vale",
+   "gen": "field",
+   "map": [
+    0.17,
+    0.6
+   ],
+   "bosses": [],
+   "level": 1
+  },
+  {
+   "id": "ashbrook_outskirts",
+   "region": "vale",
+   "gen": "field",
+   "map": [
+    0.15,
+    0.66
+   ],
+   "bosses": [
+    {
+     "enemy": "skarn_1",
+     "quest": "MQ08"
+    }
+   ],
+   "level": 1
+  },
+  {
+   "id": "refugee_camp",
+   "region": "vale",
+   "gen": "hub",
+   "map": [
+    0.22,
+    0.57
+   ],
+   "bosses": [],
+   "level": 1
+  },
+  {
+   "id": "aurelheim",
+   "region": "vale",
+   "gen": "hub",
+   "map": [
+    0.3,
+    0.5
+   ],
+   "bosses": [
+    {
+     "enemy": "caldrin",
+     "quest": "MQ20",
+     "at": "aurelheim_cathedral"
+    },
+    {
+     "enemy": "darius_duel",
+     "quest": "MQ06",
+     "at": "aurelheim_arena"
+    }
+   ],
+   "level": 1
+  },
+  {
+   "id": "convergence_shrine",
+   "region": "vale",
+   "gen": "field",
+   "map": [
+    0.36,
+    0.5
+   ],
+   "bosses": [
+    {
+     "enemy": "shadow_self",
+     "quest": "MQ14"
+    }
+   ],
+   "level": 1
+  },
+  {
+   "id": "sanctum_of_dawn",
+   "region": "vale",
+   "gen": "field",
+   "map": [
+    0.28,
+    0.56
+   ],
+   "bosses": [],
+   "level": 1
+  },
+  {
+   "id": "spire_academy",
+   "region": "vale",
+   "gen": "hub",
+   "map": [
+    0.4,
+    0.4
+   ],
+   "bosses": [],
+   "level": 1
+  },
+  {
+   "id": "forbidden_library",
+   "region": "vale",
+   "gen": "dungeon",
+   "map": [
+    0.41,
+    0.38
+   ],
+   "bosses": [
+    {
+     "enemy": "library_guardian",
+     "quest": "MQ12"
+    }
+   ],
+   "level": 1
+  },
+  {
+   "id": "whisperwood_edge",
+   "region": "vale",
+   "gen": "field",
+   "map": [
+    0.24,
+    0.42
+   ],
+   "bosses": [],
+   "level": 1
+  },
+  {
+   "id": "whisperwood",
+   "region": "vale",
+   "gen": "hub",
+   "map": [
+    0.22,
+    0.38
+   ],
+   "bosses": [],
+   "level": 1
+  },
+  {
+   "id": "fenns_hut",
+   "region": "vale",
+   "gen": "field",
+   "map": [
+    0.21,
+    0.4
+   ],
+   "bosses": [],
+   "level": 1
+  },
+  {
+   "id": "fort_greywall",
+   "region": "vale",
+   "gen": "field",
+   "map": [
+    0.34,
+    0.3
+   ],
+   "bosses": [],
+   "level": 1
+  },
+  {
+   "id": "greywall_memorial",
+   "region": "vale",
+   "gen": "field",
+   "map": [
+    0.34,
+    0.29
+   ],
+   "bosses": [],
+   "level": 1
+  },
+  {
+   "id": "goblin_warrens",
+   "region": "vale",
+   "gen": "dungeon",
+   "map": [
+    0.26,
+    0.66
+   ],
+   "bosses": [
+    {
+     "enemy": "grukk",
+     "quest": "MQ07"
+    }
+   ],
+   "level": 1
+  },
+  {
+   "id": "rootheart_hollow",
+   "region": "vale",
+   "gen": "dungeon",
+   "map": [
+    0.2,
+    0.3
+   ],
+   "bosses": [
+    {
+     "enemy": "vessara",
+     "quest": "MQ15"
+    }
+   ],
+   "level": 1
+  },
+  {
+   "id": "moonpetal_glade",
+   "region": "vale",
+   "gen": "field",
+   "map": [
+    0.19,
+    0.35
+   ],
+   "bosses": [],
+   "level": 1
+  },
+  {
+   "id": "monks_clearing",
+   "region": "vale",
+   "gen": "field",
+   "map": [
+    0.23,
+    0.33
+   ],
+   "bosses": [],
+   "level": 1
+  },
+  {
+   "id": "lamb_meadow",
+   "region": "vale",
+   "gen": "field",
+   "map": [
+    0.2,
+    0.58
+   ],
+   "bosses": [],
+   "level": 1
+  },
+  {
+   "id": "qasr_amun",
+   "region": "sunscar",
+   "gen": "hub",
+   "map": [
+    0.38,
+    0.78
+   ],
+   "bosses": [],
+   "level": 2
+  },
+  {
+   "id": "oasis_market",
+   "region": "sunscar",
+   "gen": "field",
+   "map": [
+    0.39,
+    0.77
+   ],
+   "bosses": [],
+   "level": 2
+  },
+  {
+   "id": "khemet_ruins",
+   "region": "sunscar",
+   "gen": "hub",
+   "map": [
+    0.46,
+    0.86
+   ],
+   "bosses": [],
+   "level": 2
+  },
+  {
+   "id": "lost_mural",
+   "region": "sunscar",
+   "gen": "field",
+   "map": [
+    0.47,
+    0.88
+   ],
+   "bosses": [],
+   "level": 2
+  },
+  {
+   "id": "scorpion_catacombs",
+   "region": "sunscar",
+   "gen": "dungeon",
+   "map": [
+    0.52,
+    0.8
+   ],
+   "bosses": [],
+   "level": 2
+  },
+  {
+   "id": "hourglass_vault",
+   "region": "sunscar",
+   "gen": "dungeon",
+   "map": [
+    0.55,
+    0.9
+   ],
+   "bosses": [
+    {
+     "enemy": "khemet_ur",
+     "quest": "MQ17"
+    }
+   ],
+   "level": 2
+  },
+  {
+   "id": "caravan_road",
+   "region": "sunscar",
+   "gen": "field",
+   "map": [
+    0.42,
+    0.72
+   ],
+   "bosses": [],
+   "level": 2
+  },
+  {
+   "id": "serpent_dunes",
+   "region": "sunscar",
+   "gen": "field",
+   "map": [
+    0.44,
+    0.8
+   ],
+   "bosses": [],
+   "level": 2
+  },
+  {
+   "id": "hrimvald",
+   "region": "frostspire",
+   "gen": "hub",
+   "map": [
+    0.55,
+    0.18
+   ],
+   "bosses": [],
+   "level": 3
+  },
+  {
+   "id": "whiteout_pass",
+   "region": "frostspire",
+   "gen": "dungeon",
+   "map": [
+    0.48,
+    0.24
+   ],
+   "bosses": [],
+   "level": 3
+  },
+  {
+   "id": "choir_cathedral",
+   "region": "frostspire",
+   "gen": "dungeon",
+   "map": [
+    0.62,
+    0.1
+   ],
+   "bosses": [
+    {
+     "enemy": "isrevna",
+     "quest": "MQ19"
+    }
+   ],
+   "level": 3
+  },
+  {
+   "id": "frozen_lighthouse",
+   "region": "frostspire",
+   "gen": "field",
+   "map": [
+    0.52,
+    0.12
+   ],
+   "bosses": [],
+   "level": 3
+  },
+  {
+   "id": "climbers_camp",
+   "region": "frostspire",
+   "gen": "field",
+   "map": [
+    0.5,
+    0.21
+   ],
+   "bosses": [],
+   "level": 3
+  },
+  {
+   "id": "singing_ice",
+   "region": "frostspire",
+   "gen": "field",
+   "map": [
+    0.58,
+    0.14
+   ],
+   "bosses": [],
+   "level": 3
+  },
+  {
+   "id": "emberforge",
+   "region": "cinderhold",
+   "gen": "hub",
+   "map": [
+    0.78,
+    0.52
+   ],
+   "bosses": [],
+   "level": 4
+  },
+  {
+   "id": "ashen_mines",
+   "region": "cinderhold",
+   "gen": "dungeon",
+   "map": [
+    0.72,
+    0.62
+   ],
+   "bosses": [],
+   "level": 4
+  },
+  {
+   "id": "molten_keep",
+   "region": "cinderhold",
+   "gen": "dungeon",
+   "map": [
+    0.86,
+    0.44
+   ],
+   "bosses": [
+    {
+     "enemy": "pyrrhax",
+     "quest": "MQ22"
+    }
+   ],
+   "level": 4
+  },
+  {
+   "id": "singing_forge",
+   "region": "cinderhold",
+   "gen": "field",
+   "map": [
+    0.8,
+    0.54
+   ],
+   "bosses": [],
+   "level": 4
+  },
+  {
+   "id": "lava_channels",
+   "region": "cinderhold",
+   "gen": "field",
+   "map": [
+    0.76,
+    0.46
+   ],
+   "bosses": [],
+   "level": 4
+  },
+  {
+   "id": "hollow_gate",
+   "region": "hollow",
+   "gen": "field",
+   "map": [
+    0.86,
+    0.22
+   ],
+   "bosses": [
+    {
+     "enemy": "skarn_final",
+     "quest": "MQ24"
+    }
+   ],
+   "level": 5
+  },
+  {
+   "id": "bone_bridge",
+   "region": "hollow",
+   "gen": "dungeon",
+   "map": [
+    0.9,
+    0.3
+   ],
+   "bosses": [],
+   "level": 5
+  },
+  {
+   "id": "nox_hideout",
+   "region": "hollow",
+   "gen": "field",
+   "map": [
+    0.88,
+    0.26
+   ],
+   "bosses": [],
+   "level": 5
+  },
+  {
+   "id": "front_camp",
+   "region": "hollow",
+   "gen": "field",
+   "map": [
+    0.84,
+    0.25
+   ],
+   "bosses": [],
+   "level": 5
+  },
+  {
+   "id": "voidspire_castle",
+   "region": "hollow",
+   "gen": "dungeon",
+   "map": [
+    0.94,
+    0.14
+   ],
+   "bosses": [],
+   "level": 5
+  },
+  {
+   "id": "voidspire_throne",
+   "region": "hollow",
+   "gen": "field",
+   "map": [
+    0.95,
+    0.12
+   ],
+   "bosses": [
+    {
+     "enemy": "vorathis",
+     "quest": "MQ25"
+    }
+   ],
+   "level": 5
+  }
+ ]
+}

@@ -70,10 +70,12 @@ try {
   const pf = await party();
   check(pf && pf.followerDist < 14, `companions keep up with the leader (${pf.followerDist.toFixed(1)} m)`);
   const hold = async (k, ms = 1100) => { await page.keyboard.down(k); await page.waitForTimeout(ms); await page.keyboard.up(k); await page.waitForTimeout(300); };
+  // a key press can land in a stalled software-GL frame and be missed: retry only while the state is still unchanged
+  const holdUntil = async (key, changed) => { for (let i = 0; i < 3 && !(await changed()); ++i) await hold(key); };
   const cmd0 = (await party()).command;
-  await hold('b');
+  await holdUntil('b', async () => (await party()).command !== cmd0);
   check((await party()).command === (cmd0 + 1) % 3, 'B cycles the party command');
-  await hold('r');
+  await holdUntil('r', async () => (await party()).active !== 0);
   check((await party()).active === 1, 'R switches control to the next member (Bram)');
   await hold('8');
   check((await party()).active === 3, '8 selects Mirelle');

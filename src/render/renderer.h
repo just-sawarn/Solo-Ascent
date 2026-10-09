@@ -9,6 +9,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <raylib.h>
+#include "core/daynight.h"
 
 typedef enum { TIER_ULTRA, TIER_HIGH, TIER_MEDIUM, TIER_LOW, TIER_MOBILE, TIER_COUNT } QualityTier;
 
@@ -49,6 +50,8 @@ void  renderer_set_tier(QualityTier t);
 QualityTier renderer_tier(void);
 const TierSettings *renderer_tier_settings(QualityTier t);
 void  renderer_set_look(int look);
+/* Day/night + weather environment applied on top of the look each frame (NULL = the look's own sky and light). */
+void  renderer_set_env(const Env *e);
 int   renderer_look(void);
 const char *renderer_look_name(int look);
 /* internal render size after scale */

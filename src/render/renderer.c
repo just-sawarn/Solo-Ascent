@@ -1,3 +1,4 @@
+#include "core/daynight.h"
 #include "render/renderer.h"
 #include <math.h>
 #include <string.h>
@@ -6,7 +7,7 @@
 #include "core/log.h"
 #include "render/shaders.h"
 
-#define MAX_DRAWS 2048
+#define MAX_DRAWS 3072
 
 typedef struct { const Mesh *mesh; Matrix xf; RenderMat mat; const Matrix *bones; int bone_count; } DrawCmd;
 
@@ -95,6 +96,8 @@ typedef struct {
     int  screen_w, screen_h, rt_w, rt_h;
     QualityTier tier;
     int  look;
+    Look cur;            /* the look with the day/night environment applied */
+    bool env_on; Env env;
     Shader toon, outline, shadow, sky, bright, blur, composite;
     Shader toon_sk, outline_sk, shadow_sk;
     Material m_toon, m_toon_sk, m_outline, m_outline_sk, m_shadow, m_shadow_sk;
@@ -206,7 +209,7 @@ static void draw_fullscreen(Texture2D tex, int dst_w, int dst_h, bool flip) {
 void renderer_init(int w, int h, QualityTier tier, int look) {
     memset(&r, 0, sizeof r);
     r.screen_w = w; r.screen_h = h;
-    r.tier = tier; r.look = look < 0 || look >= LOOK_COUNT ? 0 : look;
+    r.tier = tier; r.look = look < 0 || look >= LOOK_COUNT ? 0 : look; r.cur = LOOKS[r.look];
     load_shaders();
     Image white = GenImageColor(1, 1, WHITE);
     r.white = LoadTextureFromImage(white);
@@ -244,7 +247,26 @@ void renderer_set_tier(QualityTier t) {
 }
 QualityTier renderer_tier(void) { return r.tier; }
 const TierSettings *renderer_tier_settings(QualityTier t) { return &TIERS[t]; }
-void renderer_set_look(int l) { if (l < 0 || l >= LOOK_COUNT) return; r.look = l; build_ramp(); }
+void renderer_set_look(int l) { if (l < 0 || l >= LOOK_COUNT) return; r.look = l; r.cur = LOOKS[l]; build_ramp(); }
+void renderer_set_env(const Env *e) { if (e) { r.env = *e; r.env_on = true; } else r.env_on = false; }
+
+static Vector3 vrgb(Rgb c) { return (Vector3){c.r, c.g, c.b}; }
+/* The art look keeps its shading ramp, rim, outline, bloom and grade; the environment drives light, sky and fog. */
+static void apply_env(Look *L, const Env *e) {
+    static const Vector3 LIGHT_TINT[LOOK_COUNT] = {{0.92f, 0.96f, 1.08f}, {1.0f, 1.0f, 1.0f}, {1.08f, 0.96f, 0.92f}};
+    Vector3 t = LIGHT_TINT[r.look];
+    float lum = 0.299f * L->light_col.x + 0.587f * L->light_col.y + 0.114f * L->light_col.z;
+    float gain = lum * 0.75f; gain = gain < 0.6f ? 0.6f : (gain > 0.95f ? 0.95f : gain);
+    L->light_dir = (Vector3){e->light_dir[0], e->light_dir[1], e->light_dir[2]};
+    L->light_col = (Vector3){e->light_col.r * t.x * gain, e->light_col.g * t.y * gain, e->light_col.b * t.z * gain};
+    L->amb_top = vrgb(e->amb_top); L->amb_bot = vrgb(e->amb_bot);
+    L->sky_top = vrgb(e->sky_top); L->sky_bot = vrgb(e->sky_bot); L->sky_glow = vrgb(e->sky_glow);
+    L->fog_col = vrgb(e->fog_col); L->fog_den = e->fog_den;
+    L->disc_x = e->disc_x; L->disc_y = e->disc_y; L->stars = e->stars;
+    L->disc_col = e->is_day ? (Vector3){1.0f, 0.93f, 0.78f} : (Vector3){0.75f, 0.82f, 1.0f};
+    L->disc_r = e->is_day ? 0.05f : 0.04f;
+    L->exposure *= e->exposure; L->sat *= e->sat;
+}
 int renderer_look(void) { return r.look; }
 const char *renderer_look_name(int l) { return LOOKS[l].name; }
 void renderer_target_size(int *w, int *h) { *w = r.rt_w; *h = r.rt_h; }
@@ -252,6 +274,8 @@ int renderer_queue_count(void) { return r.ncmds; }
 
 void renderer_begin_frame(Camera3D cam, float time_s) {
     r.cam = cam; r.time = time_s; r.ncmds = 0; r.bone_sets = 0;
+    r.cur = LOOKS[r.look];
+    if (r.env_on) apply_env(&r.cur, &r.env);
     int sw = GetScreenWidth(), sh = GetScreenHeight();
     if (sw != r.screen_w || sh != r.screen_h) {
         r.screen_w = sw; r.screen_h = sh;
@@ -281,7 +305,7 @@ static Material make_material(Shader sh) {
 }
 
 static void compute_light_vp(Camera3D *lc, float extent) {
-    const Look *L = &LOOKS[r.look];
+    const Look *L = &r.cur;
     Vector3 ld = v3n(L->light_dir);
     Vector3 focus = r.cam.target;
     /* snap the focus point to shadow texels in light space to prevent shimmering */
@@ -330,7 +354,7 @@ static void run_shadow_pass(void) {
 }
 
 static void set_toon_uniforms(Shader s) {
-    const Look *L = &LOOKS[r.look];
+    const Look *L = &r.cur;
     const TierSettings *T = &TIERS[r.tier];
     set3(s, "uLightDir", v3n(L->light_dir));
     set3(s, "uLightCol", L->light_col);
@@ -354,7 +378,7 @@ static void set_toon_uniforms(Shader s) {
 }
 
 static void draw_sky(void) {
-    const Look *L = &LOOKS[r.look];
+    const Look *L = &r.cur;
     Shader s = r.sky;
     set3(s, "uTop", L->sky_top); set3(s, "uBottom", L->sky_bot); set3(s, "uGlow", L->sky_glow);
     float d[4] = {L->disc_x, L->disc_y, L->disc_r, L->disc_halo};
@@ -392,7 +416,7 @@ static void set_cmd_uniforms(Shader s, const DrawCmd *c) {
 }
 
 static void run_scene_pass(void) {
-    const Look *L = &LOOKS[r.look];
+    const Look *L = &r.cur;
     const TierSettings *T = &TIERS[r.tier];
     BeginTextureMode(r.scene);
     ClearBackground(BLACK);
@@ -440,7 +464,7 @@ static void run_scene_pass(void) {
 }
 
 static void run_bloom(void) {
-    const Look *L = &LOOKS[r.look];
+    const Look *L = &r.cur;
     const TierSettings *T = &TIERS[r.tier];
     if (T->bloom_passes <= 0 || !r.bloom_a.id) return;
     int bw = r.bloom_a.texture.width, bh = r.bloom_a.texture.height;
@@ -468,7 +492,7 @@ static void run_bloom(void) {
 }
 
 static void run_composite(void) {
-    const Look *L = &LOOKS[r.look];
+    const Look *L = &r.cur;
     const TierSettings *T = &TIERS[r.tier];
     Shader s = r.composite;
     BeginShaderMode(s);
