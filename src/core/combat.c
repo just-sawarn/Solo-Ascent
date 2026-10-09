@@ -42,7 +42,7 @@ Combatant *combat_add(CombatWorld *cw, World *w, Entity e, int team, int level, 
         memset(c, 0, sizeof *c);
         c->used = true; c->ent = e; c->team = team; c->level = level; c->st = st;
         c->poise_max = c->poise = poise;
-        c->radius = 0.4f; c->height = 1.8f; c->cast_skill = -1;
+        c->radius = 0.4f; c->height = 1.8f; c->cast_skill = -1; c->party_idx = -1; c->threat_mult = 1.0f;
         for (int k = 0; k < EL_COUNT; ++k) c->resist[k] = 1.0f;
         combatant_recalc(c);
         c->hp = c->max_hp; c->mp = c->max_mp;
@@ -154,6 +154,7 @@ static void hit_target(CombatWorld *cw, World *w, Combatant *a, const Skill *s, 
     deal_raw(cw, w, d, dmg, a->ent);
     emit(cw, (CombatEvent){.type = CE_HIT, .src = a->ent, .dst = d->ent, .amount = dmg, .crit = crit, .elem = s->element, .pos = dp});
     d->hit_flash = 0.12f;
+    if (a->party_idx >= 0 && a->party_idx < 8 && d->team == TEAM_ENEMY) d->threat[a->party_idx] += dmg * a->threat_mult;
     if (a->team == TEAM_PLAYER) cw->gauge = fminf(100.0f, cw->gauge + (crit ? 5.0f : 2.0f));
     if (d->dead) return;
     if (s->status != ST_NONE && s->kind != SK_BUFF && s->kind != SK_TAUNT && s->kind != SK_CLEANSE) add_status(cw, d, s->status, s->status_time, s->status_power, a->ent);
@@ -174,6 +175,14 @@ static void heal_target(CombatWorld *cw, World *w, Combatant *src, const Skill *
     if (has_status(t, ST_HOLLOW_CURSE)) amount = 0; /* the Hollow Curse blocks healing */
     float real = fminf(amount, t->max_hp - t->hp);
     t->hp += real;
+    if (src->party_idx >= 0 && src->party_idx < 8 && real > 0) { /* healing draws attention from engaged enemies */
+        for (int i = 0; i < CB_MAX; ++i) {
+            Combatant *e = &cw->c[i];
+            if (!e->used || e->dead || e->team == src->team) continue;
+            float engaged = 0; for (int k = 0; k < 8; ++k) engaged += e->threat[k];
+            if (engaged > 0) e->threat[src->party_idx] += real * 0.35f * src->threat_mult;
+        }
+    }
     emit(cw, (CombatEvent){.type = CE_HEAL, .src = src->ent, .dst = t->ent, .amount = amount, .elem = s->element, .pos = pos_of(w, t)});
 }
 
@@ -305,6 +314,7 @@ static void execute_skill(CombatWorld *cw, World *w, PhysWorld *phys, Combatant 
             if (!d->used || d->dead || d->team == c->team) continue;
             if (dist2d(pos_of(w, d), o) > s->radius) continue;
             add_status(cw, d, ST_TAUNT, s->status_time, 1.0f, c->ent);
+            if (c->party_idx >= 0) { float top = 0; for (int k = 0; k < 8; ++k) top = fmaxf(top, d->threat[k]); d->threat[c->party_idx] = fmaxf(d->threat[c->party_idx], top * 1.1f + 60.0f); }
             poise_hit(cw, w, d, s->stagger, c->ent);
         }
     } break;
@@ -397,6 +407,7 @@ void combat_update(CombatWorld *cw, World *w, PhysWorld *phys, float dt) {
         Combatant *c = &cw->c[i];
         if (!c->used) continue;
         if (c->hit_flash > 0) c->hit_flash -= dt;
+        if (c->team == TEAM_ENEMY) for (int k = 0; k < 8; ++k) c->threat[k] *= 1.0f - fminf(1.0f, 0.06f * dt);
         if (c->dead) { c->dead_t += dt; continue; }
         for (int k = 0; k < cw->skills->n; ++k) if (c->cd[k] > 0) c->cd[k] -= dt;
         if (c->stagger_t > 0) c->stagger_t -= dt;

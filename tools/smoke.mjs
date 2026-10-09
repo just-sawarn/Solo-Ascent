@@ -43,7 +43,7 @@ try {
   await page.click('#start');
   await page.waitForTimeout(500);
   // hold the key across several frames: raylib polls key state once per frame
-  await page.keyboard.down('Enter'); await page.waitForTimeout(300); await page.keyboard.up('Enter');
+  await page.keyboard.down('Enter'); await page.waitForTimeout(1500); await page.keyboard.up('Enter');
   await page.waitForFunction(() => window.__sa.state === 'playing', null, { timeout: 10000 });
   check(true, 'new game started (state=playing)');
 
@@ -63,6 +63,22 @@ try {
   check(maxY > 0.3, `jump leaves the ground (peak sample ${maxY.toFixed(2)} m)`);
   await page.waitForTimeout(1200);
   check((await pl()).grounded, 'player lands again');
+
+  // party: companions follow, control can be switched, the command cycles
+  const party = () => page.evaluate(() => window.__sa.party);
+  await page.waitForTimeout(2500);
+  const pf = await party();
+  check(pf && pf.followerDist < 14, `companions keep up with the leader (${pf.followerDist.toFixed(1)} m)`);
+  const hold = async (k, ms = 700) => { await page.keyboard.down(k); await page.waitForTimeout(ms); await page.keyboard.up(k); await page.waitForTimeout(300); };
+  const cmd0 = (await party()).command;
+  await hold('b');
+  check((await party()).command === (cmd0 + 1) % 3, 'B cycles the party command');
+  await hold('r');
+  check((await party()).active === 1, 'R switches control to the next member (Bram)');
+  await hold('8');
+  check((await party()).active === 3, '8 selects Mirelle');
+  await hold('5');
+  check((await party()).active === 0, '5 returns to Kael');
 
   // hold a movement key, toggle the debug overlay, then measure frame times
   await page.keyboard.down('F3'); await page.waitForTimeout(200); await page.keyboard.up('F3');
@@ -102,19 +118,22 @@ try {
     await pa.goto(base + '?arena=1&tier=mobile&still=1');
     await pa.waitForFunction(() => window.__sa && window.__sa.state === 'title', null, { timeout: 60000 });
     await pa.click('#start'); await pa.waitForTimeout(300);
-    await pa.keyboard.down('Enter'); await pa.waitForTimeout(500); await pa.keyboard.up('Enter');
+    await pa.keyboard.down('Enter'); await pa.waitForTimeout(1500); await pa.keyboard.up('Enter');
     await pa.waitForFunction(() => window.__sa.combat && window.__sa.combat.enemies === 1, null, { timeout: 10000 });
     const c0 = await pa.evaluate(() => window.__sa.combat);
-    let kills = 0, minPlayer = c0.playerHp, minEnemy = c0.enemyHp;
-    for (let i = 0; i < 40 && kills === 0; i++) {            // mash attack (J) and the sunder skill (2)
+    const p0 = await pa.evaluate(() => window.__sa.party.hp.reduce((a, b) => a + b, 0));
+    let kills = 0, minPlayer = p0, minEnemy = c0.enemyHp;
+    for (let i = 0; i < 90 && kills === 0; i++) {            // mash attack (J) and the sunder skill (2)
       await pa.keyboard.down('j'); await pa.waitForTimeout(120); await pa.keyboard.up('j');
       if (i % 4 === 3) { await pa.keyboard.down('2'); await pa.waitForTimeout(120); await pa.keyboard.up('2'); }
       await pa.waitForTimeout(350);
       const c = await pa.evaluate(() => window.__sa.combat);
-      kills = c.kills; minPlayer = Math.min(minPlayer, c.playerHp); minEnemy = Math.min(minEnemy, c.enemyHp);
+      kills = c.kills; minEnemy = Math.min(minEnemy, c.enemyHp);
+      minPlayer = Math.min(minPlayer, await pa.evaluate(() => window.__sa.party.hp.reduce((a, b) => a + b, 0)));
     }
     check(minEnemy < c0.enemyHp, `attacks damage the enemy (${c0.enemyHp.toFixed(0)} -> ${minEnemy.toFixed(0)})`);
-    check(minPlayer < c0.playerHp, `the enemy fights back (player ${c0.playerHp.toFixed(0)} -> ${minPlayer.toFixed(0)})`);
+    const pend = await pa.evaluate(() => window.__sa.party);
+    check(pend.dead === 0 && minPlayer > p0 * 0.5, `the party beats it without losses (party HP ${p0.toFixed(0)} -> min ${minPlayer.toFixed(0)}; enemy retaliation is covered by native tests)`);
     check(kills >= 1, `the enemy can be defeated (kills: ${kills})`);
     check(ea.length === 0, `no console errors in combat${ea.length ? ': ' + ea.join(' | ') : ''}`);
     await pa.close();

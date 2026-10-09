@@ -29,6 +29,8 @@ add_library(sa_core STATIC
   src/core/data.c
   src/core/combat.c
   src/core/enemy_ai.c
+  src/core/party.c
+  src/core/companion_ai.c
   src/core/gameloop.c
   src/core/vec.c
   src/core/log.c)
@@ -44,7 +46,7 @@ endif()
 # ---- Native tests ----
 if(SA_NATIVE_TESTS AND NOT EMSCRIPTEN)
   enable_testing()
-  foreach(t ecs gameloop physics player camrig data combat enemy_ai)
+  foreach(t ecs gameloop physics player camrig data combat enemy_ai party)
     add_executable(test_${t} tests/test_${t}.c)
     target_link_libraries(test_${t} PRIVATE sa_core)
     target_compile_options(test_${t} PRIVATE ${SA_WARN} ${SA_SAN_FLAGS})

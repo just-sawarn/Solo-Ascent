@@ -2,18 +2,21 @@
 #define SA_HEROES_H
 #include <stdbool.h>
 #include <raylib.h>
-/* Styled characters built on the CC0 base body: outfit paint + overlay parts + pose. */
+/* The four party members on the shared CC0 rig: animation state machines, outfit paint and overlay parts.
+ * member: 0 Kael, 1 Bram, 2 Lyra, 3 Mirelle. */
 void heroes_init(void);
-/* Drive Kael's animation from the player controller state. */
+int  heroes_clip(const char *name);   /* animation clip index by name, -1 if unknown */
+
 typedef struct {
     float speed;                           /* horizontal m/s */
-    bool grounded, attacking, rolling;     /* state from the player controller */
-    bool ev_attack, ev_roll;               /* started this frame */
-    float attack_seconds, roll_seconds;    /* gameplay durations the clips are fitted into */
-    bool dead, staggered, guarding;        /* combat state */
+    bool grounded, casting, rolling;       /* state from the controller / combat */
+    bool ev_cast, ev_roll;                 /* started this frame */
+    int cast_clip;                         /* clip for the cast that just started */
+    float cast_seconds, roll_seconds;      /* gameplay durations the clips are fitted into */
+    bool dead, staggered, guarding;
     float flash;                           /* white hit flash 0..1 */
-} KaelMotion;
-void heroes_update_kael(float dt, const KaelMotion *m);
-/* Kael, the Ascendant: `pos`/`yaw` place him in the world, `t` drives the idle sway. */
-void heroes_submit_kael(Vector3 pos, float yaw, float t);
+} MemberMotion;
+
+void heroes_update(int member, float dt, const MemberMotion *m);
+void heroes_submit(int member, Vector3 pos, float yaw, float t);
 #endif

@@ -4,6 +4,7 @@
 #include <raylib.h>
 #include "core/combat.h"
 #include "core/enemy_ai.h"
+#include "core/party.h"
 
 #define HUD_MAX_NUMBERS 64
 
@@ -15,9 +16,9 @@ typedef struct {
 } Hud;
 
 void hud_init(Hud *h);
-void hud_on_events(Hud *h, const CombatEvent *ev, int n, Entity player);
+void hud_on_events(Hud *h, const CombatEvent *ev, int n, const Party *party);
 void hud_update(Hud *h, float dt);
 void hud_draw(const Hud *h, Camera3D cam, World *w, CombatWorld *cw, const EnemyPool *pool, const EnemyDB *db,
-              Entity player, Entity locked, const int skill_slots[4], bool touch_ui);
+              const Party *party, Entity locked, bool touch_ui);
 
 #endif

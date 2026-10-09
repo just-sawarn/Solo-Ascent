@@ -52,6 +52,19 @@ static Combatant *nearest_player(CombatWorld *cw, World *w, Vec3 from, float *ou
     return best;
 }
 
+/* Highest-threat living party member (within double aggro range); falls back to the nearest. */
+static Combatant *choose_target(CombatWorld *cw, World *w, const Combatant *self, Vec3 from, float aggro, float *out_d) {
+    Combatant *best = NULL; float bt = 1.0f;
+    for (int i = 0; i < CB_MAX; ++i) {
+        Combatant *c = &cw->c[i];
+        if (!c->used || c->dead || c->team != TEAM_PLAYER || c->party_idx < 0 || c->party_idx >= 8) continue;
+        float t = self->threat[c->party_idx];
+        if (t > bt && dist2d(w->pos[ecs_index(c->ent)], from) <= aggro * 2.0f) { bt = t; best = c; }
+    }
+    if (best) { *out_d = dist2d(w->pos[ecs_index(best->ent)], from); return best; }
+    return nearest_player(cw, w, from, out_d);
+}
+
 /* Effective reach of a skill for deciding when to start it. */
 static float skill_reach(const Skill *s) {
     switch (s->kind) {
@@ -93,7 +106,7 @@ void enemies_update(EnemyPool *p, CombatWorld *cw, World *w, PhysWorld *phys, co
 
         /* target: taunt wins, else the nearest player-side combatant */
         float td;
-        Combatant *tg = nearest_player(cw, w, en->ctl.pos, &td);
+        Combatant *tg = choose_target(cw, w, c, en->ctl.pos, d->aggro_range, &td);
         if (c->status[ST_TAUNT].time > 0) {
             Combatant *tc = combat_get(cw, c->status[ST_TAUNT].src);
             if (tc && !tc->dead) { tg = tc; td = dist2d(w->pos[ecs_index(tc->ent)], en->ctl.pos); }

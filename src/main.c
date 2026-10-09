@@ -6,10 +6,11 @@
 #include "core/camrig.h"
 #include "core/combat.h"
 #include "core/data.h"
-#include "core/enemy_ai.h"
 #include "core/ecs.h"
+#include "core/enemy_ai.h"
 #include "core/gameloop.h"
 #include "core/log.h"
+#include "core/party.h"
 #include "core/physics.h"
 #include "core/player.h"
 #include "platform/platform.h"
@@ -33,20 +34,19 @@ typedef struct {
     GameLoop loop;
     DebugState dbg;
     GameState state;
-    Entity player;
-    PlayerCtl pc;
     PhysWorld phys;
     CamRig cam;
+    Vec3 cam_focus;
     Input input;
     SkillDB skills;
     EnemyDB edb;
+    PartyDB pdb;
     EnemyPool enemies;
     CombatWorld cw;
+    PartyCtx ctx;
+    Party party;
     ActorAnim actors[ENEMY_MAX];
     Hud hud;
-    int hero_skill[4], basic[3];
-    int combo_idx; float combo_timer; bool attack_queued;
-    int awakening;                 /* sandbox: everything unlocked */
     Entity lock_ent;
     float hitstop, respawn_t;
     int kills; float last_damage;
@@ -54,8 +54,9 @@ typedef struct {
     bool auto_orbit, governor_on;
     double title_t, time;
     double toast_t; char toast[96];
-    /* events accumulated over the sim steps of one frame */
-    bool ev_attack, ev_roll;
+    /* per-member one-frame animation triggers accumulated over sim steps */
+    bool ev_roll[PARTY_MAX], ev_cast[PARTY_MAX];
+    int cast_skill[PARTY_MAX];
 } Game;
 
 static Game G; /* static: World and PhysWorld are large, no per-frame allocation anywhere */
@@ -64,6 +65,8 @@ static void toast(Game *g, const char *fmt, int a, const char *b) {
     snprintf(g->toast, sizeof g->toast, fmt, a, b);
     g->toast_t = 2.5;
 }
+
+static void toast_text(Game *g, const char *s) { snprintf(g->toast, sizeof g->toast, "%s", s); g->toast_t = 2.5; }
 
 static const struct { const char *id; float x, z; } SPAWNS[] = {
     {"shadow_soldier", -9.0f, -13.0f}, {"shadow_soldier", 9.0f, -13.0f}, {"shadow_archer", 0.0f, -19.0f},
@@ -75,6 +78,11 @@ static void spawn_enemy(Game *g, const char *id, float x, float z) {
     if (def >= 0) enemy_spawn(&g->enemies, &g->cw, &g->world, &g->edb, def, vec3(x, 0, z));
 }
 
+static const char *CMD_NAMES[] = {"Aggressive", "Defensive", "Support"};
+
+static PartyMember *active_member(Game *g) { return &g->party.m[g->party.active < 0 ? 0 : g->party.active]; }
+static Entity active_ent(Game *g) { return active_member(g)->ent; }
+
 static void new_game(Game *g) {
     ecs_init(&g->world);
     gameloop_init(&g->loop);
@@ -82,21 +90,20 @@ static void new_game(Game *g) {
     enemies_init(&g->enemies);
     hud_init(&g->hud);
     memset(g->actors, 0, sizeof g->actors);
-    g->player = ecs_create(&g->world, C_TRANSFORM | C_VELOCITY | C_HEALTH | C_FACTION);
-    g->world.faction[ecs_index(g->player)] = FACTION_PLAYER;
-    player_init(&g->pc, vec3(0, 0, 0.5f));
-    g->pc.yaw = 3.14159265f; /* face -z, toward the arena; the camera sits behind him */
-    uint32_t p = ecs_index(g->player);
-    g->world.yaw[p] = g->world.prev_yaw[p] = g->pc.yaw;
-    g->world.pos[p] = g->world.prev_pos[p] = g->pc.ch.pos;
-    Combatant *pcb = combat_add(&g->cw, &g->world, g->player, TEAM_PLAYER, 5, (Stats){14, 8, 12, 10, 10}, 120);
-    if (pcb) { pcb->has_resolve = true; pcb->weapon_atk = 6.0f; combatant_recalc(pcb); pcb->hp = pcb->max_hp; pcb->mp = pcb->max_mp; }
-    if (g->arena) spawn_enemy(g, "shadow_soldier", 0.0f, -3.6f);
+    memset(g->ev_roll, 0, sizeof g->ev_roll); memset(g->ev_cast, 0, sizeof g->ev_cast);
+    g->ctx = (PartyCtx){&g->cw, &g->world, &g->phys, &g->enemies, &g->edb, &g->skills};
+    party_init(&g->party);
+    g->party.cmd = CMD_DEFENSIVE;
+    static const float OX[4] = {0.0f, -2.4f, 2.4f, 0.0f}, OZ[4] = {0.5f, 2.2f, 2.6f, 4.2f};
+    for (int i = 0; i < g->pdb.n && i < PARTY_MAX; ++i) party_add(&g->party, &g->ctx, &g->pdb.m[i], vec3(OX[i], 0, OZ[i]), 3.14159265f);
+    g->party.active = 0;
+    if (g->arena) spawn_enemy(g, "shadow_brute", 0.0f, -4.5f);
     else for (unsigned i = 0; i < sizeof SPAWNS / sizeof SPAWNS[0]; ++i) spawn_enemy(g, SPAWNS[i].id, SPAWNS[i].x, SPAWNS[i].z);
     g->lock_ent = ENTITY_NULL;
     g->cam.locked = false;
-    g->combo_idx = 0; g->combo_timer = 0; g->attack_queued = false;
     g->kills = 0; g->respawn_t = 0; g->hitstop = 0;
+    Vec3 ap = active_member(g)->pc.ch.pos;
+    g->cam_focus = ap;
 }
 
 static Vector3 lock_pos(const Game *g) {
@@ -105,113 +112,69 @@ static Vector3 lock_pos(const Game *g) {
     return (Vector3){p.x, p.y, p.z};
 }
 
-static PlayerIn make_player_input(const Game *g) {
+static PartyInput make_party_input(const Game *g) {
     const Input *in = &g->input;
-    /* camera-relative movement */
-    float cs = cosf(g->cam.yaw), sn = sinf(g->cam.yaw);
-    PlayerIn pin = {0};
-    pin.mx = in->move_x * cs - in->move_y * sn;
-    pin.mz = -in->move_x * sn - in->move_y * cs;
-    pin.sprint = in->sprint; pin.walk = in->walk;
-    if (g->lock_ent != ENTITY_NULL && combat_alive(&g->cw, g->lock_ent)) { Vector3 lp = lock_pos(g); pin.has_lock = true; pin.lock_x = lp.x; pin.lock_z = lp.z; }
+    float cs = cosf(g->cam.yaw), sn = sinf(g->cam.yaw); /* camera-relative movement */
+    PartyInput pin = {0};
+    pin.move.mx = in->move_x * cs - in->move_y * sn;
+    pin.move.mz = -in->move_x * sn - in->move_y * cs;
+    pin.move.sprint = in->sprint; pin.move.walk = in->walk;
+    pin.attack = in->attack; pin.jump = in->jump; pin.roll = in->roll; pin.guard = in->guard;
+    for (int k = 0; k < 4; ++k) pin.skill[k] = in->skill[k];
+    pin.lock = (g->lock_ent != ENTITY_NULL && combat_alive(&g->cw, g->lock_ent)) ? g->lock_ent : ENTITY_NULL;
     return pin;
-}
-
-static float aim_yaw_for(const Game *g, const PlayerIn *pin) {
-    if (pin->has_lock) return atan2f(pin->lock_x - g->pc.ch.pos.x, pin->lock_z - g->pc.ch.pos.z);
-    if (pin->mx * pin->mx + pin->mz * pin->mz > 1e-4f) return atan2f(pin->mx, pin->mz);
-    return g->pc.yaw;
-}
-
-static bool try_cast(Game *g, PlayerIn *pin, int skill) {
-    if (skill < 0) return false;
-    const Skill *s = &g->skills.s[skill];
-    Combatant *pcb = combat_get(&g->cw, g->player);
-    if (!pcb || pcb->dead || pcb->stagger_t > 0 || s->awakening > g->awakening) return false;
-    if (!g->pc.ch.grounded || player_rolling(&g->pc) || player_attacking(&g->pc)) return false;
-    float aim = aim_yaw_for(g, pin);
-    if (!combat_begin_cast(&g->cw, &g->world, g->player, skill, g->lock_ent, aim)) return false;
-    pin->attack = true; pin->attack_time = s->total_time; pin->has_aim = true; pin->aim_yaw = aim;
-    return true;
-}
-
-static void try_basic(Game *g, PlayerIn *pin) {
-    if (try_cast(g, pin, g->basic[g->combo_idx])) { g->combo_idx = (g->combo_idx + 1) % 3; g->combo_timer = 0.9f; g->attack_queued = false; }
-}
-
-static void respawn(Game *g) {
-    Combatant *pcb = combat_get(&g->cw, g->player);
-    if (!pcb) return;
-    pcb->dead = false; pcb->dead_t = 0; pcb->hp = pcb->max_hp; pcb->mp = pcb->max_mp; pcb->resolve_used = false;
-    memset(pcb->status, 0, sizeof pcb->status); pcb->barrier = 0; pcb->cast_skill = -1; pcb->stagger_t = 0;
-    player_init(&g->pc, vec3(0, 0, 0.5f));
-    g->pc.yaw = 3.14159265f;
-    g->lock_ent = ENTITY_NULL; g->respawn_t = 0;
 }
 
 /* Fixed 60 Hz simulation step. */
 static void sim_step(Game *g, bool first_step) {
-    World *w = &g->world;
-    ecs_snapshot_transforms(w);
-    Combatant *pcb = combat_get(&g->cw, g->player);
-    bool alive = pcb && !pcb->dead;
-    PlayerIn pin = make_player_input(g);
-    if (!alive) { pin.mx = pin.mz = 0; pin.sprint = false; }
+    Party *pt = &g->party;
+    PartyInput pin = make_party_input(g);
+    pt->focus = pin.lock;
+    party_step(pt, &g->ctx, &pin, first_step, SIM_DT);
+    for (int i = 0; i < pt->n; ++i) { g->ev_roll[i] |= pt->m[i].pc.ev_roll; }
+    enemies_update(&g->enemies, &g->cw, &g->world, &g->phys, &g->edb, SIM_DT);
+    combat_update(&g->cw, &g->world, &g->phys, SIM_DT);
+    if (g->dbg.god_mode) for (int i = 0; i < pt->n; ++i) { Combatant *c = party_cb(pt, &g->ctx, i); if (c && !c->dead) c->hp = c->max_hp; }
 
-    if (alive) {
-        pcb->invuln = player_invulnerable(&g->pc);
-        bool can_guard = g->pc.ch.grounded && !player_attacking(&g->pc) && !player_rolling(&g->pc) && pcb->stagger_t <= 0;
-        combat_set_guard(&g->cw, g->player, g->input.guard && can_guard);
-        if (pcb->guarding) pin.walk = true;
-        if (g->combo_timer > 0 && !player_attacking(&g->pc)) { g->combo_timer -= SIM_DT; if (g->combo_timer <= 0) g->combo_idx = 0; }
-        if (first_step && !pcb->guarding) {
-            bool cast = false;
-            for (int i = 0; i < 4 && !cast; ++i) if (g->input.skill[i]) cast = try_cast(g, &pin, g->hero_skill[i]);
-            if (!cast && g->input.attack) { if (player_attacking(&g->pc)) g->attack_queued = true; else try_basic(g, &pin); }
-            if (g->input.roll) pin.roll = true;
-            if (g->input.jump) pin.jump = true;
-        }
-        if (g->attack_queued && !player_attacking(&g->pc) && !pin.attack) try_basic(g, &pin);
-        if (pcb->guarding) { pin.roll = false; pin.jump = false; }
+    /* the controlled member fell: hand control to someone alive; a full wipe respawns the party */
+    Combatant *ac = party_cb(pt, &g->ctx, pt->active);
+    if (ac && ac->dead) { int nx = party_next_alive(pt, &g->ctx, pt->active); if (nx >= 0) { party_switch(pt, &g->ctx, nx); g->lock_ent = ENTITY_NULL; } }
+    if (party_wiped(pt, &g->ctx)) {
+        g->respawn_t += SIM_DT;
+        if (g->respawn_t > 3.5f) { party_respawn_all(pt, &g->ctx, vec3(0, 0, 0.5f)); pt->active = 0; g->lock_ent = ENTITY_NULL; g->respawn_t = 0; }
     }
-    player_step(&g->pc, &g->phys, &pin, SIM_DT);
-    g->ev_attack |= g->pc.ev_attack;
-    g->ev_roll |= g->pc.ev_roll;
-    uint32_t p = ecs_index(g->player);
-    w->pos[p] = g->pc.ch.pos;
-    w->yaw[p] = g->pc.yaw;
-    w->vel[p] = g->pc.ch.vel;
-
-    enemies_update(&g->enemies, &g->cw, w, &g->phys, &g->edb, SIM_DT);
-    combat_update(&g->cw, w, &g->phys, SIM_DT);
-    if (pcb && pcb->dash_pending) { g->pc.ch.pos.x = pcb->dash_to.x; g->pc.ch.pos.z = pcb->dash_to.z; g->pc.ch.vel = vec3(0, 0, 0); pcb->dash_pending = false; w->pos[p] = g->pc.ch.pos; }
-    if (g->dbg.god_mode && pcb && !pcb->dead) pcb->hp = pcb->max_hp;
-    if (pcb && pcb->dead) { g->respawn_t += SIM_DT; if (g->respawn_t > 3.5f) respawn(g); }
 }
 
 /* Presentation reactions to this frame's combat events. */
 static void process_events(Game *g) {
+    Entity act = active_ent(g);
     for (int i = 0; i < g->cw.nev; ++i) {
         const CombatEvent *e = &g->cw.ev[i];
-        bool by_player = e->src == g->player, on_player = e->dst == g->player;
+        bool by_active = e->src == act, on_party = false;
+        for (int k = 0; k < g->party.n; ++k) {
+            if (e->dst == g->party.m[k].ent) on_party = true;
+            if (e->type == CE_CAST && e->amount < 0.5f && e->src == g->party.m[k].ent) { g->ev_cast[k] = true; g->cast_skill[k] = e->skill; }
+        }
+        bool on_active = e->dst == act;
         switch (e->type) {
-        case CE_HIT: {
-            if (by_player) { g->hitstop = fmaxf(g->hitstop, e->crit ? 0.085f : 0.05f); camrig_shake(&g->cam, e->crit ? 0.05f : 0.02f); g->last_damage = e->amount; }
-            if (on_player) { g->hitstop = fmaxf(g->hitstop, 0.045f); camrig_shake(&g->cam, 0.06f); }
-        } break;
+        case CE_HIT:
+            if (by_active) { g->hitstop = fmaxf(g->hitstop, e->crit ? 0.085f : 0.05f); camrig_shake(&g->cam, e->crit ? 0.05f : 0.02f); g->last_damage = e->amount; }
+            else if (!on_party) camrig_shake(&g->cam, 0.008f);
+            if (on_active) { g->hitstop = fmaxf(g->hitstop, 0.045f); camrig_shake(&g->cam, 0.06f); }
+            break;
         case CE_PARRY: g->hitstop = fmaxf(g->hitstop, 0.14f); camrig_shake(&g->cam, 0.09f); break;
         case CE_BLOCK: camrig_shake(&g->cam, 0.03f); break;
         case CE_DEATH:
-            if (e->dst != g->player) { g->kills++; g->hitstop = fmaxf(g->hitstop, 0.10f); camrig_shake(&g->cam, 0.08f); }
+            if (!on_party) { g->kills++; g->hitstop = fmaxf(g->hitstop, 0.10f); camrig_shake(&g->cam, 0.08f); }
             else camrig_shake(&g->cam, 0.15f);
             break;
         case CE_CAST:
-            if (e->amount > 0.5f && by_player) camrig_shake(&g->cam, 0.05f); /* ground impact */
+            if (e->amount > 0.5f && by_active) camrig_shake(&g->cam, 0.05f); /* ground impact */
             break;
         default: break;
         }
     }
-    hud_on_events(&g->hud, g->cw.ev, g->cw.nev, g->player);
+    hud_on_events(&g->hud, g->cw.ev, g->cw.nev, &g->party);
     g->cw.nev = 0;
 }
 
@@ -228,7 +191,7 @@ static void handle_render_keys(Game *g) {
 
 static void toggle_lock(Game *g) {
     if (g->lock_ent != ENTITY_NULL) { g->lock_ent = ENTITY_NULL; return; }
-    Vec3 pp = g->pc.ch.pos;
+    Vec3 pp = active_member(g)->pc.ch.pos;
     float best = 25.0f * 25.0f; Entity bi = ENTITY_NULL;
     float fx = -sinf(g->cam.yaw), fz = -cosf(g->cam.yaw);
     for (int i = 0; i < ENEMY_MAX; ++i) {
@@ -241,6 +204,24 @@ static void toggle_lock(Game *g) {
         if (d2 < best) { best = d2; bi = en->ent; }
     }
     g->lock_ent = bi;
+}
+
+static void do_party_controls(Game *g) {
+    Input *in = &g->input;
+    Party *pt = &g->party;
+    int to = -1;
+    if (in->swap_to >= 0 && in->swap_to < pt->n) to = in->swap_to;
+    else if (in->swap_next) to = party_next_alive(pt, &g->ctx, pt->active);
+    if (to >= 0 && party_switch(pt, &g->ctx, to)) {
+        g->lock_ent = ENTITY_NULL;
+        char b[64]; snprintf(b, sizeof b, "Controlling %s", pt->m[to].def->name);
+        toast_text(g, b);
+    }
+    if (in->cmd_cycle) {
+        pt->cmd = (PartyCommand)(((int)pt->cmd + 1) % 3);
+        char b[64]; snprintf(b, sizeof b, "Party command: %s", CMD_NAMES[pt->cmd]);
+        toast_text(g, b);
+    }
 }
 
 static void frame(void) {
@@ -264,7 +245,8 @@ static void frame(void) {
 
     int steps = 0;
     if (playing) {
-        if (g->input.lock) { toggle_lock(g); }
+        do_party_controls(g);
+        if (g->input.lock) toggle_lock(g);
         if (g->lock_ent != ENTITY_NULL && !combat_alive(&g->cw, g->lock_ent)) g->lock_ent = ENTITY_NULL;
         steps = gameloop_advance(&g->loop, (double)sim_dt);
         for (int s = 0; s < steps; ++s) sim_step(g, s == 0);
@@ -292,12 +274,18 @@ static void frame(void) {
     process_events(g);
     hud_update(&g->hud, dt);
 
-    Combatant *pcb = combat_get(&g->cw, g->player);
+    Combatant *acb = combat_get(&g->cw, active_ent(g));
     if (playing) {
         int alive = 0; float ehp = 0;
         for (int i = 0; i < ENEMY_MAX; ++i) { const Enemy *en = &g->enemies.e[i]; if (!en->used) continue; Combatant *c = combat_get(&g->cw, en->ent); if (c && !c->dead) { alive++; ehp += c->hp; } }
-        platform_report_player(g->pc.ch.pos.x, g->pc.ch.pos.y, g->pc.ch.pos.z, g->pc.ch.grounded, g->pc.speed_xz);
-        platform_report_combat(alive, ehp, pcb ? pcb->hp : 0.0f, g->kills, g->last_damage);
+        PlayerCtl *apc = &active_member(g)->pc;
+        platform_report_player(apc->ch.pos.x, apc->ch.pos.y, apc->ch.pos.z, apc->ch.grounded, apc->speed_xz);
+        platform_report_combat(alive, ehp, acb ? acb->hp : 0.0f, g->kills, g->last_damage);
+        float hp[4] = {0, 0, 0, 0}; int dead = 0;
+        for (int i = 0; i < g->party.n && i < 4; ++i) { Combatant *c = party_cb(&g->party, &g->ctx, i); if (c) { hp[i] = c->hp; dead += c->dead; } }
+        float fol = 0; /* furthest follower distance from the leader */
+        for (int i = 0; i < g->party.n; ++i) if (i != g->party.active) { Vec3 a = g->party.m[i].pc.ch.pos, b = apc->ch.pos; fol = fmaxf(fol, sqrtf((a.x - b.x) * (a.x - b.x) + (a.z - b.z) * (a.z - b.z))); }
+        platform_report_party(g->party.active, (int)g->party.cmd, dead, fol, hp[0], hp[1], hp[2], hp[3]);
     }
     dbg_update(&g->dbg, dt, steps);
     g->dbg.draw_calls = 0;
@@ -305,35 +293,46 @@ static void frame(void) {
     renderer_governor_update(dt, g->governor_on && !hidden);
 
     float alpha = gameloop_alpha(&g->loop);
-    Vec3 pp = ecs_render_pos(&g->world, ecs_index(g->player), alpha);
-    float yaw = ecs_render_yaw(&g->world, ecs_index(g->player), alpha);
+    Entity act = active_ent(g);
+    Vec3 pp = ecs_render_pos(&g->world, ecs_index(act), alpha);
 
-    /* camera */
+    /* camera follows the controlled member, smoothing the hand-over when control switches */
+    Vec3 want = vec3(pp.x, pp.y, pp.z);
+    g->cam_focus = vec3_lerp(g->cam_focus, want, 1.0f - expf(-10.0f * dt));
     float ldx = g->input.look_dx, ldy = g->input.look_dy;
     if (g->auto_orbit) g->cam.yaw += dt * 0.12f;
     g->cam.locked = g->lock_ent != ENTITY_NULL;
     if (g->cam.locked) { Vector3 lp = lock_pos(g); g->cam.lock_pos = vec3(lp.x, 0, lp.z); }
-    camrig_update(&g->cam, &g->phys, vec3(pp.x, pp.y + 1.3f, pp.z), ldx, ldy, dt);
+    camrig_update(&g->cam, &g->phys, vec3(g->cam_focus.x, g->cam_focus.y + 1.3f, g->cam_focus.z), ldx, ldy, dt);
     float wheel = GetMouseWheelMove();
     if (wheel != 0.0f) g->cam.dist -= wheel * 0.6f;
     Camera3D cam = {.position = {g->cam.eye.x, g->cam.eye.y, g->cam.eye.z}, .target = {g->cam.target.x, g->cam.target.y, g->cam.target.z},
                     .up = {0, 1, 0}, .fovy = 38.0f, .projection = CAMERA_PERSPECTIVE};
 
     float anim_dt = !hidden && g->hitstop <= 0 ? dt : 0.0f;
-    {
-        KaelMotion km = {.speed = g->pc.speed_xz, .grounded = g->pc.ch.grounded, .attacking = player_attacking(&g->pc),
-                         .rolling = player_rolling(&g->pc), .ev_attack = g->ev_attack, .ev_roll = g->ev_roll,
-                         .attack_seconds = PLAYER_ATTACK_TIME, .roll_seconds = PLAYER_ROLL_TIME};
-        if (pcb) {
-            km.dead = pcb->dead; km.staggered = pcb->stagger_t > 0; km.guarding = pcb->guarding;
-            km.flash = pcb->hit_flash > 0 ? fminf(1.0f, pcb->hit_flash / 0.12f) : 0.0f;
-            if (pcb->cast_skill >= 0) { km.attack_seconds = g->skills.s[pcb->cast_skill].total_time; }
+    for (int i = 0; i < g->party.n; ++i) {
+        PartyMember *m = &g->party.m[i];
+        Combatant *c = combat_get(&g->cw, m->ent);
+        MemberMotion mm = {.speed = m->pc.speed_xz, .grounded = m->pc.ch.grounded, .casting = player_attacking(&m->pc), .rolling = player_rolling(&m->pc),
+                           .ev_roll = g->ev_roll[i], .ev_cast = g->ev_cast[i], .cast_clip = -1, .roll_seconds = PLAYER_ROLL_TIME, .cast_seconds = PLAYER_ATTACK_TIME};
+        if (g->ev_cast[i] && g->cast_skill[i] >= 0) {
+            const Skill *s = &g->skills.s[g->cast_skill[i]];
+            mm.cast_clip = heroes_clip(s->anim[0] ? s->anim : "Sword_Attack"); mm.cast_seconds = s->total_time;
         }
-        g->ev_attack = g->ev_roll = false;
-        heroes_update_kael(playing ? anim_dt : 0.0f, &km);
+        if (c) {
+            mm.dead = c->dead; mm.staggered = c->stagger_t > 0; mm.guarding = c->guarding;
+            mm.flash = c->hit_flash > 0 ? fminf(1.0f, c->hit_flash / 0.12f) : 0.0f;
+        }
+        g->ev_roll[i] = g->ev_cast[i] = false;
+        heroes_update(i, playing ? anim_dt : 0.0f, &mm);
     }
+
     renderer_begin_frame(cam, (float)g->time);
-    test_scene_submit((float)g->time, (Vector3){pp.x, pp.y, pp.z}, yaw);
+    test_scene_submit((float)g->time);
+    for (int i = 0; i < g->party.n; ++i) {
+        Vec3 mp = ecs_render_pos(&g->world, ecs_index(g->party.m[i].ent), alpha);
+        heroes_submit(i, (Vector3){mp.x, mp.y, mp.z}, ecs_render_yaw(&g->world, ecs_index(g->party.m[i].ent), alpha), (float)g->time);
+    }
     for (int i = 0; i < ENEMY_MAX; ++i) {
         const Enemy *en = &g->enemies.e[i];
         if (!en->used) continue;
@@ -368,10 +367,10 @@ static void frame(void) {
             DrawText(p, (sw - MeasureText(p, 24)) / 2, sh * 6 / 7, 24, RAYWHITE);
         }
     } else {
-        hud_draw(&g->hud, cam, &g->world, &g->cw, &g->enemies, &g->edb, g->player, g->lock_ent, g->hero_skill, g->input.touch_ui);
+        hud_draw(&g->hud, cam, &g->world, &g->cw, &g->enemies, &g->edb, &g->party, g->lock_ent, g->input.touch_ui);
         if (!g->input.touch_ui)
-            DrawText(IsCursorHidden() ? "WASD move | Shift sprint | Space jump | J/LMB attack | 1-4 skills | E guard (parry on press) | Q/RMB roll | Tab lock | Esc mouse"
-                                      : "Click to capture the mouse | WASD | Shift | Space | J attack | 1-4 skills | E guard | Q roll | Tab lock | L look | F3 debug",
+            DrawText(IsCursorHidden() ? "WASD move | Shift sprint | Space jump | J attack | 1-4 skills | E guard | Q roll | Tab lock | R / 5-8 switch | B command | Esc mouse"
+                                      : "Click to capture the mouse | WASD | J attack | 1-4 skills | E guard | Q roll | Tab lock | R / 5-8 switch character | B party command | F3 debug",
                      10, sh - 24, 16, (Color){255, 255, 255, 170});
         input_draw_touch(&g->input);
     }
@@ -385,8 +384,8 @@ static void frame(void) {
     renderer_target_size(&rw, &rh);
     snprintf(extra, sizeof extra, "%s%s %dx%d | look: %s | %d meshes | %s%s", renderer_tier_settings(renderer_tier())->name,
              g->governor_on ? (renderer_governor_settled() ? " (auto)" : " (benchmarking)") : " (manual)", rw, rh,
-             renderer_look_name(renderer_look()), renderer_queue_count(), g->pc.ch.grounded ? "grounded" : "airborne",
-             player_invulnerable(&g->pc) ? " | I-FRAMES" : "");
+             renderer_look_name(renderer_look()), renderer_queue_count(), active_member(g)->pc.ch.grounded ? "grounded" : "airborne",
+             player_invulnerable(&active_member(g)->pc) ? " | I-FRAMES" : "");
     dbg_draw(&g->dbg, g->world.alive_count, g->loop.sim_ticks, (unsigned long)platform_heap_bytes(), extra);
     EndDrawing();
 }
@@ -422,12 +421,9 @@ int main(int argc, char **argv) {
     gameloop_init(&G.loop);
     dbg_init(&G.dbg);
     input_init(&G.input);
-    G.data_ok = skilldb_load(&G.skills, "data/skills.json") && enemydb_load(&G.edb, &G.skills, "data/enemies.json");
+    G.data_ok = skilldb_load(&G.skills, "data/skills.json") && enemydb_load(&G.edb, &G.skills, "data/enemies.json") &&
+                partydb_load(&G.pdb, &G.skills, "data/party.json");
     if (!G.data_ok) LOGE("content data failed to load");
-    G.awakening = 5;
-    const char *hs[4] = {"heroic_slash", "sunder", "gale_rush", "dawn_arc"}, *bs[3] = {"hero_light_1", "hero_light_2", "hero_light_3"};
-    for (int i = 0; i < 4; ++i) G.hero_skill[i] = skilldb_find(&G.skills, hs[i]);
-    for (int i = 0; i < 3; ++i) G.basic[i] = skilldb_find(&G.skills, bs[i]);
     test_scene_build_physics(&G.phys);
     hud_init(&G.hud);
     new_game(&G);

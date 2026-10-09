@@ -10,12 +10,14 @@ typedef struct {
     float look_dx, look_dy;    /* radians this frame */
     bool jump, attack, roll, lock;   /* latched presses */
     bool skill[4];                   /* latched skill-slot presses */
+    bool swap_next, cmd_cycle;       /* latched: switch character / cycle the party command */
+    int swap_to;                     /* latched direct selection 0..3, -1 none */
     bool sprint, walk, guard;        /* held */
     bool touch_ui;                   /* a touch was seen: show on-screen controls */
     /* touch tracking */
     int joy_id, look_id;
     Vector2 joy_origin, joy_pos, look_last;
-    int btn_id[8];                   /* touch id holding each button, -1 none */
+    int btn_id[10];                  /* touch id holding each button, -1 none */
 } Input;
 
 void input_init(Input *in);

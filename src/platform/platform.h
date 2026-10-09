@@ -10,6 +10,8 @@ void   platform_report_state(const char *state);  /* exposes state to JS test ho
 void   platform_report_player(float x, float y, float z, int grounded, float speed);
 /* test hook: combat summary as window.__sa.combat */
 void   platform_report_combat(int enemies_alive, float enemy_hp_total, float player_hp, int kills, float last_damage);
+/* test hook: party summary as window.__sa.party */
+void   platform_report_party(int active, int command, int dead, float follower_max_dist, float hp0, float hp1, float hp2, float hp3);
 int    platform_is_hidden(void);                  /* tab hidden => sim paused */
 int    platform_context_lost(void);
 int    platform_take_context_restored(void);      /* true once after a restore */

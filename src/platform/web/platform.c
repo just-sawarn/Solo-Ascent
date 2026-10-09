@@ -38,7 +38,17 @@ void platform_report_combat(int enemies_alive, float enemy_hp_total, float playe
         s["combat"] = o;
     }, enemies_alive, enemy_hp_total, player_hp, kills, last_damage);
 }
+void platform_report_party(int active, int command, int dead, float follower_max_dist, float hp0, float hp1, float hp2, float hp3) {
+    EM_ASM({
+        var s = (window["__sa"] = window["__sa"] || {});
+        var o = {};
+        o["active"] = $0; o["command"] = $1; o["dead"] = $2; o["followerDist"] = $3;
+        var hp = new Array(); hp.push($4); hp.push($5); hp.push($6); hp.push($7); o["hp"] = hp;
+        s["party"] = o;
+    }, active, command, dead, follower_max_dist, hp0, hp1, hp2, hp3);
+}
 #else
+void platform_report_party(int a, int b, int c, float d, float e, float f, float g, float h) { (void)a; (void)b; (void)c; (void)d; (void)e; (void)f; (void)g; (void)h; }
 void platform_report_combat(int a, float b, float c, int d, float e) { (void)a; (void)b; (void)c; (void)d; (void)e; }
 void platform_report_player(float x, float y, float z, int grounded, float speed) { (void)x; (void)y; (void)z; (void)grounded; (void)speed; }
 void platform_init(void) {}

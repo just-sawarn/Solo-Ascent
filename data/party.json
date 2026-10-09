@@ -1,0 +1,159 @@
+{
+ "party": [
+  {
+   "id": "kael",
+   "name": "Kael",
+   "role": "hero",
+   "level": 5,
+   "stats": {
+    "str": 14,
+    "int": 8,
+    "vit": 12,
+    "wis": 10,
+    "agi": 10
+   },
+   "poise": 120,
+   "weapon_atk": 6,
+   "weapon_matk": 0,
+   "armor": 0,
+   "skills": [
+    "heroic_slash",
+    "sunder",
+    "gale_rush",
+    "dawn_arc",
+    "focus_strike",
+    "rising_slash",
+    "blade_dance",
+    "wind_cutter",
+    "second_wind",
+    "heroic_cry",
+    "flame_parry"
+   ],
+   "slots": [
+    "heroic_slash",
+    "sunder",
+    "gale_rush",
+    "dawn_arc"
+   ],
+   "basic": [
+    "hero_light_1",
+    "hero_light_2",
+    "hero_light_3"
+   ]
+  },
+  {
+   "id": "bram",
+   "name": "Bram",
+   "role": "tank",
+   "level": 5,
+   "stats": {
+    "str": 12,
+    "int": 4,
+    "vit": 20,
+    "wis": 10,
+    "agi": 5
+   },
+   "poise": 260,
+   "weapon_atk": 4,
+   "weapon_matk": 0,
+   "armor": 14,
+   "skills": [
+    "taunt",
+    "shield_bash",
+    "iron_wall",
+    "ground_slam",
+    "bulwark_barrier",
+    "unbroken_vow",
+    "counter_block",
+    "vow_of_steel",
+    "guardians_roar",
+    "oath_aegis"
+   ],
+   "slots": [
+    "taunt",
+    "shield_bash",
+    "iron_wall",
+    "ground_slam"
+   ],
+   "basic": [
+    "bram_strike"
+   ]
+  },
+  {
+   "id": "lyra",
+   "name": "Lyra",
+   "role": "mage",
+   "level": 5,
+   "stats": {
+    "str": 4,
+    "int": 22,
+    "vit": 7,
+    "wis": 14,
+    "agi": 8
+   },
+   "poise": 70,
+   "weapon_atk": 0,
+   "weapon_matk": 6,
+   "armor": 0,
+   "skills": [
+    "fireball",
+    "frost_lance",
+    "arcane_shield",
+    "ice_nova",
+    "lightning_chain",
+    "thunderstorm",
+    "void_bolt",
+    "meteor",
+    "starfall",
+    "mana_anchor"
+   ],
+   "slots": [
+    "fireball",
+    "frost_lance",
+    "ice_nova",
+    "arcane_shield"
+   ],
+   "basic": [
+    "lyra_bolt"
+   ]
+  },
+  {
+   "id": "mirelle",
+   "name": "Mirelle",
+   "role": "healer",
+   "level": 5,
+   "stats": {
+    "str": 4,
+    "int": 16,
+    "vit": 9,
+    "wis": 20,
+    "agi": 7
+   },
+   "poise": 80,
+   "weapon_atk": 0,
+   "weapon_matk": 4,
+   "armor": 0,
+   "skills": [
+    "heal",
+    "cleanse",
+    "blessing",
+    "dawns_embrace",
+    "sanctuary",
+    "revive",
+    "smite",
+    "purify_curse",
+    "prayer_of_mending",
+    "radiant_renewal"
+   ],
+   "slots": [
+    "heal",
+    "cleanse",
+    "blessing",
+    "sanctuary"
+   ],
+   "basic": [
+    "mirelle_spark"
+   ]
+  }
+ ]
+}

@@ -26,28 +26,15 @@ static bool g_showcase, g_rack;
 void test_scene_set_rack(bool on) { g_rack = on; }
 void test_scene_set_showcase(bool on) { g_showcase = on; }
 
-void test_scene_submit(float t, Vector3 hero, float hero_yaw) {
-    static CharDesc bram, lyra, mirelle;
-    static bool init;
-    if (!init) {
-        bram = proc_preset(OUTFIT_TANK); lyra = proc_preset(OUTFIT_MAGE);
-        mirelle = proc_preset(OUTFIT_HEALER);
-        init = true;
-    }
+void test_scene_submit(float t) {
     proc_submit_ground(120.0f, C(54, 56, 76));
-
-    /* the party, in a loose arc around the hero's start; the hero is driven by the ECS player */
-    heroes_submit_kael(hero, hero_yaw, t);
     if (g_showcase) {
-        if (g_rack) { /* weapon review: one of each, tips up, 0.9 m long */
+        if (g_rack) { /* weapon review: one of each, tips up, 1.3 m long */
             for (int i = 0; i < WEAPON_COUNT; ++i)
                 proc_submit_weapon((WeaponId)i, MatrixTranslate(-3.0f + 1.0f * (float)i, 0.1f, 1.5f), 1.3f);
         }
         return;
     }
-    proc_submit_character(&bram, (Vector3){-3.2f, 0, 1.0f}, 3.14159f, t + 0.7f);
-    proc_submit_character(&lyra, (Vector3){3.2f, 0, 1.0f}, 3.14159f, t + 1.4f);
-    proc_submit_character(&mirelle, (Vector3){-5.0f, 0, 3.0f}, 3.14159f, t + 2.1f);
 
     /* ruins + crystal */
     proc_submit_box((Vector3){-2.65f, 4.9f, -10.05f}, (Vector3){2.65f, 5.7f, -8.95f}, C(70, 72, 96)); /* lintel */

@@ -29,6 +29,14 @@ int main(void) {
     CHECK(enemydb_find(&E, "shadow_soldier") >= 0);
     CHECK(E.e[enemydb_find(&E, "shadow_soldier")].resist[EL_HOLY] > 1.0f);
 
+    PartyDB P;
+    CHECK(partydb_load(&P, &S, SA_DATA_DIR "/party.json"));
+    CHECK(P.n == 4);
+    CHECK(P.m[0].role == ROLE_HERO && P.m[1].role == ROLE_TANK && P.m[2].role == ROLE_MAGE && P.m[3].role == ROLE_HEALER);
+    for (int i = 0; i < P.n; ++i) { CHECK(P.m[i].nskills >= 8); CHECK(P.m[i].nbasic >= 1); for (int k = 0; k < 4; ++k) CHECK(P.m[i].slots[k] >= 0); }
+    /* every member only knows skills of their own role (hero skills may be used by Kael only) */
+    for (int i = 0; i < P.n; ++i) for (int k = 0; k < P.m[i].nskills; ++k) CHECK(S.s[P.m[i].skills[k]].role == P.m[i].role);
+
     /* missing file fails cleanly */
     SkillDB bad;
     CHECK(!skilldb_load(&bad, SA_DATA_DIR "/does_not_exist.json"));

@@ -1,7 +1,7 @@
 #include "ui/input.h"
 #include <math.h>
 
-enum { B_ATTACK, B_ROLL, B_JUMP, B_LOCK, B_S1, B_S2, B_S3, B_GUARD, B_COUNT };
+enum { B_ATTACK, B_ROLL, B_JUMP, B_LOCK, B_S1, B_S2, B_S3, B_GUARD, B_SWAP, B_CMD, B_COUNT };
 
 static float ui_scale(void) {
     float s = fminf((float)GetScreenWidth(), (float)GetScreenHeight()) / 720.0f;
@@ -10,14 +10,14 @@ static float ui_scale(void) {
 
 static void button_layout(int i, Vector2 *c, float *r) {
     float w = (float)GetScreenWidth(), h = (float)GetScreenHeight(), s = ui_scale();
-    static const float X[B_COUNT] = {130, 250, 60, 300, 215, 185, 95, 330}, Y[B_COUNT] = {130, 70, 250, 235, 175, 265, 340, 130};
-    static const float R[B_COUNT] = {62, 42, 42, 30, 34, 34, 34, 36};
-    *c = (Vector2){w - X[i] * s, h - Y[i] * s};
+    static const float X[B_COUNT] = {130, 250, 60, 300, 215, 185, 95, 330, 60, 150}, Y[B_COUNT] = {130, 70, 250, 235, 175, 265, 340, 130, 0, 0};
+    static const float R[B_COUNT] = {62, 42, 42, 30, 34, 34, 34, 36, 34, 30};
+    *c = (Vector2){w - X[i] * s, i >= B_SWAP ? 64 * s : h - Y[i] * s};
     *r = R[i] * s;
 }
 
 void input_init(Input *in) {
-    *in = (Input){.joy_id = -1, .look_id = -1, .btn_id = {-1, -1, -1, -1, -1, -1, -1, -1}};
+    *in = (Input){.joy_id = -1, .look_id = -1, .btn_id = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, .swap_to = -1};
 }
 
 static bool seen(const int *ids, int n, int id) {
@@ -34,6 +34,8 @@ static void latch(Input *in, int b) {
     case B_S1: in->skill[0] = true; break;
     case B_S2: in->skill[1] = true; break;
     case B_S3: in->skill[2] = true; break;
+    case B_SWAP: in->swap_next = true; break;
+    case B_CMD: in->cmd_cycle = true; break;
     default: break; /* guard is a held button */
     }
 }
@@ -94,6 +96,9 @@ void input_update(Input *in, float dt, bool active) {
     if (IsKeyPressed(KEY_TAB)) in->lock = true;
     if (IsKeyDown(KEY_E)) in->guard = true;
     for (int k = 0; k < 4; ++k) if (IsKeyPressed(KEY_ONE + k)) in->skill[k] = true;
+    for (int k = 0; k < 4; ++k) if (IsKeyPressed(KEY_FIVE + k)) in->swap_to = k;
+    if (IsKeyPressed(KEY_R)) in->swap_next = true;
+    if (IsKeyPressed(KEY_B)) in->cmd_cycle = true;
 
     /* mouse: only while the pointer is locked (desktop) */
     if (!in->touch_ui && IsCursorHidden()) {
@@ -125,6 +130,8 @@ void input_update(Input *in, float dt, bool active) {
             if (IsGamepadButtonPressed(0, GAMEPAD_BUTTON_RIGHT_FACE_UP) || IsGamepadButtonPressed(0, GAMEPAD_BUTTON_RIGHT_THUMB)) in->lock = true;
         }
         if (IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_TRIGGER_2)) in->guard = true;
+        if (IsGamepadButtonPressed(0, GAMEPAD_BUTTON_LEFT_FACE_RIGHT)) in->swap_next = true;
+        if (IsGamepadButtonPressed(0, GAMEPAD_BUTTON_LEFT_FACE_UP)) in->cmd_cycle = true;
         if (IsGamepadButtonDown(0, GAMEPAD_BUTTON_RIGHT_TRIGGER_1)) in->sprint = true;
         if (IsGamepadButtonDown(0, GAMEPAD_BUTTON_LEFT_TRIGGER_1)) in->walk = true;
     }
@@ -135,7 +142,7 @@ void input_update(Input *in, float dt, bool active) {
     if (l > 1.0f) { in->move_x /= l; in->move_y /= l; }
 }
 
-void input_consume(Input *in) { in->jump = in->attack = in->roll = in->lock = false; for (int k = 0; k < 4; ++k) in->skill[k] = false; }
+void input_consume(Input *in) { in->jump = in->attack = in->roll = in->lock = in->swap_next = in->cmd_cycle = false; in->swap_to = -1; for (int k = 0; k < 4; ++k) in->skill[k] = false; }
 
 void input_draw_touch(const Input *in) {
     if (!in->touch_ui) return;
@@ -148,7 +155,7 @@ void input_draw_touch(const Input *in) {
         Vector2 c = {110 * s, (float)GetScreenHeight() - 130 * s};
         DrawCircleLinesV(c, 60 * s, (Color){255, 255, 255, 60});
     }
-    static const char *label[B_COUNT] = {"ATK", "ROLL", "JUMP", "LOCK", "1", "2", "3", "GUARD"};
+    static const char *label[B_COUNT] = {"ATK", "ROLL", "JUMP", "LOCK", "1", "2", "3", "GUARD", "SWAP", "CMD"};
     for (int b = 0; b < B_COUNT; ++b) {
         Vector2 c; float r; button_layout(b, &c, &r);
         bool down = in->btn_id[b] >= 0;

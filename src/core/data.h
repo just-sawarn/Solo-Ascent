@@ -45,6 +45,19 @@ typedef struct { EnemyDef e[DB_MAX_ENEMIES]; int n; } EnemyDB;
 
 bool skilldb_load(SkillDB *db, const char *path);
 int  skilldb_find(const SkillDB *db, const char *id); /* -1 if unknown */
+typedef struct {
+    char id[16], name[24];
+    Role role;
+    int level; Stats stats;
+    float poise, weapon_atk, weapon_matk, armor;
+    int skills[16], nskills;   /* everything this member knows (AI picks from these) */
+    int slots[4];              /* player skill-slot bindings (-1 = empty) */
+    int basic[3], nbasic;
+} PartyDef;
+#define DB_MAX_PARTY 8
+typedef struct { PartyDef m[DB_MAX_PARTY]; int n; } PartyDB;
+bool partydb_load(PartyDB *db, const SkillDB *skills, const char *path);
+
 bool enemydb_load(EnemyDB *db, const SkillDB *skills, const char *path);
 int  enemydb_find(const EnemyDB *db, const char *id);
 

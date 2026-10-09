@@ -147,3 +147,44 @@ int enemydb_find(const EnemyDB *db, const char *id) {
     for (int i = 0; i < db->n; ++i) if (strcmp(db->e[i].id, id) == 0) return i;
     return -1;
 }
+
+bool partydb_load(PartyDB *db, const SkillDB *skills, const char *path) {
+    memset(db, 0, sizeof *db);
+    char *text = read_all(path);
+    if (!text) return false;
+    cJSON *root = cJSON_Parse(text);
+    free(text);
+    if (!root) { LOGE("%s: JSON parse error", path); return false; }
+    const cJSON *arr = cJSON_GetObjectItemCaseSensitive(root, "party");
+    bool ok = cJSON_IsArray(arr);
+    const cJSON *it;
+    cJSON_ArrayForEach(it, arr) {
+        if (db->n >= DB_MAX_PARTY) { ok = false; break; }
+        PartyDef *p = &db->m[db->n];
+        copy(p->id, sizeof p->id, str(it, "id")); copy(p->name, sizeof p->name, str(it, "name"));
+        int role = index_of(ROLE_NAMES, 4, str(it, "role"));
+        if (!p->id[0] || role < 0) { LOGE("%s: party member '%s' has no valid id/role", path, p->id); ok = false; continue; }
+        p->role = (Role)role;
+        p->level = (int)num(it, "level", 1);
+        const cJSON *st = cJSON_GetObjectItemCaseSensitive(it, "stats");
+        p->stats = (Stats){(int)num(st, "str", 5), (int)num(st, "int", 5), (int)num(st, "vit", 5), (int)num(st, "wis", 5), (int)num(st, "agi", 5)};
+        p->poise = num(it, "poise", 100); p->weapon_atk = num(it, "weapon_atk", 0); p->weapon_matk = num(it, "weapon_matk", 0); p->armor = num(it, "armor", 0);
+        const cJSON *lists[3] = {cJSON_GetObjectItemCaseSensitive(it, "skills"), cJSON_GetObjectItemCaseSensitive(it, "slots"), cJSON_GetObjectItemCaseSensitive(it, "basic")};
+        for (int s = 0; s < 4; ++s) p->slots[s] = -1;
+        for (int l = 0; l < 3; ++l) {
+            int k = 0;
+            const cJSON *sid;
+            cJSON_ArrayForEach(sid, lists[l]) {
+                int idx = cJSON_IsString(sid) ? skilldb_find(skills, sid->valuestring) : -1;
+                if (idx < 0) { LOGE("%s: member '%s' references unknown skill", path, p->id); ok = false; continue; }
+                if (l == 0 && p->nskills < 16) p->skills[p->nskills++] = idx;
+                else if (l == 1 && k < 4) p->slots[k++] = idx;
+                else if (l == 2 && p->nbasic < 3) p->basic[p->nbasic++] = idx;
+            }
+        }
+        if (p->nbasic == 0) { LOGE("%s: member '%s' has no basic attack", path, p->id); ok = false; }
+        db->n++;
+    }
+    cJSON_Delete(root);
+    return ok && db->n > 0;
+}

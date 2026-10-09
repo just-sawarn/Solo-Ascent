@@ -40,6 +40,9 @@ typedef struct {
     bool dead; float dead_t;
     bool dash_pending; Vec3 dash_to;                         /* the owner of the movement controller applies this */
     float dot_t, hit_flash;
+    int party_idx;             /* index in the party (threat slot), -1 otherwise */
+    float threat_mult;         /* how much threat this combatant's damage generates (tanks > 1) */
+    float threat[8];           /* on enemies: accumulated threat per party member */
 } Combatant;
 
 typedef struct { bool active; Vec3 pos, vel; Entity owner; int skill, team; float life; } Projectile;
