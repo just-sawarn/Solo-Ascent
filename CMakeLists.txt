@@ -101,11 +101,8 @@ if(EMSCRIPTEN OR SA_BUILD_NATIVE_GAME)
       -sUSE_GLFW=3 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2 -sFULL_ES3=1
       -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=64MB -sSTACK_SIZE=1MB
       -sASSERTIONS=$<IF:$<CONFIG:Debug>,1,0>
-      -sEXPORTED_RUNTIME_METHODS=ccall,cwrap
+      -sEXPORTED_RUNTIME_METHODS=ccall,cwrap,FS
       -sEXPORTED_FUNCTIONS=_main,_sa_on_visibility,_sa_on_context_lost,_sa_on_context_restored
-      "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/assets/models/weapons@/assets/weapons"
-      "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/assets/models/characters@/assets/characters"
-      "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/assets/models/animations@/assets/animations"
       "SHELL:--preload-file ${CMAKE_SOURCE_DIR}/data@/data"
       --shell-file ${CMAKE_SOURCE_DIR}/web/shell.html)
     if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -119,10 +116,15 @@ endif()
 
 # ---- Web glue files copied next to the generated page ----
 if(EMSCRIPTEN)
-  set(SA_WEB_FILES glue.js game.css sw.js manifest.webmanifest icon-192.png icon-512.png)
+  set(SA_WEB_FILES glue.js game.css manifest.webmanifest icon-192.png icon-512.png)
   foreach(f ${SA_WEB_FILES})
     add_custom_command(TARGET solo_ascent POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_SOURCE_DIR}/web/${f} $<TARGET_FILE_DIR:solo_ascent>/${f})
   endforeach()
   set_target_properties(solo_ascent PROPERTIES OUTPUT_NAME index)
+  # asset packs + build-stamped service worker (runs after every build so asset edits are picked up)
+  find_package(Python3 REQUIRED COMPONENTS Interpreter)
+  add_custom_target(sa_packs ALL
+    COMMAND ${Python3_EXECUTABLE} -I ${CMAKE_SOURCE_DIR}/tools/pack_assets.py ${CMAKE_SOURCE_DIR} $<TARGET_FILE_DIR:solo_ascent>
+    DEPENDS solo_ascent VERBATIM)
 endif()

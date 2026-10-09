@@ -44,6 +44,8 @@ Plain static files; no COOP/COEP headers or SharedArrayBuffer needed. `dist/` co
 - Cloudflare Pages / Netlify: they compress automatically; the precompressed files are optional.
 - nginx: `brotli_static on; gzip_static on;`. GitHub Pages: deploy works via the CI workflow (compression is automatic).
 - The service worker (offline cache) is only registered on non-localhost origins (use `?sw=1` to test locally).
+- Assets ship as content-addressed packs in `packs/*.pak` (hash in the file name) plus `packs.json`. Serve `packs/` with long-lived `Cache-Control: immutable`; keep `packs.json`, `index.html` and `sw.js` revalidating (`no-cache`).
+- Download budget (brotli): ~0.45 MB wasm+js+data core, ~2.8 MB boot packs (characters 1.9, animations 0.8, weapons 0.03).
 
 ## Layout
 `src/core` engine-agnostic logic (ECS, game loop, math, log): no raylib, no browser calls, unit-tested natively.

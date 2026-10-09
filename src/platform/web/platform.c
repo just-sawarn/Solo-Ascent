@@ -63,7 +63,15 @@ void platform_report_story(int mq, int act, int npcs, int dialogue_open, int act
         s["story"] = o;
     }, mq, act, npcs, dialogue_open, active_quests, tracked, completed);
 }
+void platform_pack_request(const char *name) {
+    EM_ASM({ var n = UTF8ToString($0); if (window["SoloAscentPacks"]) window["SoloAscentPacks"]["request"](n); }, name);
+}
+PackState platform_pack_state(const char *name) {
+    return (PackState)EM_ASM_INT({ var n = UTF8ToString($0); return window["SoloAscentPacks"] ? window["SoloAscentPacks"]["state"](n) : 0; }, name);
+}
 #else
+void platform_pack_request(const char *name) { (void)name; }
+PackState platform_pack_state(const char *name) { (void)name; return PACK_READY; }
 void platform_report_story(int a, int b, int c, int d, int e, int f, int h) { (void)a; (void)b; (void)c; (void)d; (void)e; (void)f; (void)h; }
 void platform_report_inventory(int a, int b, int c, float d) { (void)a; (void)b; (void)c; (void)d; }
 void platform_report_party(int a, int b, int c, float d, float e, float f, float g, float h) { (void)a; (void)b; (void)c; (void)d; (void)e; (void)f; (void)g; (void)h; }

@@ -74,6 +74,7 @@ typedef struct {
     /* per-member one-frame animation triggers accumulated over sim steps */
     bool ev_roll[PARTY_MAX], ev_cast[PARTY_MAX];
     int cast_skill[PARTY_MAX];
+    int packtest;      /* 0 off, 1 waiting for the selftest pack, 2 done */
 } Game;
 
 static Game G; /* static: World and PhysWorld are large, no per-frame allocation anywhere */
@@ -445,6 +446,12 @@ static void frame(void) {
 
     if (platform_take_context_restored()) LOGI("WebGL context restored (GPU resource rebuild lands with the lifecycle milestone)");
 
+    if (g->packtest == 1) {   /* streaming self-test (?packtest): request, wait, then check the file landed in the FS */
+        PackState ps = platform_pack_state("selftest");
+        if (ps == PACK_READY) { g->packtest = 2; LOGI("packtest %s", FileExists("/packs/selftest.txt") ? "ok" : "missing"); }
+        else if (ps == PACK_FAILED) { g->packtest = 2; LOGI("packtest failed"); }
+    }
+
     bool playing = g->state == STATE_PLAYING;
     input_update(&g->input, dt, playing && !hidden && !g->menu.open && !g->dui.open);
     if (playing && g->input.menu && !g->dui.open) { menu_toggle(&g->menu); if (g->menu.open && IsCursorHidden()) EnableCursor(); g->input.menu = false; }
@@ -638,7 +645,7 @@ int main(int argc, char **argv) {
     /* args (from URL query on web): --look N  --tier name  --still  --mobile  --hero  --rack  --arena */
     int look = 2;
     QualityTier tier = TIER_HIGH;
-    bool tier_forced = false, still = false, hero_only = false, rack = false;
+    bool tier_forced = false, still = false, hero_only = false, rack = false, packtest = false;
     G.arena = false;
     for (int i = 1; i < argc; ++i) {
         if (!strcmp(argv[i], "--look") && i + 1 < argc) look = atoi(argv[++i]) - 1 < 0 ? 0 : atoi(argv[i]) - 1;
@@ -647,6 +654,7 @@ int main(int argc, char **argv) {
         else if (!strcmp(argv[i], "--hero")) hero_only = true;
         else if (!strcmp(argv[i], "--rack")) rack = true;
         else if (!strcmp(argv[i], "--arena")) G.arena = true;
+        else if (!strcmp(argv[i], "--packtest")) packtest = true;
         else if (!strcmp(argv[i], "--mobile") && !tier_forced) tier = TIER_LOW;
     }
 
@@ -681,6 +689,7 @@ int main(int argc, char **argv) {
     actors_init();
     renderer_init(GetScreenWidth(), GetScreenHeight(), tier, look);
     platform_report_state("title");
+    if (packtest) { G.packtest = 1; platform_pack_request("selftest"); }
     LOGI("Solo Ascent boot OK");
 
 #ifdef __EMSCRIPTEN__

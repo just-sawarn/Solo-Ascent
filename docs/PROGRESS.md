@@ -55,4 +55,11 @@ Game: NPCs follow their schedules (nearest 10 within 30 m are drawn), quest mark
 Verified: native suites; browser smoke (NPCs populate, quest active, K skip completes a quest, Esc skips cutscenes) on debug and release. NOT verified: dialogue feel on touch, writing/pacing in play.
 Gaps: only the Aurelheim sandbox exists (other regions arrive in M9; their explore/boss objectives are only completable with dev skip K or dev travel), cutscenes are dialogue-only until M10/11 (3 reserved for boss scripts), NPC visuals are palette swaps, no XP/levelling, save system not wired to quests/inventory (M11/12).
 
-## Next: Milestone 8: asset pipeline, streaming, PWA.
+## Milestone 8: Asset pipeline, streaming, PWA: DONE (first pass; see gaps)
+- `tools/pack_assets.py` (run by the `sa_packs` CMake target after every web build) builds content-addressed packs (`packs/<name>.<hash8>.pak`, format "SAPK") and `packs.json` (size + sha256 + `boot` flag), and stamps `sw.js` with a build id so each build installs a fresh service worker. Preloaded `index.data` shrank from 6.9 MB to 0.74 MB (data JSON only); models/animations moved to packs.
+- `web/glue.js`: boot packs download in `preRun` (run dependency) with a byte-accurate progress bar, SHA-256 verification (a corrupt cached entry is evicted), 3 tries with backoff, and a visible error plus Retry if they still fail. On-demand streaming API for the C side: `platform_pack_request/state` (native build: always ready).
+- `web/sw.js`: core cache per build (cache-first), shared immutable pack cache (pruned to the packs listed in `packs.json`), network-first for the page and `packs.json`; install precaches the core and boot packs so the game starts offline after one visit. A new build shows an in-page "Reload" notice instead of forcing a reload mid-game. Storage persistence requested on start; quota is reported in `__sa.storage`.
+- Tests: `tools/smoke_pwa.mjs` (boot packs mounted, C-requested pack streamed into the FS, SW core + pack caches, offline reload reaches the title, corrupt pack fails loudly). Existing smoke passes on debug and release.
+Gaps: no region packs yet (they arrive with M9; the mechanism is proven with a self-test pack), no texture compression (KTX2/Basis) because textures are tiny palettes, no audio assets yet (M11), update-notice flow not browser-tested (needs two builds), `scripts/package.sh` output not tried on a real host or real phone.
+
+## Next: Milestone 9: world generation, regions, dungeons, day-night, weather, VFX.

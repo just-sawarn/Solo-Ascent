@@ -10,3 +10,6 @@ h2 { margin: 0 0 16px; font-weight: 400; letter-spacing: .3em; font-size: clamp(
 button { font: inherit; font-size: 20px; padding: 14px 32px; min-height: 48px; border-radius: 8px; border: 2px solid #ffc832; background: #ffc83220; color: #ffc832; cursor: pointer; }
 button:disabled { opacity: .35; cursor: default; }
 button:not(:disabled):hover { background: #ffc83240; }
+
+#update { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); background: #1b2340; color: #e8ecff; border: 1px solid #5b73ff; padding: 8px 14px; border-radius: 8px; z-index: 20; font: 14px sans-serif; }
+#update a { color: #ffd76a; margin-left: 8px; }

@@ -16,6 +16,10 @@ void   platform_report_party(int active, int command, int dead, float follower_m
 void   platform_report_inventory(int gold, int item_count, int menu_open, float atk_kael);
 /* test hook: story summary as window.__sa.story */
 void   platform_report_story(int mq, int act, int npcs, int dialogue_open, int active_quests, int tracked, int completed);
+/* On-demand asset packs (streamed archives). Native builds read assets straight from disk: always ready. */
+typedef enum { PACK_NONE = 0, PACK_LOADING = 1, PACK_READY = 2, PACK_FAILED = 3 } PackState;
+void      platform_pack_request(const char *name);  /* start streaming; idempotent */
+PackState platform_pack_state(const char *name);
 int    platform_is_hidden(void);                  /* tab hidden => sim paused */
 int    platform_context_lost(void);
 int    platform_take_context_restored(void);      /* true once after a restore */
