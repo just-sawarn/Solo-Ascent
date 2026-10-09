@@ -17,6 +17,8 @@ void vfx_frame(Camera3D cam, float t, float dt, QualityTier tier, WeatherKind wx
 
 typedef enum { VFX_SPARK, VFX_HIT, VFX_SLASH, VFX_HEAL, VFX_DUST, VFX_PICKUP, VFX_AURA, VFX_EMBER, VFX_COUNT } VfxKind;
 void vfx_burst(VfxKind k, Vector3 pos, Vector3 dir);   /* dir: preferred direction (zero = omni) */
+/* A glowing line for this frame only (call every frame it should show, e.g. Bond Resonance links). */
+void vfx_beam(Vector3 a, Vector3 b, Color c);
 int  vfx_live(void);                                    /* burst particles alive (tests/HUD) */
 int  vfx_last_count(void);                              /* quads submitted last frame */
 

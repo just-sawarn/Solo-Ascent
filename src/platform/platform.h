@@ -22,6 +22,8 @@ void      platform_pack_request(const char *name);  /* start streaming; idempote
 PackState platform_pack_state(const char *name);
 /* test hook: world summary as window.__sa.world */
 void   platform_report_world(const char *zone, int gen, int region, int weather, float intensity, float hour, int props, int particles, int enemies);
+/* test hook: boss fight state as window.__sa.boss */
+void   platform_report_boss(int active, int phase, float hp_frac, int solo, int callout_ready, int finisher_ready, int called, int defeated, int awakening, int ng_plus);
 int    platform_is_hidden(void);                  /* tab hidden => sim paused */
 int    platform_context_lost(void);
 int    platform_take_context_restored(void);      /* true once after a restore */

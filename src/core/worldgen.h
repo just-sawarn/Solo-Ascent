@@ -35,7 +35,7 @@ typedef struct {
     uint8_t dng_wall[3], dng_floor[3], dng_torch[3];
 } RegionDef;
 
-typedef struct { char enemy[32]; char quest[16]; char at[24]; int def; } ZoneBoss;
+typedef struct { char enemy[32]; char quest[16]; char at[24]; int def; bool ng_plus; } ZoneBoss;   /* ng_plus: a super-boss that only exists in New Game+ */
 typedef struct {
     char id[24];
     int region;

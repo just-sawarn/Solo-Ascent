@@ -72,6 +72,14 @@ void platform_report_world(const char *zone, int gen, int region, int weather, f
         s["world"] = o;
     }, zone, gen, region, weather, intensity, hour, props, particles, enemies);
 }
+void platform_report_boss(int active, int phase, float hp_frac, int solo, int callout_ready, int finisher_ready, int called, int defeated, int awakening, int ng_plus) {
+    EM_ASM({
+        var s = (window["__sa"] = window["__sa"] || {});
+        var o = {};
+        o["active"] = !!$0; o["phase"] = $1; o["hp"] = $2; o["solo"] = !!$3; o["callout"] = !!$4; o["finisher"] = !!$5; o["called"] = $6; o["defeated"] = !!$7;
+        s["boss"] = o; s["awakening"] = $8; s["ngplus"] = $9;
+    }, active, phase, hp_frac, solo, callout_ready, finisher_ready, called, defeated, awakening, ng_plus);
+}
 void platform_pack_request(const char *name) {
     EM_ASM({ var n = UTF8ToString($0); if (window["SoloAscentPacks"]) window["SoloAscentPacks"]["request"](n); }, name);
 }
@@ -79,6 +87,7 @@ PackState platform_pack_state(const char *name) {
     return (PackState)EM_ASM_INT({ var n = UTF8ToString($0); return window["SoloAscentPacks"] ? window["SoloAscentPacks"]["state"](n) : 0; }, name);
 }
 #else
+void platform_report_boss(int a, int b, float c, int d, int e, int f, int g, int h, int i, int j) { (void)a; (void)b; (void)c; (void)d; (void)e; (void)f; (void)g; (void)h; (void)i; (void)j; }
 void platform_report_world(const char *z, int a, int b, int c, float d, float e, int f, int g, int h) { (void)z; (void)a; (void)b; (void)c; (void)d; (void)e; (void)f; (void)g; (void)h; }
 void platform_pack_request(const char *name) { (void)name; }
 PackState platform_pack_state(const char *name) { (void)name; return PACK_READY; }

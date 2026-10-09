@@ -19,7 +19,7 @@ static Entity spawn(int team, Vec3 pos, float yaw, Stats st, int level, float po
 static void run(float seconds) { for (int i = 0; i < (int)(seconds * 60.0f + 0.5f); ++i) combat_update(&CW, &W, &PH, DT); }
 static void reset(void) {
     ecs_init(&W); phys_init(&PH, 0.0f);
-    uint32_t seed = CW.rng; combat_init(&CW, &S); CW.rng = seed ? seed : 777u;
+    uint32_t seed = CW.rng; combat_init(&CW, &S); CW.rng = seed ? seed : 777u; CW.awakening = 5;
 }
 static const Stats HERO = {10, 4, 8, 6, 6}, GRUNT = {9, 4, 8, 4, 6};
 static int count_events(CombatEventType t) { int n = 0; for (int i = 0; i < CW.nev; ++i) if (CW.ev[i].type == t) n++; return n; }

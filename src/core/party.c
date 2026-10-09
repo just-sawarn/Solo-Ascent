@@ -42,14 +42,14 @@ int party_next_alive(const Party *p, const PartyCtx *c, int from) {
     for (int k = 1; k <= p->n; ++k) {
         int i = ((from + k) % p->n + p->n) % p->n;
         Combatant *cb = party_cb(p, c, i);
-        if (cb && !cb->dead) return i;
+        if (cb && !cb->dead && !cb->ghost) return i;
     }
     return -1;
 }
 
 bool party_switch(Party *p, PartyCtx *c, int idx) {
     Combatant *cb = party_cb(p, c, idx);
-    if (!cb || cb->dead || idx == p->active) return false;
+    if (!cb || cb->dead || cb->ghost || idx == p->active) return false;
     p->active = idx;
     return true;
 }
@@ -125,7 +125,7 @@ void party_step(Party *p, PartyCtx *c, const PartyInput *in, bool first_step, fl
         if (cb->dash_pending) { m->pc.ch.pos.x = cb->dash_to.x; m->pc.ch.pos.z = cb->dash_to.z; m->pc.ch.vel = vec3(0, 0, 0); cb->dash_pending = false; }
         PlayerIn pin = {0};
         bool human = i == p->active;
-        if (cb->dead) {
+        if (cb->dead || cb->ghost) {
             player_step(&m->pc, c->phys, &pin, dt);
             c->w->pos[ei] = m->pc.ch.pos; c->w->vel[ei] = vec3(0, 0, 0);
             continue;

@@ -23,7 +23,7 @@ Enemy *enemy_spawn(EnemyPool *p, CombatWorld *cw, World *w, const EnemyDB *db, i
         memcpy(c->resist, d->resist, sizeof c->resist);
         c->radius = 0.4f * d->scale; c->height = 1.8f * d->scale;
         Enemy *en = &p->e[i];
-        *en = (Enemy){.used = true, .ent = e, .def = def, .state = AI_IDLE, .home = pos, .strafe_dir = (i & 1) ? 1.0f : -1.0f};
+        *en = (Enemy){.used = true, .ent = e, .def = def, .state = AI_IDLE, .home = pos, .strafe_dir = (i & 1) ? 1.0f : -1.0f, .speed_mult = 1.0f};
         char_init(&en->ctl, pos);
         en->ctl.radius = 0.4f * d->scale;
         return en;
@@ -44,7 +44,7 @@ static Combatant *nearest_player(CombatWorld *cw, World *w, Vec3 from, float *ou
     Combatant *best = NULL; float bd = 1e9f;
     for (int i = 0; i < CB_MAX; ++i) {
         Combatant *c = &cw->c[i];
-        if (!c->used || c->dead || c->team != TEAM_PLAYER) continue;
+        if (!c->used || c->dead || c->ghost || c->team != TEAM_PLAYER) continue;
         float d = dist2d(w->pos[ecs_index(c->ent)], from);
         if (d < bd) { bd = d; best = c; }
     }
@@ -57,7 +57,7 @@ static Combatant *choose_target(CombatWorld *cw, World *w, const Combatant *self
     Combatant *best = NULL; float bt = 1.0f;
     for (int i = 0; i < CB_MAX; ++i) {
         Combatant *c = &cw->c[i];
-        if (!c->used || c->dead || c->team != TEAM_PLAYER || c->party_idx < 0 || c->party_idx >= 8) continue;
+        if (!c->used || c->dead || c->ghost || c->team != TEAM_PLAYER || c->party_idx < 0 || c->party_idx >= 8) continue;
         float t = self->threat[c->party_idx];
         if (t > bt && dist2d(w->pos[ecs_index(c->ent)], from) <= aggro * 2.0f) { bt = t; best = c; }
     }
@@ -100,7 +100,8 @@ void enemies_update(EnemyPool *p, CombatWorld *cw, World *w, PhysWorld *phys, co
         uint32_t idx = ecs_index(en->ent);
         if (c->dead) { move(en, phys, 0, 0, 0, dt); w->pos[idx] = en->ctl.pos; w->vel[idx] = vec3(0, 0, 0); continue; }
 
-        float speed = d->speed;
+        float speed = d->speed * en->speed_mult;
+        const int *kit = en->nsk > 0 ? en->sk : d->skills; int nkit = en->nsk > 0 ? en->nsk : d->nskills;
         if (c->status[ST_SLOW].time > 0) speed *= 1.0f - c->status[ST_SLOW].power;
         bool disabled = c->stagger_t > 0 || c->status[ST_STUN].time > 0;
 
@@ -135,11 +136,11 @@ void enemies_update(EnemyPool *p, CombatWorld *cw, World *w, PhysWorld *phys, co
             en->yaw = turn_to(en->yaw, want_yaw, 9.0f * dt);
             /* choose a skill that is ready and in reach */
             int pick = -1;
-            for (int k = 0; k < d->nskills && pick < 0; ++k) {
-                const Skill *s = &cw->skills->s[d->skills[k]];
-                if (combat_can_cast(cw, c, d->skills[k]) && td <= skill_reach(s)) {
+            for (int k = 0; k < nkit && pick < 0; ++k) {
+                const Skill *s = &cw->skills->s[kit[k]];
+                if (combat_can_cast(cw, c, kit[k]) && td <= skill_reach(s)) {
                     bool ranged_ok = s->kind != SK_PROJECTILE || phys_raycast(phys, vec3(en->ctl.pos.x, 1.2f, en->ctl.pos.z), vec3(dx / (td + 1e-4f), 0, dz / (td + 1e-4f)), td) >= td - 0.2f;
-                    if (ranged_ok) pick = d->skills[k];
+                    if (ranged_ok) pick = kit[k];
                 }
             }
             if (pick >= 0 && fabsf(fmodf(want_yaw - en->yaw + 9.4247f, 6.2832f) - 3.1416f) < 0.35f) {

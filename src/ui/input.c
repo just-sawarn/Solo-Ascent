@@ -102,7 +102,7 @@ void input_update(Input *in, float dt, bool active) {
     for (int k = 0; k < 4; ++k) if (IsKeyPressed(KEY_ONE + k)) in->skill[k] = true;
     for (int k = 0; k < 4; ++k) if (IsKeyPressed(KEY_FIVE + k)) in->swap_to = k;
     if (IsKeyPressed(KEY_R)) in->swap_next = true;
-    if (IsKeyPressed(KEY_F)) in->talk = true;
+    if (IsKeyPressed(KEY_F) || IsKeyPressed(KEY_H)) in->talk = true;
     if (IsKeyPressed(KEY_Z)) in->quick[0] = true;
     if (IsKeyPressed(KEY_X)) in->quick[1] = true;
     if (IsKeyPressed(KEY_C)) in->quick[2] = true;
@@ -152,7 +152,7 @@ void input_update(Input *in, float dt, bool active) {
     if (l > 1.0f) { in->move_x /= l; in->move_y /= l; }
 }
 
-void input_consume(Input *in) { in->jump = in->attack = in->roll = in->lock = in->swap_next = in->cmd_cycle = in->menu = in->talk = false; in->swap_to = -1; for (int k = 0; k < 4; ++k) in->quick[k] = false; for (int k = 0; k < 4; ++k) in->skill[k] = false; }
+void input_consume(Input *in) { in->jump = in->attack = in->roll = in->lock = in->swap_next = in->cmd_cycle = in->menu = false;   /* talk is consumed by the story code itself (it runs after this) */ in->swap_to = -1; for (int k = 0; k < 4; ++k) in->quick[k] = false; for (int k = 0; k < 4; ++k) in->skill[k] = false; }
 
 void input_draw_touch(const Input *in) {
     if (!in->touch_ui) return;
@@ -173,6 +173,8 @@ void input_draw_touch(const Input *in) {
         DrawCircleV(c, r, (Color){255, 200, 50, (unsigned char)(down ? 150 : 60)});
         DrawCircleLinesV(c, r, (Color){255, 220, 120, 190});
         int fs = (int)((b == B_GUARD ? 14 : 18) * s);
-        DrawText(label[b], (int)(c.x - (float)MeasureText(label[b], fs) / 2), (int)(c.y - fs / 2), fs, WHITE);
+        const char *lb = (b == B_TALK && in->ctx_label) ? in->ctx_label : label[b];
+        if (b == B_TALK && in->ctx_label) fs = (int)(12 * s);
+        DrawText(lb, (int)(c.x - (float)MeasureText(lb, fs) / 2), (int)(c.y - fs / 2), fs, WHITE);
     }
 }

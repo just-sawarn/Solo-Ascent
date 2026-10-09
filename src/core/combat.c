@@ -44,7 +44,7 @@ Combatant *combat_add(CombatWorld *cw, World *w, Entity e, int team, int level, 
         memset(c, 0, sizeof *c);
         c->used = true; c->ent = e; c->team = team; c->level = level; c->st = st;
         c->poise_max = c->poise = poise;
-        c->radius = 0.4f; c->height = 1.8f; c->cast_skill = -1; c->party_idx = -1; c->threat_mult = 1.0f;
+        c->radius = 0.4f; c->height = 1.8f; c->cast_skill = -1; c->party_idx = -1; c->threat_mult = 1.0f; c->dmg_taken = c->dmg_dealt = 1.0f;
         for (int k = 0; k < EL_COUNT; ++k) { c->resist[k] = 1.0f; c->elem_boost[k] = 1.0f; }
         combatant_recalc(c);
         c->hp = c->max_hp; c->mp = c->max_mp;
@@ -120,6 +120,8 @@ static void deal_raw(CombatWorld *cw, World *w, Combatant *d, float amount, Enti
     kill_if_dead(cw, w, d, src);
 }
 
+void combat_damage_raw(CombatWorld *cw, World *w, Combatant *d, float amount, Entity src) { deal_raw(cw, w, d, amount, src); }
+
 static void poise_hit(CombatWorld *cw, World *w, Combatant *d, float amount, Entity src) {
     if (d->dead || amount <= 0) return;
     d->poise -= amount; d->poise_regen_t = 3.0f;
@@ -139,8 +141,8 @@ static bool in_front(const World *w, const Combatant *d, Vec3 from) {
 
 /* One skill hit on one target. `origin` is where the blow comes from (for guard direction). */
 static void hit_target(CombatWorld *cw, World *w, Combatant *a, const Skill *s, Combatant *d, Vec3 origin, float dmg_scale) {
-    if (d->dead || d->team == a->team || d->invuln) return;
-    float base = combat_base_damage(a, s, d) * dmg_scale;
+    if (d->dead || d->team == a->team || d->invuln || d->ghost || a->ghost) return;
+    float base = combat_base_damage(a, s, d) * dmg_scale * a->dmg_dealt;
     bool crit = combat_rand(cw) < a->crit;
     float var = 0.95f + 0.10f * combat_rand(cw);
     float dmg = fmaxf(1.0f, base * var * (crit ? 1.5f : 1.0f));
@@ -156,12 +158,14 @@ static void hit_target(CombatWorld *cw, World *w, Combatant *a, const Skill *s, 
         dmg *= 0.4f; poise_dmg *= 0.3f;
         emit(cw, (CombatEvent){.type = CE_BLOCK, .src = a->ent, .dst = d->ent, .amount = dmg, .pos = dp});
     }
+    dmg *= d->dmg_taken;
+    if (d->reflect > 0 && !a->dead && dmg > 0) deal_raw(cw, w, a, dmg * d->reflect, d->ent);
     deal_raw(cw, w, d, dmg, a->ent);
-    emit(cw, (CombatEvent){.type = CE_HIT, .src = a->ent, .dst = d->ent, .amount = dmg, .crit = crit, .elem = s->element, .pos = dp});
+    emit(cw, (CombatEvent){.type = CE_HIT, .src = a->ent, .dst = d->ent, .amount = dmg, .crit = crit, .elem = s->element, .pos = dp, .skill = (int)(s - cw->skills->s)});
     d->hit_flash = 0.12f;
     if (a->party_idx >= 0 && a->party_idx < 8 && d->team == TEAM_ENEMY) d->threat[a->party_idx] += dmg * a->threat_mult;
     if (a->team == TEAM_PLAYER) cw->gauge = fminf(100.0f, cw->gauge + (crit ? 5.0f : 2.0f));
-    if (d->dead) return;
+    if (d->dead || d->dmg_taken <= 0.0f) return;   /* immune: no statuses, no stagger */
     if (s->status != ST_NONE && s->kind != SK_BUFF && s->kind != SK_TAUNT && s->kind != SK_CLEANSE) add_status(cw, d, s->status, s->status_time, s->status_power, a->ent);
     poise_hit(cw, w, d, poise_dmg, a->ent);
 }
@@ -348,6 +352,7 @@ bool combat_can_cast(const CombatWorld *cw, const Combatant *c, int skill) {
     if (has_status(c, ST_STUN)) return false;
     if (s->magic && has_status(c, ST_SILENCE)) return false;
     if (c->cd[skill] > 0 || c->mp < s->mp || cw->gauge < s->gauge) return false;
+    if (c->team == TEAM_PLAYER && s->awakening > cw->awakening) return false;
     return true;
 }
 

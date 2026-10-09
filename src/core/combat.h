@@ -46,6 +46,11 @@ typedef struct {
     int party_idx;             /* index in the party (threat slot), -1 otherwise */
     float threat_mult;         /* how much threat this combatant's damage generates (tanks > 1) */
     float threat[8];           /* on enemies: accumulated threat per party member */
+    /* scripted modifiers (boss mechanics, cutscene states) */
+    float dmg_taken;           /* multiplier on damage received (1 = normal, 0 = immune) */
+    float dmg_dealt;           /* multiplier on damage dealt */
+    float reflect;             /* fraction of received damage sent back at the attacker */
+    bool ghost;                /* out of the fight: cannot be hit or targeted */
 } Combatant;
 
 typedef struct { bool active; Vec3 pos, vel; Entity owner; int skill, team; float life; } Projectile;
@@ -62,6 +67,7 @@ typedef struct {
     int nev;
     uint32_t rng;
     float gauge;               /* Resonance Gauge 0..100 (party ultimate) */
+    int awakening;             /* the hero's Ascendant Awakening (0..5): gates the player team's awakening skills */
 } CombatWorld;
 
 void  combat_init(CombatWorld *cw, const SkillDB *skills);
@@ -81,5 +87,7 @@ float combat_rand(CombatWorld *cw);            /* [0,1) */
 /* Deterministic part of the damage formula (no variance, no crit). */
 float combat_base_damage(const Combatant *a, const Skill *s, const Combatant *d);
 bool  combat_alive(const CombatWorld *cw, Entity e);
+/* Direct damage that bypasses mitigation (scripted effects: hazards, finishers); handles barrier and death. */
+void  combat_damage_raw(CombatWorld *cw, World *w, Combatant *d, float amount, Entity src);
 
 #endif

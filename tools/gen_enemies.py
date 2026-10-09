@@ -51,5 +51,18 @@ en("demon_legionary", "Demon Legionary", 22, (22, 8, 18, 8, 10), 3.8, 16, 150, "
 en("hollow_archer", "Hollow Marksman", 22, (16, 10, 12, 8, 14), 3.4, 18, 90, "ranged", ["shadow_arrow"], 90, {"shadow": 0.5, "holy": 1.5}, 1.0, top=(60, 20, 70), bot=(36, 14, 44), shoes=(24, 10, 24), eye=(255, 70, 90))
 en("skarn_final", "Skarn, Herald of the Hollow King", 24, (26, 20, 22, 14, 16), 4.8, 24, 1400, "melee", ["shadow_slash", "brute_smash"], 1800, {"fire": 0.7, "holy": 1.3}, 1.3, True, top=(70, 10, 50), bot=(46, 8, 34), shoes=(24, 6, 24), eye=(255, 40, 70))
 en("vorathis", "Vorathis, the Hollow King", 28, (34, 30, 34, 24, 14), 3.4, 30, 3000, "brute", ["brute_smash", "shadow_slash"], 5000, {"shadow": 0.3, "holy": 1.4}, 2.1, True, top=(20, 14, 40), bot=(14, 10, 30), shoes=(8, 6, 16), eye=(180, 140, 255))
+
+# ---- milestone 10: boss mechanic adds and the super-boss; boss skill kits ----
+en("thorn_vine", "Living Vine", 8, (4, 2, 12, 2, 1), 0.0, 3, 30, "melee", ["imp_claw"], 10, {"fire": 2.0}, 1.0, top=(60, 120, 40), bot=(40, 80, 30), shoes=(30, 50, 20), eye=(160, 255, 120), leash=1)
+en("void_blade", "Shadow Blade", 24, (18, 4, 6, 4, 18), 5.6, 30, 40, "melee", ["shadow_slash"], 0, SH, 0.8, top=(10, 6, 24), bot=(8, 6, 18), shoes=(6, 4, 12), eye=(200, 100, 255))
+en("shadow_clone", "Shadow Clone", 24, (16, 10, 12, 8, 12), 4.2, 30, 90, "melee", ["shadow_slash"], 0, SH, 1.0, top=(30, 24, 60), bot=(20, 16, 40), shoes=(10, 8, 20), eye=(220, 120, 255))
+en("aurel_unbound", "Aurel, Unbound", 40, (44, 40, 44, 30, 18), 3.8, 36, 4000, "brute", ["void_cleave", "gravity_slam"], 9000, {"shadow": 0.3, "holy": 1.0}, 2.2, True, top=(230, 200, 120), bot=(60, 50, 90), shoes=(30, 24, 50), eye=(255, 230, 150))
+KITS = {
+    "vessara": ["thorn_lash", "brute_smash", "shadow_arrow"], "khemet_ur": ["time_slash", "brute_smash", "sand_lash"],
+    "isrevna": ["frost_shard", "ice_burst", "shadow_arrow"], "pyrrhax": ["molten_slam", "brute_smash"],
+    "vorathis": ["void_cleave", "brute_smash", "void_orb"], "skarn_final": ["void_rend", "shadow_slash", "brute_smash"],
+}
+for e_ in E:
+    if e_["id"] in KITS: e_["skills"] = KITS[e_["id"]]
 json.dump({"enemies": E}, open(os.path.join(out, "enemies.json"), "w"), indent=1)
 print(len(E), "enemies")

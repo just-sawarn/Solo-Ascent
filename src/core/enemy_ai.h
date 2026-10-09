@@ -16,6 +16,8 @@ typedef struct {
     Entity target;
     Vec3 home;
     CharCtl ctl;
+    int sk[4]; int nsk;    /* scripted skill kit (boss phases); nsk == 0 uses the definition's */
+    float speed_mult;      /* scripted speed multiplier (1 = normal) */
 } Enemy;
 
 typedef struct { Enemy e[ENEMY_MAX]; } EnemyPool;

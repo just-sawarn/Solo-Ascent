@@ -74,6 +74,9 @@ def main(out):
             for z in zones:
                 if z["id"] == "aurelheim":
                     z["bosses"] += [dict(b, at=l["id"]) for b in boss_at.get(l["id"], [])]
+    for z in zones:   # the hidden super-boss waits at the Convergence Shrine in New Game+
+        if z['id'] == 'convergence_shrine':
+            z['bosses'].append({'enemy': 'aurel_unbound', 'quest': '', 'ng': True})
     # region tier -> default enemy level range by zone
     for z in zones:
         z["level"] = next(r["tier"] for r in REGIONS if r["id"] == z["region"])

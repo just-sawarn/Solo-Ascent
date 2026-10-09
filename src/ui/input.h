@@ -11,7 +11,8 @@ typedef struct {
     bool jump, attack, roll, lock;   /* latched presses */
     bool skill[4];                   /* latched skill-slot presses */
     bool talk_visible;               /* the game shows the TALK button (an NPC is near) */
-    bool talk;                       /* latched */
+    bool talk;                       /* latched: the context action (talk / Call Out / Quartet Strike) */
+    const char *ctx_label;           /* touch label of that button (NULL = TALK) */
     bool swap_next, cmd_cycle, menu; /* latched: switch character / cycle the party command / open the menu */
     bool quick[4];                   /* latched quick-use: HP potion, MP potion, revive, cleanse */
     int swap_to;                     /* latched direct selection 0..3, -1 none */

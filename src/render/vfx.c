@@ -74,6 +74,9 @@ static void streak(Vector3 a, Vector3 b, float w, Color col) {
     quad(mid, side, half, col);
 }
 
+static struct { Vector3 a, b; Color c; } BEAM[16]; static int nbeam;
+void vfx_beam(Vector3 a, Vector3 b, Color c) { if (nbeam < 16) BEAM[nbeam++] = (typeof(BEAM[0])){a, b, c}; }
+
 static float wrap(float v, float w) { return v - w * floorf(v / w + 0.5f); }
 static float h01(uint32_t i, uint32_t k) { return (float)(hash_combine(i, k) >> 8) * (1.0f / 16777216.0f); }
 
@@ -189,6 +192,15 @@ void vfx_frame(Camera3D cam, float t, float dt, QualityTier tier, WeatherKind wx
     if (!indoor) { weather_particles(wx, wxi, t, tier); ambient_motes(biome, t, tier, hour); }
     else ambient_motes(4, t, tier == TIER_MOBILE ? TIER_MOBILE : TIER_LOW, 12.0f);
     burst_update_draw(dt);
+    for (int i = 0; i < nbeam; ++i) {   /* beams are drawn as short overlapping streaks so they shimmer */
+        Vector3 d = Vector3Subtract(BEAM[i].b, BEAM[i].a); float l = Vector3Length(d);
+        int seg = (int)(l / 0.6f) + 1;
+        for (int k = 0; k < seg; ++k) {
+            float t0 = ((float)k + 0.1f * sinf(t * 6.0f + (float)(k + i))) / (float)seg, t1 = (float)(k + 1) / (float)seg;
+            streak(Vector3Add(BEAM[i].a, Vector3Scale(d, t0)), Vector3Add(BEAM[i].a, Vector3Scale(d, t1)), 0.035f, BEAM[i].c);
+        }
+    }
+    nbeam = 0;
     V.last = V.quads;
     if (V.quads == 0) return;
     V.mesh.triangleCount = V.quads * 2;

@@ -142,7 +142,7 @@ bool worlddb_load(WorldDB *db, const char *dir, const EnemyDB *edb) {
             if (z->nbosses >= 4) { ok = false; break; }
             ZoneBoss *zb = &z->bosses[z->nbosses++];
             snprintf(zb->enemy, sizeof zb->enemy, "%s", str(b, "enemy")); snprintf(zb->quest, sizeof zb->quest, "%s", str(b, "quest"));
-            snprintf(zb->at, sizeof zb->at, "%s", str(b, "at"));
+            snprintf(zb->at, sizeof zb->at, "%s", str(b, "at")); zb->ng_plus = cJSON_IsTrue(cJSON_GetObjectItemCaseSensitive(b, "ng"));
             zb->def = enemydb_find(edb, zb->enemy);
             if (zb->def < 0) { LOGE("zones.json: unknown boss '%s' in %s", zb->enemy, z->id); ok = false; }
         }

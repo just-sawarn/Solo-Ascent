@@ -23,6 +23,10 @@
 #include "render/vfx.h"
 #include "render/worldview.h"
 #include "core/worldgen.h"
+#include "core/boss.h"
+#include <raymath.h>
+#include "ui/boss_hud.h"
+#include "ui/ending.h"
 #include "render/renderer.h"
 #include "ui/debug_overlay.h"
 #include "ui/dialogue.h"
@@ -37,7 +41,7 @@
 #include <emscripten.h>
 #endif
 
-typedef enum { STATE_TITLE, STATE_PLAYING } GameState;
+typedef enum { STATE_TITLE, STATE_PLAYING, STATE_ENDING } GameState;
 
 typedef struct {
     World world;
@@ -85,6 +89,11 @@ typedef struct {
     float exit_cd, fade; bool boss_up[4];
     char start_zone[24]; float start_hour; int start_wx;   /* test/dev: ?zone=ID&hour=H&weather=KIND */
     char zone_title[48]; float zone_banner;
+    /* bosses, endings, New Game+ */
+    BossDB bdb; BossRt boss; bool boss_ok;
+    ImpactFrame impact; float member_flash[PARTY_MAX];
+    EndingUI ending; bool ended; int ng_plus; double play_time;
+    char start_boss[32]; float aura_t;
 } Game;
 
 static Game G; /* static: World and PhysWorld are large, no per-frame allocation anywhere */
@@ -189,14 +198,29 @@ static const char *zone_display_name(const Game *g, const char *id) {
     return li >= 0 ? g->story.loc[li].name : id;
 }
 
-static void spawn_enemy_def(Game *g, int def, float x, float z) {
-    if (def < 0) return;
+static Enemy *spawn_enemy_def(Game *g, int def, float x, float z) {
+    if (def < 0) return NULL;
     float y = g->zone_idx >= 0 && !g->legacy_zone ? zone_height(&g->zone, x, z) : 0.0f;
-    enemy_spawn(&g->enemies, &g->cw, &g->world, &g->edb, def, vec3(x, y, z));
+    Enemy *e = enemy_spawn(&g->enemies, &g->cw, &g->world, &g->edb, def, vec3(x, y, z));
+    if (e && g->ng_plus > 0) {   /* New Game+: tougher, harder-hitting enemies */
+        Combatant *c = combat_get(&g->cw, e->ent);
+        if (c) { float k = 1.0f + 0.6f * (float)g->ng_plus; c->max_hp *= k; c->hp = c->max_hp; c->dmg_dealt = 1.0f + 0.3f * (float)g->ng_plus; }
+    }
+    return e;
 }
 
 static void clear_enemies(Game *g) {
     for (int i = 0; i < ENEMY_MAX; ++i) if (g->enemies.e[i].used) enemy_remove(&g->enemies, &g->cw, &g->world, g->enemies.e[i].ent);
+}
+
+static void start_boss_script(Game *g, Enemy *e, Vec3 center) {
+    int bd = g->boss_ok ? bossdb_find(&g->bdb, g->edb.e[e->def].id) : -1;
+    if (bd < 0) return;
+    if (g->boss.active) boss_end(&g->boss, &g->party, &g->ctx);
+    boss_start(&g->boss, &g->bdb, bd, e->ent, center, &g->ctx);
+    g->boss.dmg_scale = 1.0f + 0.3f * (float)g->ng_plus;
+    Combatant *bc = combat_get(&g->cw, e->ent);
+    if (bc && g->ng_plus > 0) bc->hp = bc->max_hp;
 }
 
 static void spawn_zone_boss(Game *g, int bi) {
@@ -204,13 +228,15 @@ static void spawn_zone_boss(Game *g, int bi) {
     const ZoneBoss *b = &zd->bosses[bi];
     float x = g->zone.boss_pos.x, z = g->zone.boss_pos.z;
     if (b->at[0] && g->story_ok) { int li = storydb_find_loc(&g->story, b->at); if (li >= 0) { x = g->story.loc[li].lx; z = g->story.loc[li].lz + 6.0f; } }
-    spawn_enemy_def(g, b->def, x, z);
+    Enemy *e = spawn_enemy_def(g, b->def, x, z);
     g->boss_up[bi] = true;
+    if (e) start_boss_script(g, e, vec3(x, 0, z));
 }
 
 /* Builds the zone's collision, visuals and population, and moves the party in. from < 0 = default arrival. */
 static void zone_enter(Game *g, int zi, int from) {
     const ZoneDef *zd = &g->wdb.zone[zi];
+    if (g->boss.active) boss_end(&g->boss, &g->party, &g->ctx);
     g->zone_idx = zi;
     zone_generate(&g->zone, &g->wdb, zi);
     g->legacy_zone = !strcmp(zd->id, "aurelheim");   /* Aurelheim keeps its hand-built sandbox visuals and collision */
@@ -258,6 +284,10 @@ static void world_frame(Game *g, float dt, bool paused) {
     if (!paused && g->story_ok) {
         for (int b = 0; b < zd->nbosses; ++b) {
             if (g->boss_up[b]) continue;
+            if (zd->bosses[b].ng_plus) {   /* the hidden super-boss: New Game+ only, until it falls */
+                if (g->ng_plus > 0 && !flag_get(&g->ss, "flag.super_boss_down") && !g->boss.active) { spawn_zone_boss(g, b); toast_text(g, "Something older than the Hollow King waits here..."); }
+                continue;
+            }
             int q = storydb_find_quest(&g->story, zd->bosses[b].quest);
             if (q >= 0 && g->ss.q[q].state == QS_ACTIVE) {
                 spawn_zone_boss(g, b); toast_text(g, "A powerful presence stirs...");
@@ -292,6 +322,7 @@ static void new_game(Game *g) {
     enemies_init(&g->enemies);
     hud_init(&g->hud);
     memset(g->actors, 0, sizeof g->actors);
+    g->boss = (BossRt){0}; g->impact = (ImpactFrame){0}; g->ended = false; g->play_time = 0;
     memset(g->ev_roll, 0, sizeof g->ev_roll); memset(g->ev_cast, 0, sizeof g->ev_cast);
     g->ctx = (PartyCtx){&g->cw, &g->world, &g->phys, &g->enemies, &g->edb, &g->skills};
     party_init(&g->party);
@@ -323,8 +354,24 @@ static void new_game(Game *g) {
     if (g->world_ok) zone_enter(g, worlddb_zone(&g->wdb, "aurelheim"), -1);
     else { snprintf(g->region, sizeof g->region, "aurelheim"); test_scene_build_physics(&g->phys); }
     if (g->world_ok && g->start_zone[0]) { int zi = worlddb_zone(&g->wdb, g->start_zone); if (zi >= 0) zone_enter(g, zi, -1); }
+    if (g->start_boss[0] && g->world_ok) {   /* ?boss=<enemy id>: fight it here, now (tests and rehearsal) */
+        int def = enemydb_find(&g->edb, g->start_boss);
+        Enemy *e = def >= 0 ? spawn_enemy_def(g, def, g->zone.center.x, g->zone.center.z - 8.0f) : NULL;
+        if (e) start_boss_script(g, e, vec3(g->zone.center.x, 0, g->zone.center.z));
+    }
     if (g->start_hour >= 0) g->hour = g->start_hour;
     if (g->start_wx >= 0) weather_set(&g->wx, (WeatherKind)g->start_wx, 1.0f);
+}
+
+static void start_new_game_plus(Game *g) {
+    Inventory keep = g->inv; int lvl = g->ss.level, aw = g->ss.awakening, ng = g->ng_plus + 1;
+    new_game(g);
+    g->inv = keep; g->ng_plus = ng;
+    if (g->story_ok) { g->ss.level = lvl; g->ss.awakening = aw; flag_set(&g->ss, "flag.ng_plus", 1); }
+    apply_all_gear(g);
+    g->state = STATE_PLAYING; g->auto_orbit = false;
+    toast_text(g, "New Game+: enemies are stronger. The Convergence Shrine remembers.");
+    platform_report_state("playing");
 }
 
 static Vector3 lock_pos(const Game *g) {
@@ -355,14 +402,19 @@ static void sim_step(Game *g, bool first_step) {
     for (int i = 0; i < pt->n; ++i) { g->ev_roll[i] |= pt->m[i].pc.ev_roll; }
     enemies_update(&g->enemies, &g->cw, &g->world, &g->phys, &g->edb, SIM_DT);
     combat_update(&g->cw, &g->world, &g->phys, SIM_DT);
+    if (g->boss.active) boss_update(&g->boss, &g->bdb, pt, &g->ctx, SIM_DT);
     if (g->dbg.god_mode) for (int i = 0; i < pt->n; ++i) { Combatant *c = party_cb(pt, &g->ctx, i); if (c && !c->dead) c->hp = c->max_hp; }
 
     /* the controlled member fell: hand control to someone alive; a full wipe respawns the party */
     Combatant *ac = party_cb(pt, &g->ctx, pt->active);
-    if (ac && ac->dead) { int nx = party_next_alive(pt, &g->ctx, pt->active); if (nx >= 0) { party_switch(pt, &g->ctx, nx); g->lock_ent = ENTITY_NULL; } }
+    if (ac && ac->dead && !g->boss.lock_control) { int nx = party_next_alive(pt, &g->ctx, pt->active); if (nx >= 0) { party_switch(pt, &g->ctx, nx); g->lock_ent = ENTITY_NULL; } }
     if (party_wiped(pt, &g->ctx)) {
         g->respawn_t += SIM_DT;
-        if (g->respawn_t > 3.5f) { party_respawn_all(pt, &g->ctx, vec3(0, 0, 0.5f)); pt->active = 0; g->lock_ent = ENTITY_NULL; g->respawn_t = 0; }
+        if (g->respawn_t > 3.5f) {
+            Vec3 rp = g->zone_idx >= 0 && !g->legacy_zone ? g->zone.spawn : vec3(0, 0, 0.5f);
+            party_respawn_all(pt, &g->ctx, rp); pt->active = 0; g->lock_ent = ENTITY_NULL; g->respawn_t = 0;
+            if (g->boss.active) boss_reset(&g->boss, &g->bdb, pt, &g->ctx);
+        }
     }
 }
 
@@ -397,6 +449,7 @@ static void process_events(Game *g) {
                 if (en && g->story_ok) {
                     const EnemyDef *ed = &g->edb.e[en->def];
                     if (ed->boss) story_on_boss(&g->ss, &g->story, &g->sh, ed->id);
+                    if (!strcmp(ed->id, "aurel_unbound")) flag_set(&g->ss, "flag.super_boss_down", 1);
                     story_on_kill(&g->ss, &g->story, &g->sh, ed->id);
                 }
                 if (en) {
@@ -476,6 +529,7 @@ static void do_party_controls(Game *g) {
     Input *in = &g->input;
     Party *pt = &g->party;
     int to = -1;
+    if (g->boss.lock_control) { in->swap_to = -1; in->swap_next = false; }   /* the Solo Ascent: Kael stands alone */
     if (in->swap_to >= 0 && in->swap_to < pt->n) to = in->swap_to;
     else if (in->swap_next) to = party_next_alive(pt, &g->ctx, pt->active);
     if (to >= 0 && party_switch(pt, &g->ctx, to)) {
@@ -506,6 +560,50 @@ static void skip_tracked_quest(Game *g) {
     refresh_npcs(g);
 }
 
+static const char *MEMBER_ULT[4] = {"ASCENDANT DAWN", "UNBROKEN VOW", "STARFALL", "RADIANT RENEWAL"};
+static const Color MEMBER_COL[4] = {{255, 220, 120, 255}, {150, 190, 255, 255}, {190, 150, 255, 255}, {150, 255, 200, 255}};
+
+static Vector3 boss_pos3(Game *g) { Vec3 p = g->world.pos[ecs_index(g->boss.ent)]; return (Vector3){p.x, p.y + 1.4f, p.z}; }
+
+/* Presentation of what the boss script asked for. */
+static void boss_actions(Game *g) {
+    const char *a;
+    while ((a = boss_pop_action(&g->boss))) {
+        if (!strncmp(a, "toast:", 6)) toast_text(g, a + 6);
+        else if (!strncmp(a, "cutscene:", 9)) { if (g->story_ok) dui_queue_cutscene(&g->dui, a + 9); }
+        else if (!strncmp(a, "gauge:", 6)) g->cw.gauge = (float)atof(a + 6);
+        else if (!strcmp(a, "vfx:rewind")) { for (int i = 0; i < 4; ++i) vfx_burst(VFX_PICKUP, boss_pos3(g), (Vector3){0, 1, 0}); camrig_shake(&g->cam, 0.12f); g->hitstop = fmaxf(g->hitstop, 0.2f); }
+        else if (!strncmp(a, "return:", 7)) {
+            int i = atoi(a + 7);
+            if (i >= 0 && i < g->party.n) {
+                Vec3 p = g->party.m[i].pc.ch.pos;
+                for (int k = 0; k < 3; ++k) vfx_burst(VFX_HEAL, (Vector3){p.x, p.y + 0.8f, p.z}, (Vector3){0, 1, 0});
+                vfx_burst(VFX_HIT, (Vector3){p.x, p.y + 1.0f, p.z}, (Vector3){0, 1, 0});
+                char b[96]; snprintf(b, sizeof b, "%s answers the call!", g->party.m[i].def->name);
+                toast_text(g, b); camrig_shake(&g->cam, 0.15f); g->hitstop = fmaxf(g->hitstop, 0.15f);
+                g->impact = (ImpactFrame){.t = 0.6f, .col = MEMBER_COL[i & 3]}; snprintf(g->impact.text, sizeof g->impact.text, "%s", g->party.m[i].def->name);
+            }
+        }
+        else if (!strncmp(a, "freeze:", 7)) { int i = atoi(a + 7); if (i >= 0 && i < g->party.n) { Vec3 p = g->party.m[i].pc.ch.pos; for (int k = 0; k < 3; ++k) vfx_burst(VFX_SLASH, (Vector3){p.x, p.y + 1.0f, p.z}, (Vector3){0, 1, 0}); } }
+        else if (!strncmp(a, "strike:", 7)) {
+            int who = !strcmp(a + 7, "bram") ? 1 : !strcmp(a + 7, "lyra") ? 2 : !strcmp(a + 7, "mirelle") ? 3 : 0;
+            g->impact = (ImpactFrame){.t = 1.1f, .col = MEMBER_COL[who]};
+            snprintf(g->impact.text, sizeof g->impact.text, "%s", MEMBER_ULT[who]);
+            g->hitstop = fmaxf(g->hitstop, 0.30f); camrig_shake(&g->cam, 0.28f);
+            for (int k = 0; k < 4; ++k) { vfx_burst(VFX_HIT, boss_pos3(g), (Vector3){0, 1, 0}); vfx_burst(VFX_SLASH, boss_pos3(g), (Vector3){0, 0, 0}); }
+        }
+        else if (!strcmp(a, "quartet:done")) { for (int k = 0; k < 6; ++k) { vfx_burst(VFX_HIT, boss_pos3(g), (Vector3){0, 1, 0}); vfx_burst(VFX_EMBER, boss_pos3(g), (Vector3){0, 1, 0}); } camrig_shake(&g->cam, 0.4f); g->hitstop = 0.5f; }
+    }
+}
+
+static bool boss_context_action(Game *g) {
+    BossRt *b = &g->boss;
+    if (!b->active || !g->input.talk) return false;
+    if (b->finisher_ready && !b->quartet) { boss_quartet(b); return true; }
+    if (b->callout_ready && boss_call_out(b, &g->party, &g->ctx)) return true;
+    return false;
+}
+
 static void story_frame(Game *g, float dt, bool hidden) {
     bool paused = hidden || g->menu.open || g->dui.open;
     Combatant *acb = combat_get(&g->cw, active_ent(g));
@@ -522,6 +620,9 @@ static void story_frame(Game *g, float dt, bool hidden) {
     }
     if (g->dbg.visible && g->world_ok) {
         if (IsKeyPressed(KEY_Y)) { WeatherKind k = (WeatherKind)((g->wx.kind + 1) % WX_COUNT); weather_set(&g->wx, k, 1.0f); toast_text(g, weather_name(k)); }
+        if (IsKeyPressed(KEY_U) && g->boss.active) { Combatant *bc = combat_get(&g->cw, g->boss.ent); if (bc) { float f = bc->hp / bc->max_hp - 0.18f; if (f < 0.03f) f = 0.03f; bc->hp = bc->max_hp * f; toast_text(g, "Dev: boss HP -18%"); } }
+        if (IsKeyPressed(KEY_SEMICOLON)) { flag_set(&g->ss, "flag.game_cleared", 1); toast_text(g, "Dev: game cleared"); }
+        if (IsKeyPressed(KEY_APOSTROPHE)) { g->ss.awakening = (g->ss.awakening + 1) % 6; char b[40]; snprintf(b, sizeof b, "Dev: awakening %d", g->ss.awakening); toast_text(g, b); }
         if (IsKeyPressed(KEY_T)) g->hour = fmodf(g->hour + 3.0f, 24.0f);
         if (IsKeyPressed(KEY_P) && g->zone.nexits > 0) {   /* dev: step into the first portal */
             const ZoneExit *e = &g->zone.exits[0]; float l = hypotf(e->x, e->z);
@@ -529,6 +630,8 @@ static void story_frame(Game *g, float dt, bool hidden) {
             party_teleport(&g->party, &g->ctx, at, 0.0f); g->exit_cd = 0.0f;
         }
     }
+    g->cw.awakening = g->ss.awakening;
+    if (paused) g->input.talk = false;
     g->story_timer += dt;
     if (g->story_timer > 0.4f) {
         g->story_timer = 0;
@@ -551,7 +654,12 @@ static void story_frame(Game *g, float dt, bool hidden) {
     /* talking */
     if (!g->dui.open) for (int i = 0; i < g->npcs.count; ++i) g->npcs.n[i].talking = false;
     g->near_npc = (!paused && acb && !acb->dead) ? npcw_nearest(&g->npcs, apos, 2.8f) : -1;
-    g->input.talk_visible = g->near_npc >= 0;
+    {
+        bool fin = g->boss.active && g->boss.finisher_ready && !g->boss.quartet, call = g->boss.active && g->boss.callout_ready;
+        g->input.talk_visible = g->near_npc >= 0 || fin || call;
+        g->input.ctx_label = fin ? "QUARTET" : call ? "CALL" : NULL;
+    }
+    if (!paused && boss_context_action(g)) g->input.talk = false;
     if (g->input.talk) {
         g->input.talk = false;
         if (g->near_npc >= 0 && !g->dui.open) {
@@ -611,7 +719,7 @@ static void frame(void) {
             Combatant *c = combat_get(&g->cw, en->ent);
             if (c && c->dead && c->dead_t > 4.2f) enemy_remove(&g->enemies, &g->cw, &g->world, en->ent);
         }
-    } else {
+    } else if (g->state == STATE_TITLE) {
         g->title_t += (double)dt;
         if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE) || IsMouseButtonPressed(MOUSE_BUTTON_LEFT) ||
             GetTouchPointCount() > 0) {
@@ -625,9 +733,23 @@ static void frame(void) {
         for (int s = 0; s < steps; ++s) { ecs_snapshot_transforms(&g->world); enemies_update(&g->enemies, &g->cw, &g->world, &g->phys, &g->edb, SIM_DT); combat_update(&g->cw, &g->world, &g->phys, SIM_DT); }
     }
     process_events(g);
+    if (g->boss.nout > 0) boss_actions(g);
+    if (playing) g->play_time += (double)dt;
+    if (g->impact.t > 0) g->impact.t -= dt;
     hud_update(&g->hud, dt);
     if (playing && g->story_ok) story_frame(g, dt, hidden);
     if (g->world_ok) world_frame(g, dt, hidden || !playing || g->menu.open || g->dui.open);
+
+    if (playing && g->story_ok && !g->ended && flag_get(&g->ss, "flag.game_cleared") > 0 && !g->dui.open && g->dui.nqueue == 0 && !g->boss.active) {
+        g->ended = true;
+        bool all = true;
+        static const char *CHAIN[] = {"CQ-Bram4", "CQ-Lyra4", "CQ-Mirelle4", "CQ-Darius3"};
+        for (int i = 0; i < 4; ++i) { int q = storydb_find_quest(&g->story, CHAIN[i]); if (q < 0 || g->ss.q[q].state != QS_COMPLETE) all = false; }
+        ending_start(&g->ending, all, g->ng_plus, g->kills, (float)g->play_time);
+        g->state = STATE_ENDING;
+        if (all && g->story_ok) dui_queue_cutscene(&g->dui, "post_credits");
+        platform_report_state("ending");
+    }
 
     Combatant *acb = combat_get(&g->cw, active_ent(g));
     if (playing) {
@@ -643,6 +765,7 @@ static void frame(void) {
         platform_report_inventory(g->inv.gold, INV_SLOTS - inv_free_slots(&g->inv), g->menu.open, acb ? acb->atk : 0.0f);
         if (g->story_ok) { int act_q = 0, done_q = 0; for (int i = 0; i < g->story.nquest; ++i) done_q += g->ss.q[i].state == QS_COMPLETE, act_q += g->ss.q[i].state == QS_ACTIVE || g->ss.q[i].state == QS_READY; platform_report_story(story_mq(&g->ss, &g->story), story_act(&g->ss, &g->story), g->npcs.count, g->dui.open, act_q, g->ss.tracked, done_q); }
         if (g->world_ok && g->zone_idx >= 0) platform_report_world(g->region, (int)g->zone.gen, g->zone.region, (int)g->wx.kind, g->wx.intensity, g->hour, worldview_last_props(), vfx_last_count(), alive);
+        platform_report_boss(g->boss.active, g->boss.phase, boss_hp_frac(&g->boss, &g->ctx), g->boss.lock_control, g->boss.callout_ready, g->boss.finisher_ready, g->boss.called, g->boss.defeated, g->ss.awakening, g->ng_plus);
         platform_report_party(g->party.active, (int)g->party.cmd, dead, fol, hp[0], hp[1], hp[2], hp[3]);
     }
     dbg_update(&g->dbg, dt, steps);
@@ -678,7 +801,7 @@ static void frame(void) {
             mm.cast_clip = heroes_clip(s->anim[0] ? s->anim : "Sword_Attack"); mm.cast_seconds = s->total_time;
         }
         if (c) {
-            mm.dead = c->dead; mm.staggered = c->stagger_t > 0; mm.guarding = c->guarding;
+            mm.dead = c->dead || c->ghost; mm.staggered = c->stagger_t > 0; mm.guarding = c->guarding;
             mm.flash = c->hit_flash > 0 ? fminf(1.0f, c->hit_flash / 0.12f) : 0.0f;
         }
         g->ev_roll[i] = g->ev_cast[i] = false;
@@ -691,6 +814,25 @@ static void frame(void) {
     if (g->world_ok && g->zone_idx >= 0 && !test_scene_showcase()) {
         Vec3 fp = active_member(g)->pc.ch.pos;
         worldview_submit(&g->zone, &g->wdb.region[g->zone.region], (Vector3){fp.x, fp.y, fp.z}, (float)g->time, renderer_tier(), g->legacy_zone);
+    }
+    if (g->boss.active) worldview_hazards(&g->boss, (float)g->time);
+    if (g->story_ok && g->ss.awakening > 0 && anim_dt > 0) {   /* Ascendant Awakening: the hero's aura grows with each stage */
+        Vec3 kp = ecs_render_pos(&g->world, ecs_index(g->party.m[0].ent), alpha);
+        int aw = g->ss.awakening;
+        g->aura_t += anim_dt;
+        float rate = aw >= 4 ? 0.05f : aw >= 2 ? 0.12f : 0.25f;
+        if (g->aura_t > rate) { g->aura_t = 0; vfx_burst(VFX_AURA, (Vector3){kp.x + 0.25f * sinf((float)g->time * 3.0f), kp.y + 0.1f, kp.z}, (Vector3){0, 1, 0}); }
+        if (aw >= 3) {   /* halo */
+            float hy = kp.y + 2.15f;
+            renderer_submit(proc_mesh(PM_TORUS), MatrixMultiply(MatrixMultiply(MatrixScale(0.32f, 0.32f, 0.32f), MatrixRotateX(0.25f)), MatrixTranslate(kp.x, hy, kp.z)),
+                            (RenderMat){.base = (Color){255, 226, 130, 255}, .emissive = 0.9f, .flags = RM_NO_SHADOW_CAST | RM_NO_OUTLINE});
+        }
+        if (aw >= 5) {   /* Bond Resonance: golden links between the party */
+            for (int i = 1; i < g->party.n; ++i) {
+                Vec3 mp = ecs_render_pos(&g->world, ecs_index(g->party.m[i].ent), alpha);
+                vfx_beam((Vector3){kp.x, kp.y + 1.1f, kp.z}, (Vector3){mp.x, mp.y + 1.1f, mp.z}, (Color){255, 214, 110, 255});
+            }
+        }
     }
     for (int i = 0; i < g->party.n; ++i) {
         Vec3 mp = ecs_render_pos(&g->world, ecs_index(g->party.m[i].ent), alpha);
@@ -721,7 +863,12 @@ static void frame(void) {
     BeginDrawing();
     renderer_end_frame();
     int sw = GetScreenWidth(), sh = GetScreenHeight();
-    if (g->state == STATE_TITLE) {
+    if (g->state == STATE_ENDING) {
+        int r = ending_update_draw(&g->ending, g->dui.open ? 0.0f : dt);
+        if (g->story_ok) dui_update_draw(&g->dui, &g->ss, &g->story, &g->sh, dt);
+        if (r == 1 && !g->dui.open) start_new_game_plus(g);
+        else if (r == 2 && !g->dui.open) { g->ng_plus = 0; new_game(g); g->state = STATE_TITLE; platform_report_state("title"); }
+    } else if (g->state == STATE_TITLE) {
         const char *title = "SOLO ASCENT";
         int fs = sh / 8;
         DrawText(title, (sw - MeasureText(title, fs)) / 2 + 3, sh / 7 + 3, fs, (Color){0, 0, 0, 160});
@@ -749,6 +896,7 @@ static void frame(void) {
                               .hour = g->hour, .region_name = region_label, .near_npc = g->near_npc, .touch_ui = g->input.touch_ui};
             story_hud_draw(&sc);
         }
+        boss_hud_draw(&g->boss, &g->bdb, &g->ctx, (float)g->time, g->input.touch_ui);
         input_draw_touch(&g->input);
         for (int i = 0; i < 6; ++i) {
             if (g->loot_log[i].t <= 0) continue;
@@ -770,6 +918,7 @@ static void frame(void) {
         DrawText(g->zone_title, (sw - MeasureText(g->zone_title, fs)) / 2 + 2, sh / 6 + 2, fs, (Color){0, 0, 0, (unsigned char)(160 * a)});
         DrawText(g->zone_title, (sw - MeasureText(g->zone_title, fs)) / 2, sh / 6, fs, (Color){255, 236, 190, (unsigned char)(255 * a)});
     }
+    impact_frame_draw(&g->impact);
     if (g->fade > 0) DrawRectangle(0, 0, sw, sh, (Color){0, 0, 0, (unsigned char)(255.0f * fminf(1.0f, g->fade))});
     if (g->toast_t > 0) {
         g->toast_t -= (double)dt;
@@ -807,6 +956,7 @@ int main(int argc, char **argv) {
         else if (!strcmp(argv[i], "--rack")) rack = true;
         else if (!strcmp(argv[i], "--arena")) G.arena = true;
         else if (!strcmp(argv[i], "--packtest")) packtest = true;
+        else if (!strcmp(argv[i], "--boss") && i + 1 < argc) snprintf(G.start_boss, sizeof G.start_boss, "%s", argv[++i]);
         else if (!strcmp(argv[i], "--zone") && i + 1 < argc) snprintf(G.start_zone, sizeof G.start_zone, "%s", argv[++i]);
         else if (!strcmp(argv[i], "--hour") && i + 1 < argc) G.start_hour = (float)atof(argv[++i]);
         else if (!strcmp(argv[i], "--weather") && i + 1 < argc) { bool ok; G.start_wx = (int)weather_from_name(argv[++i], &ok); if (!ok) G.start_wx = -1; }
@@ -826,6 +976,8 @@ int main(int argc, char **argv) {
                 partydb_load(&G.pdb, &G.skills, "data/party.json") && itemdb_load(&G.idb, "data", &G.edb);
     G.story_ok = storydb_load(&G.story, "data", &G.edb, &G.idb);
     G.world_ok = worlddb_load(&G.wdb, "data", &G.edb);
+    G.boss_ok = bossdb_load(&G.bdb, "data", &G.edb, &G.skills);
+    if (!G.boss_ok) LOGE("boss data failed to load");
     if (!G.world_ok) LOGE("world data failed to load (sandbox only)");
     if (!G.story_ok) LOGE("story data failed to load");
     G.gear_level = 25; /* sandbox: all gear usable until the XP system lands */

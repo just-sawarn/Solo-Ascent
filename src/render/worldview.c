@@ -215,3 +215,31 @@ void worldview_submit(const Zone *z, const RegionDef *rd, Vector3 focus, float t
         renderer_submit(proc_mesh(PM_CUBE), MatrixMultiply(MatrixScale(0.9f, 1.2f, 0.9f), MatrixTranslate(cx + cosf(a) * ((b->x1 - b->x0) * 0.5f + 0.02f), gy + 1.8f, cz + sinf(a) * ((b->z1 - b->z0) * 0.5f + 0.02f))), pm(C(255, 214, 140), 0.85f, RM_NO_SHADOW_CAST | RM_NO_OUTLINE));
     }
 }
+
+void worldview_hazards(const BossRt *rt, float t) {
+    for (int i = 0; i < BOSS_HZ; ++i) {
+        const Hazard *h = &rt->hz[i];
+        if (!h->on) continue;
+        Color col = h->kind == HZ_SAND ? C(226, 190, 120) : h->kind == HZ_FIRE ? C(255, 110, 40) : C(170, 90, 255);
+        bool tele = h->tele > 0;
+        float pulse = 0.5f + 0.4f * sinf(t * 10.0f);
+        if (h->kind == HZ_WAVE) {   /* an expanding ring of glowing blocks */
+            int n = (int)(h->r * 5.0f) + 12; if (n > 96) n = 96;
+            for (int k = 0; k < n; ++k) {
+                float a = (float)k / (float)n * 6.2831853f;
+                float x = h->x + cosf(a) * h->r, z = h->z + sinf(a) * h->r;
+                renderer_submit(proc_mesh(PM_CUBE), MatrixMultiply(MatrixMultiply(MatrixScale(0.5f, tele ? 0.05f : 0.35f, 1.2f), MatrixRotateY(-a)), MatrixTranslate(x, 0.15f, z)),
+                                (RenderMat){.base = col, .emissive = tele ? pulse : 0.9f, .flags = RM_NO_SHADOW_CAST | RM_NO_OUTLINE | RM_NO_RECEIVE});
+            }
+            continue;
+        }
+        renderer_submit(proc_mesh(PM_CYL), MatrixMultiply(MatrixScale(h->r, tele ? 0.03f : 0.06f, h->r), MatrixTranslate(h->x, 0.04f + 0.0f, h->z)),
+                        (RenderMat){.base = tele ? C(col.r / 2, col.g / 2, col.b / 2) : col, .emissive = tele ? 0.35f * pulse : 0.55f, .flags = RM_NO_SHADOW_CAST | RM_NO_OUTLINE});
+        int n = (int)(h->r * 5.0f) + 8;
+        for (int k = 0; k < n; ++k) {
+            float a = (float)k / (float)n * 6.2831853f;
+            renderer_submit(proc_mesh(PM_CUBE), MatrixMultiply(MatrixMultiply(MatrixScale(0.35f, 0.5f, 0.12f), MatrixRotateY(-a)), MatrixTranslate(h->x + cosf(a) * h->r, 0.25f, h->z + sinf(a) * h->r)),
+                            (RenderMat){.base = col, .emissive = tele ? pulse : 0.95f, .flags = RM_NO_SHADOW_CAST | RM_NO_OUTLINE | RM_NO_RECEIVE});
+        }
+    }
+}

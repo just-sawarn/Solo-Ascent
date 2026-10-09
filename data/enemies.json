@@ -959,6 +959,7 @@
    "behavior": "brute",
    "preferred_range": 2.2,
    "skills": [
+    "thorn_lash",
     "brute_smash",
     "shadow_arrow"
    ],
@@ -1206,8 +1207,9 @@
    "behavior": "brute",
    "preferred_range": 2.2,
    "skills": [
+    "time_slash",
     "brute_smash",
-    "shadow_slash"
+    "sand_lash"
    ],
    "xp": 900,
    "resist": {
@@ -1407,8 +1409,9 @@
    "behavior": "ranged",
    "preferred_range": 9,
    "skills": [
-    "shadow_arrow",
-    "brute_smash"
+    "frost_shard",
+    "ice_burst",
+    "shadow_arrow"
    ],
    "xp": 1000,
    "resist": {
@@ -1658,8 +1661,8 @@
    "behavior": "brute",
    "preferred_range": 2.2,
    "skills": [
-    "brute_smash",
-    "shadow_slash"
+    "molten_slam",
+    "brute_smash"
    ],
    "xp": 1400,
    "resist": {
@@ -1810,6 +1813,7 @@
    "behavior": "melee",
    "preferred_range": 1.8,
    "skills": [
+    "void_rend",
     "shadow_slash",
     "brute_smash"
    ],
@@ -1861,8 +1865,9 @@
    "behavior": "brute",
    "preferred_range": 2.2,
    "skills": [
+    "void_cleave",
     "brute_smash",
-    "shadow_slash"
+    "void_orb"
    ],
    "xp": 5000,
    "resist": {
@@ -1891,6 +1896,206 @@
      180,
      140,
      255
+    ]
+   }
+  },
+  {
+   "id": "thorn_vine",
+   "name": "Living Vine",
+   "level": 8,
+   "stats": {
+    "str": 4,
+    "int": 2,
+    "vit": 12,
+    "wis": 2,
+    "agi": 1
+   },
+   "speed": 0.0,
+   "aggro_range": 40,
+   "leash": 1,
+   "poise": 30,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "imp_claw"
+   ],
+   "xp": 10,
+   "resist": {
+    "fire": 2.0
+   },
+   "scale": 1.0,
+   "boss": false,
+   "paint": {
+    "top": [
+     60,
+     120,
+     40
+    ],
+    "bottom": [
+     40,
+     80,
+     30
+    ],
+    "shoes": [
+     30,
+     50,
+     20
+    ],
+    "eye": [
+     160,
+     255,
+     120
+    ]
+   }
+  },
+  {
+   "id": "void_blade",
+   "name": "Shadow Blade",
+   "level": 24,
+   "stats": {
+    "str": 18,
+    "int": 4,
+    "vit": 6,
+    "wis": 4,
+    "agi": 18
+   },
+   "speed": 5.6,
+   "aggro_range": 30,
+   "leash": 26,
+   "poise": 40,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash"
+   ],
+   "xp": 0,
+   "resist": {
+    "shadow": 0.5,
+    "holy": 1.5
+   },
+   "scale": 0.8,
+   "boss": false,
+   "paint": {
+    "top": [
+     10,
+     6,
+     24
+    ],
+    "bottom": [
+     8,
+     6,
+     18
+    ],
+    "shoes": [
+     6,
+     4,
+     12
+    ],
+    "eye": [
+     200,
+     100,
+     255
+    ]
+   }
+  },
+  {
+   "id": "shadow_clone",
+   "name": "Shadow Clone",
+   "level": 24,
+   "stats": {
+    "str": 16,
+    "int": 10,
+    "vit": 12,
+    "wis": 8,
+    "agi": 12
+   },
+   "speed": 4.2,
+   "aggro_range": 30,
+   "leash": 26,
+   "poise": 90,
+   "behavior": "melee",
+   "preferred_range": 1.8,
+   "skills": [
+    "shadow_slash"
+   ],
+   "xp": 0,
+   "resist": {
+    "shadow": 0.5,
+    "holy": 1.5
+   },
+   "scale": 1.0,
+   "boss": false,
+   "paint": {
+    "top": [
+     30,
+     24,
+     60
+    ],
+    "bottom": [
+     20,
+     16,
+     40
+    ],
+    "shoes": [
+     10,
+     8,
+     20
+    ],
+    "eye": [
+     220,
+     120,
+     255
+    ]
+   }
+  },
+  {
+   "id": "aurel_unbound",
+   "name": "Aurel, Unbound",
+   "level": 40,
+   "stats": {
+    "str": 44,
+    "int": 40,
+    "vit": 44,
+    "wis": 30,
+    "agi": 18
+   },
+   "speed": 3.8,
+   "aggro_range": 36,
+   "leash": 26,
+   "poise": 4000,
+   "behavior": "brute",
+   "preferred_range": 2.2,
+   "skills": [
+    "void_cleave",
+    "gravity_slam"
+   ],
+   "xp": 9000,
+   "resist": {
+    "shadow": 0.3,
+    "holy": 1.0
+   },
+   "scale": 2.2,
+   "boss": true,
+   "paint": {
+    "top": [
+     230,
+     200,
+     120
+    ],
+    "bottom": [
+     60,
+     50,
+     90
+    ],
+    "shoes": [
+     30,
+     24,
+     50
+    ],
+    "eye": [
+     255,
+     230,
+     150
     ]
    }
   }
