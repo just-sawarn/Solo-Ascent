@@ -17,6 +17,8 @@ typedef struct {
     float flash;                           /* white hit flash 0..1 */
 } MemberMotion;
 
+/* Which CC0 weapon model a member holds: "dagger", "short_sword", "long_sword", "katana", "axe", "club", "spear" (staves are built in). */
+void heroes_set_weapon(int member, const char *model);
 void heroes_update(int member, float dt, const MemberMotion *m);
 void heroes_submit(int member, Vector3 pos, float yaw, float t);
 #endif

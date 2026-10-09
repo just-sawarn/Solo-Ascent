@@ -25,6 +25,9 @@ typedef struct {
     int level;
     Stats st;
     float weapon_atk, weapon_matk, armor;
+    struct { float str, intel, vit, wis, agi; } gear; /* stat bonuses from equipment */
+    float gear_hp, gear_mp, gear_crit;
+    float elem_boost[EL_COUNT];                         /* enchant damage multipliers (1 = none) */
     float max_hp, max_mp, atk, matk, def, mdef, crit;       /* derived (see combatant_recalc) */
     float hp, mp;
     float resist[EL_COUNT];                                  /* damage taken multiplier per element */
@@ -65,7 +68,9 @@ void  combat_init(CombatWorld *cw, const SkillDB *skills);
 Combatant *combat_add(CombatWorld *cw, World *w, Entity e, int team, int level, Stats st, float poise);
 void  combat_remove(CombatWorld *cw, Entity e);
 Combatant *combat_get(CombatWorld *cw, Entity e);
-void  combatant_recalc(Combatant *c);          /* recompute derived stats; keeps hp/mp ratios */
+void  combatant_recalc(Combatant *c);
+/* Apply a status from outside combat (consumables, scripted events). */
+void  combat_apply_status(CombatWorld *cw, Combatant *c, StatusKind k, float time, float power, Entity src);          /* recompute derived stats; keeps hp/mp ratios */
 
 bool  combat_can_cast(const CombatWorld *cw, const Combatant *c, int skill);
 bool  combat_begin_cast(CombatWorld *cw, World *w, Entity caster, int skill, Entity target, float aim_yaw);

@@ -1,0 +1,159 @@
+{
+ "loot": [
+  {
+   "enemy": "shadow_soldier",
+   "gold": [
+    8,
+    18
+   ],
+   "drops": [
+    {
+     "item": "shadow_residue",
+     "chance": 0.45,
+     "qty": [
+      1,
+      2
+     ]
+    },
+    {
+     "item": "iron_ore",
+     "chance": 0.3,
+     "qty": [
+      1,
+      2
+     ]
+    },
+    {
+     "item": "hp_small",
+     "chance": 0.2,
+     "qty": [
+      1,
+      1
+     ]
+    },
+    {
+     "item": "spark_dust",
+     "chance": 0.08,
+     "qty": [
+      1,
+      1
+     ]
+    },
+    {
+     "item": "acc_lucky_coin",
+     "chance": 0.01,
+     "qty": [
+      1,
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "enemy": "shadow_archer",
+   "gold": [
+    12,
+    26
+   ],
+   "drops": [
+    {
+     "item": "shadow_residue",
+     "chance": 0.5,
+     "qty": [
+      1,
+      2
+     ]
+    },
+    {
+     "item": "linen_thread",
+     "chance": 0.3,
+     "qty": [
+      1,
+      3
+     ]
+    },
+    {
+     "item": "mp_small",
+     "chance": 0.2,
+     "qty": [
+      1,
+      1
+     ]
+    },
+    {
+     "item": "wolf_pelt",
+     "chance": 0.2,
+     "qty": [
+      1,
+      1
+     ]
+    },
+    {
+     "item": "acc_swift_anklet",
+     "chance": 0.02,
+     "qty": [
+      1,
+      1
+     ]
+    }
+   ]
+  },
+  {
+   "enemy": "shadow_brute",
+   "gold": [
+    40,
+    80
+   ],
+   "drops": [
+    {
+     "item": "shadow_residue",
+     "chance": 0.8,
+     "qty": [
+      2,
+      4
+     ]
+    },
+    {
+     "item": "iron_ore",
+     "chance": 0.6,
+     "qty": [
+      2,
+      4
+     ]
+    },
+    {
+     "item": "hp_medium",
+     "chance": 0.4,
+     "qty": [
+      1,
+      2
+     ]
+    },
+    {
+     "item": "spark_dust",
+     "chance": 0.3,
+     "qty": [
+      1,
+      2
+     ]
+    },
+    {
+     "item": "w_hero_dagger_t2",
+     "chance": 0.04,
+     "qty": [
+      1,
+      1
+     ]
+    },
+    {
+     "item": "acc_oath_knot",
+     "chance": 0.03,
+     "qty": [
+      1,
+      1
+     ]
+    }
+   ]
+  }
+ ]
+}

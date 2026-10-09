@@ -62,6 +62,7 @@ bool enemydb_load(EnemyDB *db, const SkillDB *skills, const char *path);
 int  enemydb_find(const EnemyDB *db, const char *id);
 
 const char *status_name(StatusKind s);
+StatusKind status_from_name(const char *s); /* ST_NONE if unknown */
 Element element_from_name(const char *s, bool *ok);
 
 #endif

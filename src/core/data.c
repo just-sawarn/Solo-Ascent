@@ -29,6 +29,9 @@ static const char *BEHAVIOR_NAMES[] = {"melee", "ranged", "brute"};
 
 const char *status_name(StatusKind s) { return s >= 0 && s < ST_COUNT ? STATUS_NAMES[s] : "none"; }
 
+static int index_of(const char **names, int n, const char *s);
+StatusKind status_from_name(const char *s) { int i = index_of(STATUS_NAMES, ST_COUNT, s); return i >= 0 ? (StatusKind)i : ST_NONE; }
+
 static int index_of(const char **names, int n, const char *s) {
     for (int i = 0; i < n; ++i) if (strcmp(names[i], s) == 0) return i;
     return -1;

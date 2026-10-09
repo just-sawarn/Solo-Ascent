@@ -1,0 +1,167 @@
+{
+ "enchants": [
+  {
+   "id": "flame",
+   "name": "Flame",
+   "applies": [
+    "weapon"
+   ],
+   "element": "fire",
+   "element_boost": 0.15,
+   "stats": {},
+   "essence": "spark_dust",
+   "min_tier": 1
+  },
+  {
+   "id": "frost",
+   "name": "Frost",
+   "applies": [
+    "weapon"
+   ],
+   "element": "ice",
+   "element_boost": 0.15,
+   "stats": {},
+   "essence": "spirit_shard",
+   "min_tier": 4
+  },
+  {
+   "id": "storm",
+   "name": "Storm",
+   "applies": [
+    "weapon"
+   ],
+   "element": "lightning",
+   "element_boost": 0.15,
+   "stats": {},
+   "essence": "time_sand",
+   "min_tier": 3
+  },
+  {
+   "id": "radiance",
+   "name": "Radiance",
+   "applies": [
+    "weapon"
+   ],
+   "element": "holy",
+   "element_boost": 0.15,
+   "stats": {},
+   "essence": "dawn_fragment",
+   "min_tier": 6
+  },
+  {
+   "id": "umbra",
+   "name": "Umbra",
+   "applies": [
+    "weapon"
+   ],
+   "element": "shadow",
+   "element_boost": 0.15,
+   "stats": {},
+   "essence": "flame_core",
+   "min_tier": 5
+  },
+  {
+   "id": "keen",
+   "name": "Keen",
+   "applies": [
+    "weapon"
+   ],
+   "element": "",
+   "element_boost": 0,
+   "stats": {
+    "crit": 0.05
+   },
+   "essence": "spark_dust",
+   "min_tier": 1
+  },
+  {
+   "id": "might",
+   "name": "Might",
+   "applies": [
+    "weapon",
+    "accessory"
+   ],
+   "element": "",
+   "element_boost": 0,
+   "stats": {
+    "atk": 8
+   },
+   "essence": "life_essence",
+   "min_tier": 2
+  },
+  {
+   "id": "sorcery",
+   "name": "Sorcery",
+   "applies": [
+    "weapon",
+    "accessory"
+   ],
+   "element": "",
+   "element_boost": 0,
+   "stats": {
+    "matk": 10
+   },
+   "essence": "life_essence",
+   "min_tier": 2
+  },
+  {
+   "id": "vitality",
+   "name": "Vitality",
+   "applies": [
+    "armor",
+    "accessory"
+   ],
+   "element": "",
+   "element_boost": 0,
+   "stats": {
+    "hp": 80
+   },
+   "essence": "life_essence",
+   "min_tier": 2
+  },
+  {
+   "id": "warding",
+   "name": "Warding",
+   "applies": [
+    "armor"
+   ],
+   "element": "",
+   "element_boost": 0,
+   "stats": {
+    "armor": 5
+   },
+   "essence": "time_sand",
+   "min_tier": 3
+  },
+  {
+   "id": "clarity",
+   "name": "Clarity",
+   "applies": [
+    "armor",
+    "accessory"
+   ],
+   "element": "",
+   "element_boost": 0,
+   "stats": {
+    "mp": 50
+   },
+   "essence": "spirit_shard",
+   "min_tier": 4
+  },
+  {
+   "id": "swiftness",
+   "name": "Swiftness",
+   "applies": [
+    "armor",
+    "accessory"
+   ],
+   "element": "",
+   "element_boost": 0,
+   "stats": {
+    "agi": 4
+   },
+   "essence": "flame_core",
+   "min_tier": 5
+  }
+ ]
+}

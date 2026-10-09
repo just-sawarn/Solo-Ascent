@@ -47,7 +47,16 @@ void platform_report_party(int active, int command, int dead, float follower_max
         s["party"] = o;
     }, active, command, dead, follower_max_dist, hp0, hp1, hp2, hp3);
 }
+void platform_report_inventory(int gold, int item_count, int menu_open, float atk_kael) {
+    EM_ASM({
+        var s = (window["__sa"] = window["__sa"] || {});
+        var o = {};
+        o["gold"] = $0; o["items"] = $1; o["menu"] = !!$2; o["atkKael"] = $3;
+        s["inventory"] = o;
+    }, gold, item_count, menu_open, atk_kael);
+}
 #else
+void platform_report_inventory(int a, int b, int c, float d) { (void)a; (void)b; (void)c; (void)d; }
 void platform_report_party(int a, int b, int c, float d, float e, float f, float g, float h) { (void)a; (void)b; (void)c; (void)d; (void)e; (void)f; (void)g; (void)h; }
 void platform_report_combat(int a, float b, float c, int d, float e) { (void)a; (void)b; (void)c; (void)d; (void)e; }
 void platform_report_player(float x, float y, float z, int grounded, float speed) { (void)x; (void)y; (void)z; (void)grounded; (void)speed; }

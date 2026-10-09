@@ -80,6 +80,17 @@ try {
   await hold('5');
   check((await party()).active === 0, '5 returns to Kael');
 
+  // inventory: starting kit, gear applied, the menu opens (and pauses) and closes
+  const inv0 = await page.evaluate(() => window.__sa.inventory);
+  check(inv0 && inv0.gold >= 600 && inv0.items >= 10, `starting kit loaded (gold ${inv0.gold}, ${inv0.items} stacks)`);
+  check(inv0.atkKael > 20, `equipped gear raises Kael's attack (${inv0.atkKael.toFixed(1)})`);
+  await page.keyboard.down('i'); await page.waitForTimeout(700); await page.keyboard.up('i'); await page.waitForTimeout(500);
+  check(await page.evaluate(() => window.__sa.inventory.menu), 'I opens the menu');
+  const pz0 = await pl(); await page.waitForTimeout(800); const pz1 = await pl();
+  check(Math.hypot(pz1.x - pz0.x, pz1.z - pz0.z) < 0.05, 'the game is paused while the menu is open');
+  await page.keyboard.down('Escape'); await page.waitForTimeout(700); await page.keyboard.up('Escape'); await page.waitForTimeout(400);
+  check(!(await page.evaluate(() => window.__sa.inventory.menu)), 'Esc closes the menu');
+
   // hold a movement key, toggle the debug overlay, then measure frame times
   await page.keyboard.down('F3'); await page.waitForTimeout(200); await page.keyboard.up('F3');
   await page.keyboard.down('d');
@@ -135,6 +146,8 @@ try {
     const pend = await pa.evaluate(() => window.__sa.party);
     check(pend.dead === 0 && minPlayer > p0 * 0.5, `the party beats it without losses (party HP ${p0.toFixed(0)} -> min ${minPlayer.toFixed(0)}; enemy retaliation is covered by native tests)`);
     check(kills >= 1, `the enemy can be defeated (kills: ${kills})`);
+    const invEnd = await pa.evaluate(() => window.__sa.inventory);
+    check(invEnd.gold > 600, `defeating it drops gold (${invEnd.gold})`);
     check(ea.length === 0, `no console errors in combat${ea.length ? ': ' + ea.join(' | ') : ''}`);
     await pa.close();
   }

@@ -1,0 +1,183 @@
+{
+ "shops": [
+  {
+   "id": "garrick",
+   "name": "Garrick Thorne's Forge",
+   "keeper": "Garrick Thorne",
+   "region": "Aurelheim",
+   "sells": [
+    "w_hero_t1",
+    "w_hero_club_t1",
+    "w_hero_dagger_t2",
+    "w_tank_t1",
+    "w_mage_t1",
+    "w_heal_t1",
+    "a_hero_body_t1",
+    "a_hero_head_t1",
+    "a_hero_boots_t1",
+    "a_tank_body_t1",
+    "a_tank_head_t1",
+    "a_tank_boots_t1",
+    "a_mage_body_t1",
+    "a_mage_head_t1",
+    "a_mage_boots_t1",
+    "a_healer_body_t1",
+    "a_healer_head_t1",
+    "a_healer_boots_t1",
+    "coal",
+    "iron_ore",
+    "linen_thread"
+   ],
+   "buys": [
+    "weapon",
+    "armor",
+    "accessory",
+    "material"
+   ]
+  },
+  {
+   "id": "selwyn",
+   "name": "Madame Selwyn's Potions",
+   "keeper": "Madame Selwyn",
+   "region": "Aurelheim",
+   "sells": [
+    "hp_small",
+    "hp_medium",
+    "hp_large",
+    "mp_small",
+    "mp_medium",
+    "mp_large",
+    "antidote",
+    "holy_water",
+    "crystal_vial",
+    "meadow_herb",
+    "elixir_might",
+    "elixir_guard"
+   ],
+   "buys": [
+    "consumable",
+    "material"
+   ]
+  },
+  {
+   "id": "guild_store",
+   "name": "Guild Supply",
+   "keeper": "Pip Marlowe",
+   "region": "Aurelheim",
+   "sells": [
+    "acc_guild_ring",
+    "acc_lucky_coin",
+    "acc_hunters_tooth",
+    "acc_pilgrims_beads",
+    "food_bread",
+    "food_stew",
+    "bomb_fire"
+   ],
+   "buys": [
+    "accessory",
+    "consumable"
+   ]
+  },
+  {
+   "id": "zaira",
+   "name": "Zaira's Caravan",
+   "keeper": "Zaira",
+   "region": "Sunscar Sands",
+   "sells": [
+    "w_hero_t3",
+    "w_tank_t3",
+    "w_mage_t3",
+    "w_heal_t3",
+    "w_hero_axe_t3",
+    "acc_sandglass_charm",
+    "acc_scorpion_band",
+    "spice_blend",
+    "food_desert_flatbread",
+    "hp_large",
+    "mp_large",
+    "desert_bloom",
+    "sun_bronze"
+   ],
+   "buys": [
+    "weapon",
+    "armor",
+    "accessory",
+    "material",
+    "consumable"
+   ]
+  },
+  {
+   "id": "hrimvald",
+   "name": "Hrimvald Outfitters",
+   "keeper": "Skald Torvik",
+   "region": "Frostspire Peaks",
+   "sells": [
+    "w_hero_t4",
+    "w_tank_t4",
+    "w_mage_t4",
+    "w_heal_t4",
+    "w_hero_spear_t4",
+    "acc_rime_ring",
+    "food_frost_broth",
+    "hp_grand",
+    "mp_grand",
+    "frostcap",
+    "frost_silver"
+   ],
+   "buys": [
+    "weapon",
+    "armor",
+    "accessory",
+    "material",
+    "consumable"
+   ]
+  },
+  {
+   "id": "brandt",
+   "name": "Brandt Cinder's Forge",
+   "keeper": "Forgemaster Brandt Cinder",
+   "region": "Cinderhold",
+   "sells": [
+    "w_hero_t5",
+    "w_tank_t5",
+    "w_mage_t5",
+    "w_heal_t5",
+    "acc_forge_signet",
+    "acc_cinder_amulet",
+    "ember_steel",
+    "coal",
+    "food_lava_fish",
+    "hp_elixir",
+    "mp_elixir"
+   ],
+   "buys": [
+    "weapon",
+    "armor",
+    "accessory",
+    "material"
+   ]
+  },
+  {
+   "id": "old_fenn",
+   "name": "Old Fenn's Hut",
+   "keeper": "Old Fenn",
+   "region": "Whisperwood",
+   "sells": [
+    "w_hero_t2",
+    "w_tank_t2",
+    "w_mage_t2",
+    "w_heal_t2",
+    "moonpetal",
+    "meadow_herb",
+    "dryad_bark",
+    "heartwood",
+    "acc_moonpetal_locket",
+    "life_essence"
+   ],
+   "buys": [
+    "material",
+    "consumable"
+   ]
+  }
+ ]
+}

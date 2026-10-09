@@ -23,13 +23,15 @@ static void emit(CombatWorld *cw, CombatEvent e) {
 
 void combatant_recalc(Combatant *c) {
     float hp_ratio = c->max_hp > 0 ? c->hp / c->max_hp : 1.0f, mp_ratio = c->max_mp > 0 ? c->mp / c->max_mp : 1.0f;
-    c->max_hp = 80.0f + (float)c->st.vit * 14.0f + (float)c->level * 18.0f;
-    c->max_mp = 30.0f + (float)c->st.wis * 5.0f + (float)c->st.intel * 3.0f + (float)c->level * 4.0f;
-    c->atk = 8.0f + (float)c->st.str * 2.2f + (float)c->level * 2.0f + c->weapon_atk;
-    c->matk = 8.0f + (float)c->st.intel * 2.6f + (float)c->level * 2.0f + c->weapon_matk;
-    c->def = (float)c->st.vit * 1.3f + c->armor + (float)c->level;
-    c->mdef = (float)c->st.wis * 1.3f + c->armor * 0.5f + (float)c->level;
-    c->crit = 0.05f + (float)c->st.agi * 0.003f;
+    float str = (float)c->st.str + c->gear.str, intel = (float)c->st.intel + c->gear.intel, vit = (float)c->st.vit + c->gear.vit;
+    float wis = (float)c->st.wis + c->gear.wis, agi = (float)c->st.agi + c->gear.agi;
+    c->max_hp = 80.0f + vit * 14.0f + (float)c->level * 18.0f + c->gear_hp;
+    c->max_mp = 30.0f + wis * 5.0f + intel * 3.0f + (float)c->level * 4.0f + c->gear_mp;
+    c->atk = 8.0f + str * 2.2f + (float)c->level * 2.0f + c->weapon_atk;
+    c->matk = 8.0f + intel * 2.6f + (float)c->level * 2.0f + c->weapon_matk;
+    c->def = vit * 1.3f + c->armor + (float)c->level;
+    c->mdef = wis * 1.3f + c->armor * 0.5f + (float)c->level;
+    c->crit = 0.05f + agi * 0.003f + c->gear_crit;
     c->hp = c->hp > 0 || c->dead ? c->max_hp * hp_ratio : c->max_hp;
     c->mp = c->mp > 0 ? c->max_mp * mp_ratio : c->max_mp;
 }
@@ -43,7 +45,7 @@ Combatant *combat_add(CombatWorld *cw, World *w, Entity e, int team, int level, 
         c->used = true; c->ent = e; c->team = team; c->level = level; c->st = st;
         c->poise_max = c->poise = poise;
         c->radius = 0.4f; c->height = 1.8f; c->cast_skill = -1; c->party_idx = -1; c->threat_mult = 1.0f;
-        for (int k = 0; k < EL_COUNT; ++k) c->resist[k] = 1.0f;
+        for (int k = 0; k < EL_COUNT; ++k) { c->resist[k] = 1.0f; c->elem_boost[k] = 1.0f; }
         combatant_recalc(c);
         c->hp = c->max_hp; c->mp = c->max_mp;
         cw->slot_of[ecs_index(e)] = (int16_t)i;
@@ -80,11 +82,14 @@ static void add_status(CombatWorld *cw, Combatant *c, StatusKind k, float time, 
     emit(cw, (CombatEvent){.type = CE_STATUS, .dst = c->ent, .amount = (float)k});
 }
 
+void combat_apply_status(CombatWorld *cw, Combatant *c, StatusKind k, float time, float power, Entity src) { add_status(cw, c, k, time, power, src); }
+
 float combat_base_damage(const Combatant *a, const Skill *s, const Combatant *d) {
     float stat = s->magic ? a->matk : a->atk;
     if (has_status(a, ST_BUFF_ATK)) stat *= 1.0f + a->status[ST_BUFF_ATK].power;
     float def = s->magic ? d->mdef : d->def;
     if (has_status(d, ST_DEF_DOWN)) def *= 1.0f - d->status[ST_DEF_DOWN].power;
+    if (a->elem_boost[s->element] > 0) stat *= a->elem_boost[s->element];
     float mitig = 100.0f / (100.0f + fmaxf(def, 0.0f));
     float taken = d->resist[s->element];
     if (has_status(d, ST_BUFF_DEF)) taken *= 1.0f - fminf(d->status[ST_BUFF_DEF].power, 0.8f);

@@ -1,6 +1,7 @@
 #include "render/heroes.h"
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 #include <raymath.h>
 #include "render/character.h"
 #include "render/procmodels.h"
@@ -30,6 +31,14 @@ typedef struct {
 static MemberAnim MA[4];
 static int c_idle = -1, c_walk, c_jog, c_sprint, c_roll, c_jump_start, c_jump_loop, c_jump_land, c_hit, c_death, c_guard;
 static bool g_ready;
+static int g_weapon[4] = {WEAPON_SHORT_SWORD, WEAPON_LONG_SWORD, -1, -1};
+static const float WEAPON_LEN[WEAPON_COUNT] = {0.55f, 0.82f, 1.0f, 1.05f, 0.95f, 0.8f, 1.5f};
+
+void heroes_set_weapon(int member, const char *model) {
+    static const char *names[WEAPON_COUNT] = {"dagger", "short_sword", "long_sword", "katana", "axe", "club", "spear"};
+    if (member < 0 || member > 3 || !model) return;
+    for (int i = 0; i < WEAPON_COUNT; ++i) if (!strcmp(names[i], model)) { g_weapon[member] = i; return; }
+}
 
 int heroes_clip(const char *name) { return anim_find(name); }
 
@@ -158,7 +167,7 @@ static void submit_kael(const MemberAnim *K, Vector3 pos, float yaw) {
     Matrix hb = pose_bind(S, ha_r);
     Vector3 g0 = {hb.m12 - 0.01f, hb.m13, hb.m14};
     Matrix sw_bind = proc_limb(g0, (Vector3){g0.x - 0.15f, g0.y + 0.0f, g0.z + 0.95f}, 1.0f, 1.0f);
-    proc_submit_weapon(WEAPON_SHORT_SWORD, MatrixMultiply(pose_attach(&pose, ha_r, sw_bind), root), 0.82f);
+    proc_submit_weapon((WeaponId)g_weapon[0], MatrixMultiply(pose_attach(&pose, ha_r, sw_bind), root), WEAPON_LEN[g_weapon[0]]);
 }
 
 static void submit_bram(const MemberAnim *K, Vector3 pos, float yaw) {
@@ -207,7 +216,7 @@ static void submit_bram(const MemberAnim *K, Vector3 pos, float yaw) {
     Matrix hb = pose_bind(S, ha_r);
     Vector3 g0 = {hb.m12 - 0.01f, hb.m13, hb.m14};
     Matrix sw_bind = proc_limb(g0, (Vector3){g0.x - 0.15f, g0.y, g0.z + 0.95f}, 1.0f, 1.0f);
-    proc_submit_weapon(WEAPON_LONG_SWORD, MatrixMultiply(pose_attach(&pose, ha_r, sw_bind), root), 1.0f);
+    proc_submit_weapon((WeaponId)g_weapon[1], MatrixMultiply(pose_attach(&pose, ha_r, sw_bind), root), WEAPON_LEN[g_weapon[1]]);
 }
 
 static void submit_lyra(const MemberAnim *K, Vector3 pos, float yaw) {

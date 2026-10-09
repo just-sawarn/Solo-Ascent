@@ -1,0 +1,2158 @@
+{
+ "recipes": [
+  {
+   "id": "craft_w_hero_t1",
+   "output": "w_hero_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "iron_ore",
+     "qty": 6
+    },
+    {
+     "item": "wolf_pelt",
+     "qty": 3
+    },
+    {
+     "item": "spark_dust",
+     "qty": 1
+    }
+   ],
+   "station": "forge",
+   "gold": 40,
+   "level": 1
+  },
+  {
+   "id": "craft_a_hero_body_t1",
+   "output": "a_hero_body_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "wolf_pelt",
+     "qty": 7
+    },
+    {
+     "item": "wolf_pelt",
+     "qty": 4
+    },
+    {
+     "item": "linen_thread",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 30,
+   "level": 1
+  },
+  {
+   "id": "craft_a_hero_head_t1",
+   "output": "a_hero_head_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "wolf_pelt",
+     "qty": 4
+    },
+    {
+     "item": "linen_thread",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 15,
+   "level": 1
+  },
+  {
+   "id": "craft_a_hero_boots_t1",
+   "output": "a_hero_boots_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "wolf_pelt",
+     "qty": 4
+    },
+    {
+     "item": "linen_thread",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 14,
+   "level": 1
+  },
+  {
+   "id": "craft_w_tank_t1",
+   "output": "w_tank_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "iron_ore",
+     "qty": 6
+    },
+    {
+     "item": "wolf_pelt",
+     "qty": 3
+    },
+    {
+     "item": "spark_dust",
+     "qty": 1
+    }
+   ],
+   "station": "forge",
+   "gold": 40,
+   "level": 1
+  },
+  {
+   "id": "craft_a_tank_body_t1",
+   "output": "a_tank_body_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "iron_ore",
+     "qty": 7
+    },
+    {
+     "item": "wolf_pelt",
+     "qty": 4
+    },
+    {
+     "item": "linen_thread",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 30,
+   "level": 1
+  },
+  {
+   "id": "craft_a_tank_head_t1",
+   "output": "a_tank_head_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "wolf_pelt",
+     "qty": 4
+    },
+    {
+     "item": "linen_thread",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 15,
+   "level": 1
+  },
+  {
+   "id": "craft_a_tank_boots_t1",
+   "output": "a_tank_boots_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "wolf_pelt",
+     "qty": 4
+    },
+    {
+     "item": "linen_thread",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 14,
+   "level": 1
+  },
+  {
+   "id": "craft_w_mage_t1",
+   "output": "w_mage_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "iron_ore",
+     "qty": 6
+    },
+    {
+     "item": "wolf_pelt",
+     "qty": 3
+    },
+    {
+     "item": "spark_dust",
+     "qty": 1
+    }
+   ],
+   "station": "forge",
+   "gold": 40,
+   "level": 1
+  },
+  {
+   "id": "craft_a_mage_body_t1",
+   "output": "a_mage_body_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "wolf_pelt",
+     "qty": 7
+    },
+    {
+     "item": "wolf_pelt",
+     "qty": 4
+    },
+    {
+     "item": "linen_thread",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 30,
+   "level": 1
+  },
+  {
+   "id": "craft_a_mage_head_t1",
+   "output": "a_mage_head_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "wolf_pelt",
+     "qty": 4
+    },
+    {
+     "item": "linen_thread",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 15,
+   "level": 1
+  },
+  {
+   "id": "craft_a_mage_boots_t1",
+   "output": "a_mage_boots_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "wolf_pelt",
+     "qty": 4
+    },
+    {
+     "item": "linen_thread",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 14,
+   "level": 1
+  },
+  {
+   "id": "craft_w_heal_t1",
+   "output": "w_heal_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "iron_ore",
+     "qty": 6
+    },
+    {
+     "item": "wolf_pelt",
+     "qty": 3
+    },
+    {
+     "item": "spark_dust",
+     "qty": 1
+    }
+   ],
+   "station": "forge",
+   "gold": 40,
+   "level": 1
+  },
+  {
+   "id": "craft_a_healer_body_t1",
+   "output": "a_healer_body_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "wolf_pelt",
+     "qty": 7
+    },
+    {
+     "item": "wolf_pelt",
+     "qty": 4
+    },
+    {
+     "item": "linen_thread",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 30,
+   "level": 1
+  },
+  {
+   "id": "craft_a_healer_head_t1",
+   "output": "a_healer_head_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "wolf_pelt",
+     "qty": 4
+    },
+    {
+     "item": "linen_thread",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 15,
+   "level": 1
+  },
+  {
+   "id": "craft_a_healer_boots_t1",
+   "output": "a_healer_boots_t1",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "wolf_pelt",
+     "qty": 4
+    },
+    {
+     "item": "linen_thread",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 14,
+   "level": 1
+  },
+  {
+   "id": "craft_w_hero_t2",
+   "output": "w_hero_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "heartwood",
+     "qty": 8
+    },
+    {
+     "item": "dryad_bark",
+     "qty": 4
+    },
+    {
+     "item": "life_essence",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 160,
+   "level": 5
+  },
+  {
+   "id": "craft_a_hero_body_t2",
+   "output": "a_hero_body_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "dryad_bark",
+     "qty": 9
+    },
+    {
+     "item": "dryad_bark",
+     "qty": 5
+    },
+    {
+     "item": "linen_thread",
+     "qty": 4
+    }
+   ],
+   "station": "forge",
+   "gold": 120,
+   "level": 5
+  },
+  {
+   "id": "craft_a_hero_head_t2",
+   "output": "a_hero_head_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "dryad_bark",
+     "qty": 5
+    },
+    {
+     "item": "linen_thread",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 60,
+   "level": 5
+  },
+  {
+   "id": "craft_a_hero_boots_t2",
+   "output": "a_hero_boots_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "dryad_bark",
+     "qty": 5
+    },
+    {
+     "item": "linen_thread",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 56,
+   "level": 5
+  },
+  {
+   "id": "craft_w_tank_t2",
+   "output": "w_tank_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "heartwood",
+     "qty": 8
+    },
+    {
+     "item": "dryad_bark",
+     "qty": 4
+    },
+    {
+     "item": "life_essence",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 160,
+   "level": 5
+  },
+  {
+   "id": "craft_a_tank_body_t2",
+   "output": "a_tank_body_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "heartwood",
+     "qty": 9
+    },
+    {
+     "item": "dryad_bark",
+     "qty": 5
+    },
+    {
+     "item": "linen_thread",
+     "qty": 4
+    }
+   ],
+   "station": "forge",
+   "gold": 120,
+   "level": 5
+  },
+  {
+   "id": "craft_a_tank_head_t2",
+   "output": "a_tank_head_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "dryad_bark",
+     "qty": 5
+    },
+    {
+     "item": "linen_thread",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 60,
+   "level": 5
+  },
+  {
+   "id": "craft_a_tank_boots_t2",
+   "output": "a_tank_boots_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "dryad_bark",
+     "qty": 5
+    },
+    {
+     "item": "linen_thread",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 56,
+   "level": 5
+  },
+  {
+   "id": "craft_w_mage_t2",
+   "output": "w_mage_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "heartwood",
+     "qty": 8
+    },
+    {
+     "item": "dryad_bark",
+     "qty": 4
+    },
+    {
+     "item": "life_essence",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 160,
+   "level": 5
+  },
+  {
+   "id": "craft_a_mage_body_t2",
+   "output": "a_mage_body_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "dryad_bark",
+     "qty": 9
+    },
+    {
+     "item": "dryad_bark",
+     "qty": 5
+    },
+    {
+     "item": "linen_thread",
+     "qty": 4
+    }
+   ],
+   "station": "forge",
+   "gold": 120,
+   "level": 5
+  },
+  {
+   "id": "craft_a_mage_head_t2",
+   "output": "a_mage_head_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "dryad_bark",
+     "qty": 5
+    },
+    {
+     "item": "linen_thread",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 60,
+   "level": 5
+  },
+  {
+   "id": "craft_a_mage_boots_t2",
+   "output": "a_mage_boots_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "dryad_bark",
+     "qty": 5
+    },
+    {
+     "item": "linen_thread",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 56,
+   "level": 5
+  },
+  {
+   "id": "craft_w_heal_t2",
+   "output": "w_heal_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "heartwood",
+     "qty": 8
+    },
+    {
+     "item": "dryad_bark",
+     "qty": 4
+    },
+    {
+     "item": "life_essence",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 160,
+   "level": 5
+  },
+  {
+   "id": "craft_a_healer_body_t2",
+   "output": "a_healer_body_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "dryad_bark",
+     "qty": 9
+    },
+    {
+     "item": "dryad_bark",
+     "qty": 5
+    },
+    {
+     "item": "linen_thread",
+     "qty": 4
+    }
+   ],
+   "station": "forge",
+   "gold": 120,
+   "level": 5
+  },
+  {
+   "id": "craft_a_healer_head_t2",
+   "output": "a_healer_head_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "dryad_bark",
+     "qty": 5
+    },
+    {
+     "item": "linen_thread",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 60,
+   "level": 5
+  },
+  {
+   "id": "craft_a_healer_boots_t2",
+   "output": "a_healer_boots_t2",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "dryad_bark",
+     "qty": 5
+    },
+    {
+     "item": "linen_thread",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 56,
+   "level": 5
+  },
+  {
+   "id": "craft_w_hero_t3",
+   "output": "w_hero_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "sun_bronze",
+     "qty": 10
+    },
+    {
+     "item": "scorpion_chitin",
+     "qty": 5
+    },
+    {
+     "item": "time_sand",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 360,
+   "level": 10
+  },
+  {
+   "id": "craft_a_hero_body_t3",
+   "output": "a_hero_body_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "scorpion_chitin",
+     "qty": 11
+    },
+    {
+     "item": "scorpion_chitin",
+     "qty": 6
+    },
+    {
+     "item": "linen_thread",
+     "qty": 5
+    }
+   ],
+   "station": "forge",
+   "gold": 270,
+   "level": 10
+  },
+  {
+   "id": "craft_a_hero_head_t3",
+   "output": "a_hero_head_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "scorpion_chitin",
+     "qty": 6
+    },
+    {
+     "item": "linen_thread",
+     "qty": 4
+    }
+   ],
+   "station": "forge",
+   "gold": 135,
+   "level": 10
+  },
+  {
+   "id": "craft_a_hero_boots_t3",
+   "output": "a_hero_boots_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "scorpion_chitin",
+     "qty": 6
+    },
+    {
+     "item": "linen_thread",
+     "qty": 4
+    }
+   ],
+   "station": "forge",
+   "gold": 126,
+   "level": 10
+  },
+  {
+   "id": "craft_w_tank_t3",
+   "output": "w_tank_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "sun_bronze",
+     "qty": 10
+    },
+    {
+     "item": "scorpion_chitin",
+     "qty": 5
+    },
+    {
+     "item": "time_sand",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 360,
+   "level": 10
+  },
+  {
+   "id": "craft_a_tank_body_t3",
+   "output": "a_tank_body_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "sun_bronze",
+     "qty": 11
+    },
+    {
+     "item": "scorpion_chitin",
+     "qty": 6
+    },
+    {
+     "item": "linen_thread",
+     "qty": 5
+    }
+   ],
+   "station": "forge",
+   "gold": 270,
+   "level": 10
+  },
+  {
+   "id": "craft_a_tank_head_t3",
+   "output": "a_tank_head_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "scorpion_chitin",
+     "qty": 6
+    },
+    {
+     "item": "linen_thread",
+     "qty": 4
+    }
+   ],
+   "station": "forge",
+   "gold": 135,
+   "level": 10
+  },
+  {
+   "id": "craft_a_tank_boots_t3",
+   "output": "a_tank_boots_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "scorpion_chitin",
+     "qty": 6
+    },
+    {
+     "item": "linen_thread",
+     "qty": 4
+    }
+   ],
+   "station": "forge",
+   "gold": 126,
+   "level": 10
+  },
+  {
+   "id": "craft_w_mage_t3",
+   "output": "w_mage_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "sun_bronze",
+     "qty": 10
+    },
+    {
+     "item": "scorpion_chitin",
+     "qty": 5
+    },
+    {
+     "item": "time_sand",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 360,
+   "level": 10
+  },
+  {
+   "id": "craft_a_mage_body_t3",
+   "output": "a_mage_body_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "scorpion_chitin",
+     "qty": 11
+    },
+    {
+     "item": "scorpion_chitin",
+     "qty": 6
+    },
+    {
+     "item": "linen_thread",
+     "qty": 5
+    }
+   ],
+   "station": "forge",
+   "gold": 270,
+   "level": 10
+  },
+  {
+   "id": "craft_a_mage_head_t3",
+   "output": "a_mage_head_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "scorpion_chitin",
+     "qty": 6
+    },
+    {
+     "item": "linen_thread",
+     "qty": 4
+    }
+   ],
+   "station": "forge",
+   "gold": 135,
+   "level": 10
+  },
+  {
+   "id": "craft_a_mage_boots_t3",
+   "output": "a_mage_boots_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "scorpion_chitin",
+     "qty": 6
+    },
+    {
+     "item": "linen_thread",
+     "qty": 4
+    }
+   ],
+   "station": "forge",
+   "gold": 126,
+   "level": 10
+  },
+  {
+   "id": "craft_w_heal_t3",
+   "output": "w_heal_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "sun_bronze",
+     "qty": 10
+    },
+    {
+     "item": "scorpion_chitin",
+     "qty": 5
+    },
+    {
+     "item": "time_sand",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 360,
+   "level": 10
+  },
+  {
+   "id": "craft_a_healer_body_t3",
+   "output": "a_healer_body_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "scorpion_chitin",
+     "qty": 11
+    },
+    {
+     "item": "scorpion_chitin",
+     "qty": 6
+    },
+    {
+     "item": "linen_thread",
+     "qty": 5
+    }
+   ],
+   "station": "forge",
+   "gold": 270,
+   "level": 10
+  },
+  {
+   "id": "craft_a_healer_head_t3",
+   "output": "a_healer_head_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "scorpion_chitin",
+     "qty": 6
+    },
+    {
+     "item": "linen_thread",
+     "qty": 4
+    }
+   ],
+   "station": "forge",
+   "gold": 135,
+   "level": 10
+  },
+  {
+   "id": "craft_a_healer_boots_t3",
+   "output": "a_healer_boots_t3",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "scorpion_chitin",
+     "qty": 6
+    },
+    {
+     "item": "linen_thread",
+     "qty": 4
+    }
+   ],
+   "station": "forge",
+   "gold": 126,
+   "level": 10
+  },
+  {
+   "id": "craft_w_hero_t4",
+   "output": "w_hero_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "frost_silver",
+     "qty": 12
+    },
+    {
+     "item": "yeti_fur",
+     "qty": 6
+    },
+    {
+     "item": "spirit_shard",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 640,
+   "level": 15
+  },
+  {
+   "id": "craft_a_hero_body_t4",
+   "output": "a_hero_body_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "yeti_fur",
+     "qty": 13
+    },
+    {
+     "item": "yeti_fur",
+     "qty": 7
+    },
+    {
+     "item": "linen_thread",
+     "qty": 6
+    }
+   ],
+   "station": "forge",
+   "gold": 480,
+   "level": 15
+  },
+  {
+   "id": "craft_a_hero_head_t4",
+   "output": "a_hero_head_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "yeti_fur",
+     "qty": 7
+    },
+    {
+     "item": "linen_thread",
+     "qty": 5
+    }
+   ],
+   "station": "forge",
+   "gold": 240,
+   "level": 15
+  },
+  {
+   "id": "craft_a_hero_boots_t4",
+   "output": "a_hero_boots_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "yeti_fur",
+     "qty": 7
+    },
+    {
+     "item": "linen_thread",
+     "qty": 5
+    }
+   ],
+   "station": "forge",
+   "gold": 224,
+   "level": 15
+  },
+  {
+   "id": "craft_w_tank_t4",
+   "output": "w_tank_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "frost_silver",
+     "qty": 12
+    },
+    {
+     "item": "yeti_fur",
+     "qty": 6
+    },
+    {
+     "item": "spirit_shard",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 640,
+   "level": 15
+  },
+  {
+   "id": "craft_a_tank_body_t4",
+   "output": "a_tank_body_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "frost_silver",
+     "qty": 13
+    },
+    {
+     "item": "yeti_fur",
+     "qty": 7
+    },
+    {
+     "item": "linen_thread",
+     "qty": 6
+    }
+   ],
+   "station": "forge",
+   "gold": 480,
+   "level": 15
+  },
+  {
+   "id": "craft_a_tank_head_t4",
+   "output": "a_tank_head_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "yeti_fur",
+     "qty": 7
+    },
+    {
+     "item": "linen_thread",
+     "qty": 5
+    }
+   ],
+   "station": "forge",
+   "gold": 240,
+   "level": 15
+  },
+  {
+   "id": "craft_a_tank_boots_t4",
+   "output": "a_tank_boots_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "yeti_fur",
+     "qty": 7
+    },
+    {
+     "item": "linen_thread",
+     "qty": 5
+    }
+   ],
+   "station": "forge",
+   "gold": 224,
+   "level": 15
+  },
+  {
+   "id": "craft_w_mage_t4",
+   "output": "w_mage_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "frost_silver",
+     "qty": 12
+    },
+    {
+     "item": "yeti_fur",
+     "qty": 6
+    },
+    {
+     "item": "spirit_shard",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 640,
+   "level": 15
+  },
+  {
+   "id": "craft_a_mage_body_t4",
+   "output": "a_mage_body_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "yeti_fur",
+     "qty": 13
+    },
+    {
+     "item": "yeti_fur",
+     "qty": 7
+    },
+    {
+     "item": "linen_thread",
+     "qty": 6
+    }
+   ],
+   "station": "forge",
+   "gold": 480,
+   "level": 15
+  },
+  {
+   "id": "craft_a_mage_head_t4",
+   "output": "a_mage_head_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "yeti_fur",
+     "qty": 7
+    },
+    {
+     "item": "linen_thread",
+     "qty": 5
+    }
+   ],
+   "station": "forge",
+   "gold": 240,
+   "level": 15
+  },
+  {
+   "id": "craft_a_mage_boots_t4",
+   "output": "a_mage_boots_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "yeti_fur",
+     "qty": 7
+    },
+    {
+     "item": "linen_thread",
+     "qty": 5
+    }
+   ],
+   "station": "forge",
+   "gold": 224,
+   "level": 15
+  },
+  {
+   "id": "craft_w_heal_t4",
+   "output": "w_heal_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "frost_silver",
+     "qty": 12
+    },
+    {
+     "item": "yeti_fur",
+     "qty": 6
+    },
+    {
+     "item": "spirit_shard",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 640,
+   "level": 15
+  },
+  {
+   "id": "craft_a_healer_body_t4",
+   "output": "a_healer_body_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "yeti_fur",
+     "qty": 13
+    },
+    {
+     "item": "yeti_fur",
+     "qty": 7
+    },
+    {
+     "item": "linen_thread",
+     "qty": 6
+    }
+   ],
+   "station": "forge",
+   "gold": 480,
+   "level": 15
+  },
+  {
+   "id": "craft_a_healer_head_t4",
+   "output": "a_healer_head_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "yeti_fur",
+     "qty": 7
+    },
+    {
+     "item": "linen_thread",
+     "qty": 5
+    }
+   ],
+   "station": "forge",
+   "gold": 240,
+   "level": 15
+  },
+  {
+   "id": "craft_a_healer_boots_t4",
+   "output": "a_healer_boots_t4",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "yeti_fur",
+     "qty": 7
+    },
+    {
+     "item": "linen_thread",
+     "qty": 5
+    }
+   ],
+   "station": "forge",
+   "gold": 224,
+   "level": 15
+  },
+  {
+   "id": "craft_w_hero_t5",
+   "output": "w_hero_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "ember_steel",
+     "qty": 14
+    },
+    {
+     "item": "magma_scale",
+     "qty": 7
+    },
+    {
+     "item": "flame_core",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 1000,
+   "level": 20
+  },
+  {
+   "id": "craft_a_hero_body_t5",
+   "output": "a_hero_body_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "magma_scale",
+     "qty": 15
+    },
+    {
+     "item": "magma_scale",
+     "qty": 8
+    },
+    {
+     "item": "linen_thread",
+     "qty": 7
+    }
+   ],
+   "station": "forge",
+   "gold": 750,
+   "level": 20
+  },
+  {
+   "id": "craft_a_hero_head_t5",
+   "output": "a_hero_head_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "magma_scale",
+     "qty": 8
+    },
+    {
+     "item": "linen_thread",
+     "qty": 6
+    }
+   ],
+   "station": "forge",
+   "gold": 375,
+   "level": 20
+  },
+  {
+   "id": "craft_a_hero_boots_t5",
+   "output": "a_hero_boots_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "magma_scale",
+     "qty": 8
+    },
+    {
+     "item": "linen_thread",
+     "qty": 6
+    }
+   ],
+   "station": "forge",
+   "gold": 350,
+   "level": 20
+  },
+  {
+   "id": "craft_w_tank_t5",
+   "output": "w_tank_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "ember_steel",
+     "qty": 14
+    },
+    {
+     "item": "magma_scale",
+     "qty": 7
+    },
+    {
+     "item": "flame_core",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 1000,
+   "level": 20
+  },
+  {
+   "id": "craft_a_tank_body_t5",
+   "output": "a_tank_body_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "ember_steel",
+     "qty": 15
+    },
+    {
+     "item": "magma_scale",
+     "qty": 8
+    },
+    {
+     "item": "linen_thread",
+     "qty": 7
+    }
+   ],
+   "station": "forge",
+   "gold": 750,
+   "level": 20
+  },
+  {
+   "id": "craft_a_tank_head_t5",
+   "output": "a_tank_head_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "magma_scale",
+     "qty": 8
+    },
+    {
+     "item": "linen_thread",
+     "qty": 6
+    }
+   ],
+   "station": "forge",
+   "gold": 375,
+   "level": 20
+  },
+  {
+   "id": "craft_a_tank_boots_t5",
+   "output": "a_tank_boots_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "magma_scale",
+     "qty": 8
+    },
+    {
+     "item": "linen_thread",
+     "qty": 6
+    }
+   ],
+   "station": "forge",
+   "gold": 350,
+   "level": 20
+  },
+  {
+   "id": "craft_w_mage_t5",
+   "output": "w_mage_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "ember_steel",
+     "qty": 14
+    },
+    {
+     "item": "magma_scale",
+     "qty": 7
+    },
+    {
+     "item": "flame_core",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 1000,
+   "level": 20
+  },
+  {
+   "id": "craft_a_mage_body_t5",
+   "output": "a_mage_body_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "magma_scale",
+     "qty": 15
+    },
+    {
+     "item": "magma_scale",
+     "qty": 8
+    },
+    {
+     "item": "linen_thread",
+     "qty": 7
+    }
+   ],
+   "station": "forge",
+   "gold": 750,
+   "level": 20
+  },
+  {
+   "id": "craft_a_mage_head_t5",
+   "output": "a_mage_head_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "magma_scale",
+     "qty": 8
+    },
+    {
+     "item": "linen_thread",
+     "qty": 6
+    }
+   ],
+   "station": "forge",
+   "gold": 375,
+   "level": 20
+  },
+  {
+   "id": "craft_a_mage_boots_t5",
+   "output": "a_mage_boots_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "magma_scale",
+     "qty": 8
+    },
+    {
+     "item": "linen_thread",
+     "qty": 6
+    }
+   ],
+   "station": "forge",
+   "gold": 350,
+   "level": 20
+  },
+  {
+   "id": "craft_w_heal_t5",
+   "output": "w_heal_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "ember_steel",
+     "qty": 14
+    },
+    {
+     "item": "magma_scale",
+     "qty": 7
+    },
+    {
+     "item": "flame_core",
+     "qty": 3
+    }
+   ],
+   "station": "forge",
+   "gold": 1000,
+   "level": 20
+  },
+  {
+   "id": "craft_a_healer_body_t5",
+   "output": "a_healer_body_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "magma_scale",
+     "qty": 15
+    },
+    {
+     "item": "magma_scale",
+     "qty": 8
+    },
+    {
+     "item": "linen_thread",
+     "qty": 7
+    }
+   ],
+   "station": "forge",
+   "gold": 750,
+   "level": 20
+  },
+  {
+   "id": "craft_a_healer_head_t5",
+   "output": "a_healer_head_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "magma_scale",
+     "qty": 8
+    },
+    {
+     "item": "linen_thread",
+     "qty": 6
+    }
+   ],
+   "station": "forge",
+   "gold": 375,
+   "level": 20
+  },
+  {
+   "id": "craft_a_healer_boots_t5",
+   "output": "a_healer_boots_t5",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "magma_scale",
+     "qty": 8
+    },
+    {
+     "item": "linen_thread",
+     "qty": 6
+    }
+   ],
+   "station": "forge",
+   "gold": 350,
+   "level": 20
+  },
+  {
+   "id": "craft_hp_small",
+   "output": "hp_small",
+   "qty": 3,
+   "inputs": [
+    {
+     "item": "meadow_herb",
+     "qty": 2
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 5,
+   "level": 1
+  },
+  {
+   "id": "craft_hp_medium",
+   "output": "hp_medium",
+   "qty": 2,
+   "inputs": [
+    {
+     "item": "moonpetal",
+     "qty": 2
+    },
+    {
+     "item": "meadow_herb",
+     "qty": 1
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 15,
+   "level": 4
+  },
+  {
+   "id": "craft_hp_large",
+   "output": "hp_large",
+   "qty": 2,
+   "inputs": [
+    {
+     "item": "desert_bloom",
+     "qty": 3
+    },
+    {
+     "item": "moonpetal",
+     "qty": 1
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 40,
+   "level": 9
+  },
+  {
+   "id": "craft_hp_grand",
+   "output": "hp_grand",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "frostcap",
+     "qty": 4
+    },
+    {
+     "item": "desert_bloom",
+     "qty": 2
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 120,
+   "level": 14
+  },
+  {
+   "id": "craft_hp_elixir",
+   "output": "hp_elixir",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "ashroot",
+     "qty": 4
+    },
+    {
+     "item": "hollow_lily",
+     "qty": 2
+    },
+    {
+     "item": "flame_core",
+     "qty": 1
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 400,
+   "level": 20
+  },
+  {
+   "id": "craft_mp_small",
+   "output": "mp_small",
+   "qty": 3,
+   "inputs": [
+    {
+     "item": "spark_dust",
+     "qty": 1
+    },
+    {
+     "item": "meadow_herb",
+     "qty": 1
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 8,
+   "level": 1
+  },
+  {
+   "id": "craft_mp_medium",
+   "output": "mp_medium",
+   "qty": 2,
+   "inputs": [
+    {
+     "item": "life_essence",
+     "qty": 1
+    },
+    {
+     "item": "moonpetal",
+     "qty": 1
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 20,
+   "level": 4
+  },
+  {
+   "id": "craft_mp_large",
+   "output": "mp_large",
+   "qty": 2,
+   "inputs": [
+    {
+     "item": "time_sand",
+     "qty": 1
+    },
+    {
+     "item": "desert_bloom",
+     "qty": 2
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 60,
+   "level": 9
+  },
+  {
+   "id": "craft_mp_grand",
+   "output": "mp_grand",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "spirit_shard",
+     "qty": 2
+    },
+    {
+     "item": "frostcap",
+     "qty": 2
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 160,
+   "level": 14
+  },
+  {
+   "id": "craft_mp_elixir",
+   "output": "mp_elixir",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "flame_core",
+     "qty": 2
+    },
+    {
+     "item": "hollow_lily",
+     "qty": 2
+    },
+    {
+     "item": "dawn_fragment",
+     "qty": 1
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 500,
+   "level": 20
+  },
+  {
+   "id": "craft_antidote",
+   "output": "antidote",
+   "qty": 2,
+   "inputs": [
+    {
+     "item": "meadow_herb",
+     "qty": 2
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 6,
+   "level": 1
+  },
+  {
+   "id": "craft_holy_water",
+   "output": "holy_water",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "moonpetal",
+     "qty": 2
+    },
+    {
+     "item": "spark_dust",
+     "qty": 1
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 30,
+   "level": 5
+  },
+  {
+   "id": "craft_curse_salt",
+   "output": "curse_salt",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "time_sand",
+     "qty": 2
+    },
+    {
+     "item": "spirit_shard",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 90,
+   "level": 12
+  },
+  {
+   "id": "craft_phoenix",
+   "output": "phoenix_feather",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "flame_core",
+     "qty": 3
+    },
+    {
+     "item": "dawn_fragment",
+     "qty": 1
+    },
+    {
+     "item": "polished_gem",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 600,
+   "level": 22
+  },
+  {
+   "id": "craft_dawn_crystal",
+   "output": "dawn_crystal",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "spirit_shard",
+     "qty": 2
+    },
+    {
+     "item": "polished_gem",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 200,
+   "level": 14
+  },
+  {
+   "id": "craft_elixir_might",
+   "output": "elixir_might",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "life_essence",
+     "qty": 1
+    },
+    {
+     "item": "wolf_pelt",
+     "qty": 1
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 40,
+   "level": 5
+  },
+  {
+   "id": "craft_elixir_guard",
+   "output": "elixir_guard",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "life_essence",
+     "qty": 1
+    },
+    {
+     "item": "dryad_bark",
+     "qty": 1
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 40,
+   "level": 5
+  },
+  {
+   "id": "craft_elixir_focus",
+   "output": "elixir_focus",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "spark_dust",
+     "qty": 2
+    },
+    {
+     "item": "moonpetal",
+     "qty": 1
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 40,
+   "level": 5
+  },
+  {
+   "id": "craft_elixir_vigor",
+   "output": "elixir_vigor",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "life_essence",
+     "qty": 1
+    },
+    {
+     "item": "meadow_herb",
+     "qty": 2
+    },
+    {
+     "item": "crystal_vial",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 40,
+   "level": 5
+  },
+  {
+   "id": "craft_bomb_fire",
+   "output": "bomb_fire",
+   "qty": 3,
+   "inputs": [
+    {
+     "item": "coal",
+     "qty": 2
+    },
+    {
+     "item": "spark_dust",
+     "qty": 1
+    }
+   ],
+   "station": "alchemy",
+   "gold": 20,
+   "level": 3
+  },
+  {
+   "id": "craft_food_bread",
+   "output": "food_bread",
+   "qty": 4,
+   "inputs": [
+    {
+     "item": "wild_flour",
+     "qty": 2
+    }
+   ],
+   "station": "cooking",
+   "gold": 0,
+   "level": 1
+  },
+  {
+   "id": "craft_food_stew",
+   "output": "food_stew",
+   "qty": 2,
+   "inputs": [
+    {
+     "item": "meadow_herb",
+     "qty": 1
+    },
+    {
+     "item": "river_fish",
+     "qty": 1
+    }
+   ],
+   "station": "cooking",
+   "gold": 5,
+   "level": 1
+  },
+  {
+   "id": "craft_food_fish",
+   "output": "food_grilled_fish",
+   "qty": 2,
+   "inputs": [
+    {
+     "item": "river_fish",
+     "qty": 2
+    },
+    {
+     "item": "meadow_herb",
+     "qty": 1
+    }
+   ],
+   "station": "cooking",
+   "gold": 4,
+   "level": 1
+  },
+  {
+   "id": "craft_food_flatbread",
+   "output": "food_desert_flatbread",
+   "qty": 2,
+   "inputs": [
+    {
+     "item": "wild_flour",
+     "qty": 2
+    },
+    {
+     "item": "spice_blend",
+     "qty": 1
+    }
+   ],
+   "station": "cooking",
+   "gold": 12,
+   "level": 8
+  },
+  {
+   "id": "craft_food_broth",
+   "output": "food_frost_broth",
+   "qty": 2,
+   "inputs": [
+    {
+     "item": "frostcap",
+     "qty": 1
+    },
+    {
+     "item": "river_fish",
+     "qty": 1
+    }
+   ],
+   "station": "cooking",
+   "gold": 14,
+   "level": 14
+  },
+  {
+   "id": "craft_food_lava",
+   "output": "food_lava_fish",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "lava_fish_raw",
+     "qty": 1
+    },
+    {
+     "item": "spice_blend",
+     "qty": 1
+    },
+    {
+     "item": "ashroot",
+     "qty": 1
+    }
+   ],
+   "station": "cooking",
+   "gold": 30,
+   "level": 18
+  },
+  {
+   "id": "craft_polished_gem",
+   "output": "polished_gem",
+   "qty": 1,
+   "inputs": [
+    {
+     "item": "spark_dust",
+     "qty": 3
+    },
+    {
+     "item": "coal",
+     "qty": 2
+    }
+   ],
+   "station": "forge",
+   "gold": 80,
+   "level": 6
+  }
+ ]
+}

@@ -32,6 +32,8 @@ First time: `cd tools && npm install && npx playwright install chromium`.
 | Dodge roll (i-frames) | Q or right-click | B | ROLL |
 | Lock on | Tab or middle-click | Y / R3 | LOCK |
 | Debug overlay | F3 (or a three-finger tap); G god mode, K quest skip | | |
+| Menu (items, gear, craft, smith, shop) | I | | MENU |
+| Quick use: HP potion / MP potion / revive / cleanse | Z / X / C / V | | |
 | Look / quality | L cycles the look, `[` `]` change quality tier | | |
 
 ## Hosting

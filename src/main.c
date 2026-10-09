@@ -9,6 +9,8 @@
 #include "core/ecs.h"
 #include "core/enemy_ai.h"
 #include "core/gameloop.h"
+#include "core/inventory.h"
+#include "core/items.h"
 #include "core/log.h"
 #include "core/party.h"
 #include "core/physics.h"
@@ -21,6 +23,7 @@
 #include "ui/debug_overlay.h"
 #include "ui/hud.h"
 #include "ui/input.h"
+#include "ui/menu.h"
 #include "world/test_scene.h"
 
 #ifdef __EMSCRIPTEN__
@@ -41,6 +44,12 @@ typedef struct {
     SkillDB skills;
     EnemyDB edb;
     PartyDB pdb;
+    ItemDB idb;
+    Inventory inv;
+    Menu menu;
+    uint32_t loot_rng;
+    struct { char text[72]; float t; Color col; } loot_log[6];
+    int gear_level;
     EnemyPool enemies;
     CombatWorld cw;
     PartyCtx ctx;
@@ -83,6 +92,42 @@ static const char *CMD_NAMES[] = {"Aggressive", "Defensive", "Support"};
 static PartyMember *active_member(Game *g) { return &g->party.m[g->party.active < 0 ? 0 : g->party.active]; }
 static Entity active_ent(Game *g) { return active_member(g)->ent; }
 
+static void log_loot(Game *g, Color col, const char *fmt, const char *name, int a) {
+    for (int i = 5; i > 0; --i) g->loot_log[i] = g->loot_log[i - 1];
+    snprintf(g->loot_log[0].text, sizeof g->loot_log[0].text, fmt, name, a);
+    g->loot_log[0].t = 5.0f; g->loot_log[0].col = col;
+}
+
+/* Re-apply equipment to every combatant and refresh the weapon each member holds. */
+static void apply_all_gear(Game *g) {
+    for (int i = 0; i < g->party.n; ++i) {
+        Combatant *c = party_cb(&g->party, &g->ctx, i);
+        if (c) inv_apply_gear(&g->inv, &g->idb, i, c);
+        const ItemStack *w = &g->inv.equip[i][EQ_WEAPON];
+        if (w->item >= 0) heroes_set_weapon(i, g->idb.items[w->item].model);
+    }
+}
+
+static void give_equipped(Game *g, int member, const char *id) {
+    int it = itemdb_find(&g->idb, id);
+    if (it < 0 || !inv_add_instance(&g->inv, &g->idb, it, 0, -1)) return;
+    for (int s = 0; s < INV_SLOTS; ++s) if (g->inv.slot[s].item == it) { inv_equip(&g->inv, &g->idb, member, g->pdb.m[member].role, g->gear_level, s, 0); break; }
+}
+
+static void starting_kit(Game *g) {
+    inv_init(&g->inv);
+    g->inv.gold = 600;
+    static const struct { const char *id; int n; } KIT[] = {{"hp_small", 6}, {"mp_small", 3}, {"antidote", 2}, {"food_bread", 4}, {"coal", 6}, {"meadow_herb", 4}, {"crystal_vial", 4},
+                                                           {"iron_ore", 8}, {"wolf_pelt", 4}, {"linen_thread", 6}, {"spark_dust", 2}, {"w_hero_club_t1", 1}, {"acc_lucky_coin", 1}, {"phoenix_feather", 1}};
+    for (unsigned i = 0; i < sizeof KIT / sizeof KIT[0]; ++i) { int it = itemdb_find(&g->idb, KIT[i].id); if (it >= 0) inv_add(&g->inv, &g->idb, it, KIT[i].n); }
+    static const char *ROLE_KEY[] = {"hero", "tank", "mage", "healer"}, *WEAPON_KEY[] = {"w_hero_t1", "w_tank_t1", "w_mage_t1", "w_heal_t1"};
+    for (int i = 0; i < g->pdb.n && i < 4; ++i) {
+        char body[48]; snprintf(body, sizeof body, "a_%s_body_t1", ROLE_KEY[i]);
+        give_equipped(g, i, WEAPON_KEY[i]); give_equipped(g, i, body);
+    }
+    give_equipped(g, 0, "acc_guild_ring");
+}
+
 static void new_game(Game *g) {
     ecs_init(&g->world);
     gameloop_init(&g->loop);
@@ -104,6 +149,10 @@ static void new_game(Game *g) {
     g->kills = 0; g->respawn_t = 0; g->hitstop = 0;
     Vec3 ap = active_member(g)->pc.ch.pos;
     g->cam_focus = ap;
+    starting_kit(g);
+    apply_all_gear(g);
+    menu_init(&g->menu);
+    memset(g->loot_log, 0, sizeof g->loot_log);
 }
 
 static Vector3 lock_pos(const Game *g) {
@@ -165,7 +214,18 @@ static void process_events(Game *g) {
         case CE_PARRY: g->hitstop = fmaxf(g->hitstop, 0.14f); camrig_shake(&g->cam, 0.09f); break;
         case CE_BLOCK: camrig_shake(&g->cam, 0.03f); break;
         case CE_DEATH:
-            if (!on_party) { g->kills++; g->hitstop = fmaxf(g->hitstop, 0.10f); camrig_shake(&g->cam, 0.08f); }
+            if (!on_party) {
+                g->kills++; g->hitstop = fmaxf(g->hitstop, 0.10f); camrig_shake(&g->cam, 0.08f);
+                Enemy *en = enemy_of(&g->enemies, e->dst);
+                if (en) {
+                    LootDrop drops[12]; int gold = 0, n = loot_roll(&g->idb, en->def, &g->loot_rng, drops, &gold);
+                    if (gold > 0) { char gl[32]; snprintf(gl, sizeof gl, "+%d gold", gold); g->inv.gold += gold; log_loot(g, (Color){255, 220, 120, 255}, "%s", gl, 0); }
+                    for (int k = 0; k < n; ++k) {
+                        int left = inv_add(&g->inv, &g->idb, drops[k].item, drops[k].qty);
+                        if (drops[k].qty - left > 0) log_loot(g, (Color){200, 240, 255, 255}, "%s x%d", g->idb.items[drops[k].item].name, drops[k].qty - left);
+                    }
+                }
+            }
             else camrig_shake(&g->cam, 0.15f);
             break;
         case CE_CAST:
@@ -206,6 +266,29 @@ static void toggle_lock(Game *g) {
     g->lock_ent = bi;
 }
 
+static void quick_use(Game *g, int kind) {
+    int slot = inv_quick_slot(&g->inv, &g->idb, kind);
+    if (slot < 0) { toast_text(g, "None left."); return; }
+    int target = -1; float best = 2.0f;
+    for (int i = 0; i < g->party.n; ++i) {
+        Combatant *c = party_cb(&g->party, &g->ctx, i);
+        if (!c) continue;
+        float score = 9;
+        if (kind == 0 && !c->dead && c->hp < c->max_hp) score = c->hp / c->max_hp;
+        if (kind == 1 && !c->dead && c->mp < c->max_mp) score = c->mp / c->max_mp;
+        if (kind == 2 && c->dead) score = 0;
+        if (kind == 3 && !c->dead && (c->status[ST_BURN].time > 0 || c->status[ST_POISON].time > 0 || c->status[ST_SLOW].time > 0 || c->status[ST_STUN].time > 0 || c->status[ST_SILENCE].time > 0 || c->status[ST_HOLLOW_CURSE].time > 0)) score = 0;
+        if (score < best) { best = score; target = i; }
+    }
+    if (target < 0) { toast_text(g, "Nobody needs that."); return; }
+    char name[48]; snprintf(name, sizeof name, "%s", g->idb.items[g->inv.slot[slot].item].name);
+    UseResult r = inv_use(&g->inv, &g->idb, &g->cw, party_cb(&g->party, &g->ctx, target), slot);
+    char b[96];
+    if (r == USE_OK) snprintf(b, sizeof b, "%s on %s", name, g->party.m[target].def->name);
+    else snprintf(b, sizeof b, "%s", r == USE_COOLDOWN ? "Potions need a moment between uses." : "No effect.");
+    toast_text(g, b);
+}
+
 static void do_party_controls(Game *g) {
     Input *in = &g->input;
     Party *pt = &g->party;
@@ -217,6 +300,7 @@ static void do_party_controls(Game *g) {
         char b[64]; snprintf(b, sizeof b, "Controlling %s", pt->m[to].def->name);
         toast_text(g, b);
     }
+    for (int k = 0; k < 4; ++k) if (in->quick[k]) quick_use(g, k);
     if (in->cmd_cycle) {
         pt->cmd = (PartyCommand)(((int)pt->cmd + 1) % 3);
         char b[64]; snprintf(b, sizeof b, "Party command: %s", CMD_NAMES[pt->cmd]);
@@ -234,18 +318,21 @@ static void frame(void) {
     if (platform_take_context_restored()) LOGI("WebGL context restored (GPU resource rebuild lands with the lifecycle milestone)");
 
     bool playing = g->state == STATE_PLAYING;
-    input_update(&g->input, dt, playing && !hidden);
+    input_update(&g->input, dt, playing && !hidden && !g->menu.open);
+    if (playing && g->input.menu) { menu_toggle(&g->menu); if (g->menu.open && IsCursorHidden()) EnableCursor(); g->input.menu = false; }
+    else g->input.menu = false;
+    inv_update(&g->inv, g->menu.open ? 0.0f : dt);
     /* desktop: the first click in game grabs the mouse (pointer lock); Esc releases it */
-    if (playing && !g->input.touch_ui && !IsCursorHidden() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) DisableCursor();
-    if (IsKeyPressed(KEY_ESCAPE) && IsCursorHidden()) EnableCursor();
+    if (playing && !g->menu.open && !g->input.touch_ui && !IsCursorHidden() && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) DisableCursor();
+    if (IsKeyPressed(KEY_ESCAPE) && IsCursorHidden() && !g->menu.open) EnableCursor();
 
     /* hit-stop freezes the simulation and animation for a few frames, rendering continues */
-    float sim_dt = hidden ? 0.0f : dt;
+    float sim_dt = hidden || g->menu.open ? 0.0f : dt;
     if (g->hitstop > 0) { g->hitstop -= dt; sim_dt = 0.0f; }
 
     int steps = 0;
     if (playing) {
-        do_party_controls(g);
+        if (!g->menu.open) do_party_controls(g);
         if (g->input.lock) toggle_lock(g);
         if (g->lock_ent != ENTITY_NULL && !combat_alive(&g->cw, g->lock_ent)) g->lock_ent = ENTITY_NULL;
         steps = gameloop_advance(&g->loop, (double)sim_dt);
@@ -285,6 +372,7 @@ static void frame(void) {
         for (int i = 0; i < g->party.n && i < 4; ++i) { Combatant *c = party_cb(&g->party, &g->ctx, i); if (c) { hp[i] = c->hp; dead += c->dead; } }
         float fol = 0; /* furthest follower distance from the leader */
         for (int i = 0; i < g->party.n; ++i) if (i != g->party.active) { Vec3 a = g->party.m[i].pc.ch.pos, b = apc->ch.pos; fol = fmaxf(fol, sqrtf((a.x - b.x) * (a.x - b.x) + (a.z - b.z) * (a.z - b.z))); }
+        platform_report_inventory(g->inv.gold, INV_SLOTS - inv_free_slots(&g->inv), g->menu.open, acb ? acb->atk : 0.0f);
         platform_report_party(g->party.active, (int)g->party.cmd, dead, fol, hp[0], hp[1], hp[2], hp[3]);
     }
     dbg_update(&g->dbg, dt, steps);
@@ -309,7 +397,7 @@ static void frame(void) {
     Camera3D cam = {.position = {g->cam.eye.x, g->cam.eye.y, g->cam.eye.z}, .target = {g->cam.target.x, g->cam.target.y, g->cam.target.z},
                     .up = {0, 1, 0}, .fovy = 38.0f, .projection = CAMERA_PERSPECTIVE};
 
-    float anim_dt = !hidden && g->hitstop <= 0 ? dt : 0.0f;
+    float anim_dt = !hidden && !g->menu.open && g->hitstop <= 0 ? dt : 0.0f;
     for (int i = 0; i < g->party.n; ++i) {
         PartyMember *m = &g->party.m[i];
         Combatant *c = combat_get(&g->cw, m->ent);
@@ -369,10 +457,22 @@ static void frame(void) {
     } else {
         hud_draw(&g->hud, cam, &g->world, &g->cw, &g->enemies, &g->edb, &g->party, g->lock_ent, g->input.touch_ui);
         if (!g->input.touch_ui)
-            DrawText(IsCursorHidden() ? "WASD move | Shift sprint | Space jump | J attack | 1-4 skills | E guard | Q roll | Tab lock | R / 5-8 switch | B command | Esc mouse"
-                                      : "Click to capture the mouse | WASD | J attack | 1-4 skills | E guard | Q roll | Tab lock | R / 5-8 switch character | B party command | F3 debug",
+            DrawText(IsCursorHidden() ? "WASD | Shift | Space | J attack | 1-4 skills | E guard | Q roll | Tab lock | R/5-8 switch | B command | I menu | Z/X/C/V potions | Esc mouse"
+                                      : "Click to capture the mouse | WASD | J attack | 1-4 skills | E guard | Q roll | Tab lock | R/5-8 switch | B command | I menu | Z/X/C/V potions",
                      10, sh - 24, 16, (Color){255, 255, 255, 170});
         input_draw_touch(&g->input);
+        for (int i = 0; i < 6; ++i) {
+            if (g->loot_log[i].t <= 0) continue;
+            g->loot_log[i].t -= dt;
+            unsigned char a = (unsigned char)(255.0f * fminf(1.0f, g->loot_log[i].t));
+            Color cc = g->loot_log[i].col; cc.a = a;
+            DrawText(g->loot_log[i].text, sw - 20 - MeasureText(g->loot_log[i].text, 18), sh / 2 + i * 22, 18, cc);
+        }
+        if (g->menu.open) {
+            MenuCtx mc = {&g->inv, &g->idb, &g->skills, &g->pdb, &g->party, &g->cw, g->gear_level};
+            menu_update_draw(&g->menu, &mc);
+            if (g->menu.gear_dirty) { apply_all_gear(g); g->menu.gear_dirty = false; }
+        }
     }
     if (g->toast_t > 0) {
         g->toast_t -= (double)dt;
@@ -422,7 +522,9 @@ int main(int argc, char **argv) {
     dbg_init(&G.dbg);
     input_init(&G.input);
     G.data_ok = skilldb_load(&G.skills, "data/skills.json") && enemydb_load(&G.edb, &G.skills, "data/enemies.json") &&
-                partydb_load(&G.pdb, &G.skills, "data/party.json");
+                partydb_load(&G.pdb, &G.skills, "data/party.json") && itemdb_load(&G.idb, "data", &G.edb);
+    G.gear_level = 25; /* sandbox: all gear usable until the XP system lands */
+    G.loot_rng = 20261009u;
     if (!G.data_ok) LOGE("content data failed to load");
     test_scene_build_physics(&G.phys);
     hud_init(&G.hud);
